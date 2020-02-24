@@ -1,0 +1,1 @@
+UPDATE `per_personal_2019_2` t1 SET head = (SELECT head FROM `per_personal_2019` t2 WHERE t2.per_cardno = t1.per_cardno)
