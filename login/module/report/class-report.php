@@ -116,7 +116,7 @@ class report extends DbConn
     }
 
 
-    function tableKPI($per_cardno,$years,$tbl_kpi_score) {
+    function tableKPI($per_cardno,$years,$tablePersonal,$tbl_kpi_score) {
         // $dbConn = new DbConn;
         $err = "";
         $success = array();
@@ -132,11 +132,14 @@ class report extends DbConn
             ".$tbl_kpi_score.".`weight`,
             ".$tbl_kpi_score.".`kpi_accept`,
             `kpi_question`.`kpi_code_org`,
-            `kpi_question`.`kpi_title`
+            `kpi_question`.`kpi_title`,
+            ".$tablePersonal.".`through_trial`
                 FROM ".$tbl_kpi_score." 
                 LEFT JOIN `kpi_question` 
                 ON ".$tbl_kpi_score.".`kpi_code` = `kpi_question`.`kpi_code`
-                WHERE per_cardno = :per_cardno AND years = :years AND soft_delete = 0";
+                LEFT JOIN `$tablePersonal` 
+                ON ".$tablePersonal.".`per_cardno` = ".$tbl_kpi_score.".`per_cardno`
+                WHERE ".$tbl_kpi_score.".`per_cardno` = :per_cardno AND ".$tbl_kpi_score.".`years` = :years AND ".$tbl_kpi_score.".`soft_delete` = 0";
             $stmKPI = $this->conn->prepare($sqlKPI);
             $stmKPI->bindParam(":per_cardno",$per_cardno);
             $stmKPI->bindParam(":years",$years);
@@ -538,18 +541,20 @@ class report extends DbConn
                     'weight' => $value['weight'] , 
                     'kpiSum' => ($value['kpi_accept'] == 1 ?round($kpiSum,2):"-"),
                     'kpiSum_' => ($value['kpi_accept'] == 1 ?round($kpiSum,2):NULL), 
-                    'kpiSum_user' => ($value['kpi_score'] != null ?round($kpiSum_user,2):"-")  
+                    'kpiSum_user' => ($value['kpi_score'] != null ?round($kpiSum_user,2):"-"),
                 );
                 // kpiSum_  กรณียังไม่ยืนยันผลให้ส่ง Null ไป
                 $kpi['text'][] = $arr;
 
             }
+            $kpi['per_cardno'] = $kpiResult['result'][0]['per_cardno'];
             $kpi['kpiWeightSum'] = ($kpiWeightSum == ""? "-" : $kpiWeightSum) ;
             $kpi['kpiWeightSum_'] = ($kpiWeightSum == ""? NULL : $kpiWeightSum) ;
             $kpi['kpiSum2'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : "-" ); //ถ้ายืนยันยังไม่ครบส่ง - ใช้กับ report
             $kpi['kpiSum2_'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : null ); //ถ้ายืนยันยังไม่ครบส่ง null
-            $kpi['kpiSum2_user'] = round($kpiSum2_user,2);
+            $kpi['kpiSum2_user'] =  ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2_user,2) : "-" )   ;
             $kpi['kpiCheckSumAll'] = ($kpiCheckSumAll == 0? $kpi['kpiSum2'] : "-" );
+            $kpi['through_trial'] = $kpiResult['result'][0]['through_trial'];
         }
 
         return $kpi;
@@ -631,7 +636,16 @@ class report extends DbConn
     $log_ = array();
 
     if ( array_key_exists('text' , $cpc ) ) {
+        if ($cpc['through_trial'] == 1 ) {
+            $cpcScoring = 30;
             
+        }elseif ($cpc['through_trial'] == 2) {
+            $cpcScoring = 50; 
+            
+        }else {
+            $cpcScoring = 30; 
+           
+        }
         foreach ($cpc['text'] as $cpc_key => $cpc_value) {
             // echo var_dump($cpc_value['sum1_']);
             try {
@@ -660,14 +674,46 @@ class report extends DbConn
         } // end foreach
 
         try {
-            $sqlScoreResultUpdate = "UPDATE $cpc_score_result SET `cpc_sum_weight` = :cpc_sum_weight 
-                                                                 WHERE  per_cardno = :per_cardno";
-            $stmScoreUpdate = $this->conn->prepare($sqlScoreResultUpdate);
-            $stmScoreUpdate->bindParam(":cpc_sum_weight",$cpc['cpcSumWeight_']);
+            $sqlScoreResultUpdate = "UPDATE $cpc_score_result SET 
+                                        `cpc_score_result_yourself` = :cpcSum2_user,
+                                        `cpc_score_result_head` = :cpcSum2_,
+                                        `cpc_sum_weight` = :cpc_sum_weight,
+                                        `scoring` = :scoring ,
+                                        `timestamp` = current_timestamp
+                                    WHERE  per_cardno = :per_cardno";
 
-            $stmScoreUpdate->bindParam(":per_cardno",$value['per_cardno']);
+            $stmScoreUpdate = $this->conn->prepare($sqlScoreResultUpdate);
+            $stmScoreUpdate->bindParam(":cpcSum2_user",$cpc['cpcSum2_user']);
+            $stmScoreUpdate->bindParam(":cpcSum2_",$cpc['cpcSum2_']);
+            $stmScoreUpdate->bindParam(":cpc_sum_weight",$cpc['cpcSumWeight_']);
+            $stmScoreUpdate->bindParam(":scoring",$cpcScoring);
+            $stmScoreUpdate->bindParam(":per_cardno",$cpc['per_cardno']);
 
             $stmScoreUpdate->execute();
+
+            if ($stmScoreUpdate->rowCount() == 0) {
+                $sqlScoreResultInsert = "INSERT INTO $cpc_score_result (`per_cardno`,
+                                                                        `cpc_score_result_yourself`,
+                                                                        `cpc_score_result_head`,
+                                                                        `cpc_sum_weight`,
+                                                                        `scoring`,
+                                                                        `timestamp`
+                                                                        ) VALUES (
+                                                                            :per_cardno,
+                                                                            :cpcSum2_user,
+                                                                            :cpcSum2_,
+                                                                            :cpc_sum_weight,
+                                                                            :scoring,
+                                                                            current_timestamp
+                                                                        )";
+                $stmScoreInsert = $this->conn->prepare($sqlScoreResultInsert);
+                $stmScoreInsert->bindParam(":per_cardno",$cpc['per_cardno']);
+                $stmScoreInsert->bindParam(":cpcSum2_user",$cpc['cpcSum2_user']);
+                $stmScoreInsert->bindParam(":cpcSum2_",$cpc['cpcSum2_']);
+                $stmScoreInsert->bindParam(":cpc_sum_weight",$cpc['cpcSumWeight_']);
+                $stmScoreInsert->bindParam(":scoring",$cpcScoring);
+                $stmScoreInsert->execute();
+            }
 
         } catch (\Exception $e) {
             $errUpdate = $e->getMessage();
@@ -685,6 +731,7 @@ class report extends DbConn
         $success['error'] = $log_;
     }else {
         $success['success'] = true;
+        $suscess['error'] = $log_;
     }
         
         return $success;
@@ -699,6 +746,16 @@ class report extends DbConn
     $kpi_score_result = $resultYear['kpi_score_result'];
     $log_ = array();
         if (array_key_exists('text', $kpi) ) {
+            if ($kpi['through_trial'] == 1 ) {
+               
+                $kpiScoring = 70; 
+            }elseif ($kpi['through_trial'] == 2) {
+                
+                $kpiScoring = 50;
+            }else {
+                
+                $kpiScoring = 70;
+            }
                 
             foreach ($kpi['text'] as $keyKPI => $valueKPI) {
                 try {
@@ -723,12 +780,41 @@ class report extends DbConn
             }
 
             try {
-                $sqlKPIResultUpdate = "UPDATE $kpi_score_result SET kpi_weight_sum = :kpi_weight_sum WHERE per_cardno = :per_cardno ";
+                $sqlKPIResultUpdate = "UPDATE $kpi_score_result SET 
+                                        kpi_weight_sum = :kpi_weight_sum ,
+                                        kpi_score_result = :kpi_score_result,
+                                        `scoring` = :scoring,
+                                        `timestamp` = current_timestamp
+                                        WHERE per_cardno = :per_cardno ";
                 $stmKPIResultUpdate = $this->conn->prepare($sqlKPIResultUpdate);
+                $stmKPIResultUpdate->bindParam(":kpi_score_result",$kpi['kpiSum2_']);
                 $stmKPIResultUpdate->bindParam(":kpi_weight_sum",$kpi['kpiWeightSum_']);
-                $stmKPIResultUpdate->bindParam(":per_cardno",$value['per_cardno']);
+                $stmKPIResultUpdate->bindParam(":scoring",$kpiScoring);
+                $stmKPIResultUpdate->bindParam(":per_cardno",$kpi['per_cardno']);
 
                 $stmKPIResultUpdate->execute();
+
+                if ($stmKPIResultUpdate->rowCount() == 0) {
+                    $sqlKpiResultInsert = "INSERT $kpi_score_result INTO (
+                                                                         `per_cardno`,
+                                                                         `kpi_score_result`,
+                                                                         `kpi_weight_sum`,
+                                                                         `scoring`,
+                                                                         `time_stamp`
+                                                                        ) VALUES (
+                                                                            :per_cardno,
+                                                                            :kpi_score_result,
+                                                                            :kpi_weight_sum,
+                                                                            :scoring,
+                                                                            current_timestamp
+                                                                        )"; 
+                    $stmKpiResultInsert = $this->conn->prepare($sqlKpiResultInsert);
+                    $stmKpiResultInsert->bindParam(":per_cardno",$kpi['per_cardno']);
+                    $stmKpiResultInsert->bindParam(":kpi_score_result",$kpi['kpiSum2_']);
+                    $stmKpiResultInsert->bindParam(":kpi_weight_sum",$kpi['kpiWeightSum_']);
+                    $stmKpiResultInsert->bindParam(":scoring",$kpiScoring);
+
+                }
 
             } catch (\Exception $e) {
                 $errUpdate = $e->getMessage();
@@ -746,6 +832,7 @@ class report extends DbConn
             $success['error'] = $log_;
         }else {
             $success['success'] = true;
+            // $success['error'] = $kpi['kpiWeightSum_'];
         }
             
         return $success;
@@ -799,13 +886,14 @@ class report extends DbConn
         $setData = array();
         foreach ($tableCPC['result'] as $key => $value) {
                 $a =  array($value['cpc_accept1'],$value['cpc_accept2'],$value['cpc_accept3'],$value['cpc_accept4'],$value['cpc_accept5']);
-                // $point = $this->getPoint($a);  
-                $point = $this->getTotal($value['cpc_divisor'],$a); // คำนวณแบบเดียวกับคะแนน 
-              
+
+                // $point = $this->getPoint($a);
                 // $total = $this->getTotal($value['cpc_divisor'],$a);
-                $point456 = $this->getPointForType456($a);
+
                 $t = intval($value['question_type']) ;
                 if ( $t === 1 || $t === 2 || $t === 3 ) {
+
+                    $point = $this->getTotal($value['cpc_divisor'],$a); // คำนวณแบบเดียวกับคะแนน 
 
                     if ($point >= 3) {
                         $pointEqual = $value['cpc_divisor'];
@@ -824,9 +912,19 @@ class report extends DbConn
                         $result_minus = $pointEqual - $value['cpc_divisor'];
                        
                     }
-                    $pointEqual_OverGap =  $pointEqual + $pointOverGap ;
+                    
+                    if ($point != false) {
+                        $pointEqual_OverGap =  $pointEqual + $pointOverGap ;
+                        $gap_status = (( $pointEqual_OverGap - $value['cpc_divisor']) >= 0 ? 0 : 1);
+                    }elseif($point == false){
+                        $pointEqual_OverGap =  NULL ;
+                        $gap_status = NULL;
+                    }
                     
                 }elseif ( $t === 4 || $t === 5 || $t === 6 ) {
+
+                    $point456 = $this->getPointForType456($a);
+
                     $p = $point456;
                     if ($point456 >=  $value['cpc_divisor'] ) {
                         $pointEqual = $value['cpc_divisor'];
@@ -841,10 +939,18 @@ class report extends DbConn
                     }else {
                         $result_minus = $point456-$value['cpc_divisor'];
                     }
-                    $pointEqual_OverGap =  $pointEqual + $pointOverGap ;
+                    
+                    if ($point456 != false) {
+                        $pointEqual_OverGap =  $pointEqual + $pointOverGap ;
+                        $gap_status = (( $pointEqual_OverGap - $value['cpc_divisor']) >= 0 ? 0 : 1);
+                    }elseif($point456 == false){
+                        $gap_status = NULL;
+                        $pointEqual_OverGap =  NULL ;
+                    }
                 }
                 (( $t === 4 || $t === 5 || $t === 6 )?  $w = "-" :  $w = $value['cpc_weight']."%");
-                $gap_status = (( $pointEqual_OverGap - $value['cpc_divisor']) >= 0 ? 0 : 1);     
+
+                     
                 
             $setData[$key] =  array('per_cardno' => $value['per_cardno'],
                                     'cpc_score_id' =>  $value['cpc_score_id'],
@@ -870,15 +976,44 @@ class report extends DbConn
         //pointOverGap = ส่วนต่าง 
         //pointEqual_OverGap = จำนวนข้อที่ได้ ตั้งแต่ 1-5 
         //result_minus = ผลลัพธ์ส่วนต่าง 
+        // 'gap_status' = สถานะการติดgap,
         
         return $setData;
     }
 
+    // function  gapResultUpdate($arrGap) {
+    //     $success = array('success' => NULL,
+    //                     'error' => NULL );
+    //     $log_ = array();
 
+    //     if (count($arrGap) > 0 ) {
+
+    //         foreach ($arrGap as $key => $gap) {
+    //             try {
+    //                 $sql = ""
+    //             } catch (\Exception $e) {
+    //                 //throw $th;
+    //             }
+                
+    //         }
+
+       
+
+
+
+    //     }
+    
+    // }
+
+// cal_gap ใช้งานในไฟล์ view-evatuation-result.php
     function cal_gap($setData){ // cal_gap_chart->cal_gap คำนวณหา gap โดยใช้ข้อมูลจาก cal_gap_chart
         $gapArr = array();
         $db = new DbConn;
-        $success = array('msg'=>'');
+        $success = array(
+            'success' => NULL,
+            'count' => 0,
+            'gap' => NULL,
+            'msg'=> NULL);
         
         foreach ($setData as $key => $value) {
             if ($value['result_minus'] < 0 ) {
@@ -924,19 +1059,24 @@ class report extends DbConn
                         $setData[$key]['idp_who_is_accept'] = false;
                     }
                 }catch(Exception $e){
+                    $success['success'] = false;
                     $success['msg'] = $e->getMessage();
                 }
                 $gapArr[] = $setData[$key];
             }
+            $success['gap'] = $gapArr;
+            $success['success'] = true;
         }
             //  echo "<pre>";
         // print_r($gapArr);
         // echo "</pre>";
-        return $gapArr;
+        return $success;
     }
 
     function gapUpdateByid($point_result,$gap_status,$cpc_score_id,$cpcScoreTable) {
-        $success = array();
+        //point_result =   pointEqual_OverGap จำนวนข้อที่ได้ ตั้งแต่ 1-5
+        //gap_status = 0 ไม่ติดgap | 1 ติดgap
+        $success = array(); 
         $c = 0;
         try {
             $sqlUpdate = "UPDATE $cpcScoreTable SET `point_result` = :point_result , `gap_status` = :gap_status WHERE  `cpc_score_id` = :cpc_score_id ";
@@ -961,9 +1101,12 @@ class report extends DbConn
    // การเพ่ิมจุดแข็ง
     function cal_idp($per_cardno,$years) {  //คำนวณหา gap ที่เป็นการเพิ่มเองโดยไม่ได้อ้างอิงกับตัวที่ตก หรือที่เรียกกว่า การพัฒนาตัวเองเพื่อเพิ่มจุดแข็ง 
                                 // และจะได้ตัวที่มีการล้างข้อมูล แล้วมีการคำนวณคะแนนใหม่ ซึ่งที่จริงกันต้องถูกลบออกให้ตอนที่มีการล้างข้อมูลด้วย 
-        $gapArr = array();
         $db = new DbConn;
-        $success = array('msg'=>'');
+        $success = array(
+                        'success' => NULL,
+                         'count' => 0,
+                         'idp' => NULL,
+                         'msg'=>'');
 
         try{
             $sql = "SELECT `".$db->tbl_idp_score."`.*,
@@ -977,24 +1120,20 @@ class report extends DbConn
                 $stm->bindParam(":per_cardno",$per_cardno);
                 $stm->bindParam(":years",$years);
                 $stm->execute();
-                $result = $stm->fetchAll();
+                $result = $stm->fetchAll(PDO::FETCH_ASSOC);
                 $count = $stm->rowCount();
-                    if ($count >0 ) {
-                        $gapArr['result'] = $result;
-                        $gapArr['success'] = true; 
-                    }else {
-                        $gapArr['success'] = false; 
-                    }
+                $success['success'] = true;
+                $success['count'] = $count;
+                $success['idp'] = $result;
                 
-
         }catch(Exception $e){
             $success['msg'] = $e->getMessage();
-            $gapArr['success'] = null; 
+            $success['success'] = false; 
         }
         // echo "<pre>";
         // print_r($result);
         // echo "</pre>";
-        return $gapArr;
+        return $success;
     }
 
     function CPCscoreDone($per_cardno,$tableName,$years) {  //เช็คว่าคนนั้นทำประเมินเสร็จยัง
@@ -1258,6 +1397,7 @@ class report extends DbConn
                             'kpiTotal' => "",
                             'percentComplete' => "",
                             'msg' => null );
+        $log = array();
         $err = "";
         if (count($arr_per_cardno) > 0) {
             $text = array_filter($arr_per_cardno);
@@ -1282,6 +1422,7 @@ class report extends DbConn
     
             } catch (\Exception $e) {
                $err = $e->getMessage();
+               $log[] = $err . "cpc_score_result";
             }
     
             try {
@@ -1302,6 +1443,7 @@ class report extends DbConn
                 $kpiCount = $this->countTrue($kpiResult);
             } catch (\Exception $e) {
                 $err = $e->getMessage();
+                $log[] = $err . "kpi_score_result";
              }
            
              if ($err != "") {
@@ -1312,7 +1454,7 @@ class report extends DbConn
                                 'kpiComplete' => null,
                                 'kpiTotal' => null,
                                 'percentComplete' => null,
-                                'msg' => $err );
+                                'msg' => $sqlIN );
              }else {
                  $per_cardnoCount = count($arr_per_cardno);
                  @$sum = floor((($cpcCount+$kpiCount) / ($kpiTotal + $cpcTotal) ) * 100)    ;
@@ -1325,7 +1467,7 @@ class report extends DbConn
                                 'kpiComplete' => $kpiCount,
                                 'kpiTotal' => $kpiTotal,
                                 'percentComplete' => @$sum,
-                                'msg' => $err );
+                                'msg' => $log );
              }
         }
 

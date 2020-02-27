@@ -482,6 +482,7 @@ function percent_complete_view(arr_per_cardno,cpc_score_result,kpi_score_result,
           $("#cpcTotalID").html("ประเมินสมรรถนะเสร็จจำนวน: "+response.cpcComplete+" คน");
           $("#kpiTotalID").html("ประเมินตัวชี้วัดเสร็จจำนวน: "+response.kpiComplete+" คน");
           progressBar("#percent_completeID")
+          // console.log(response.msg)
         },
           error: function (textStatus, errorThrown) {
             $("#percent_completeID").attr("aria-pause", 0);

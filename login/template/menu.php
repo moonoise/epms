@@ -3,7 +3,6 @@ function checkPicture2($namePicture) {
   $file1 = $namePicture;
   $file_headers1 = @get_headers($file1);
  
-
   if ($file_headers1[0] != 'HTTP/1.1 404 Not Found') {
       return $file1;
   }else return "../external/images_profile/user.png";

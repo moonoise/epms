@@ -259,7 +259,7 @@ $idp = $report->cal_idp($per_cardno,$years);
                       </thead>
                       <tbody>
                       <?php
-                        foreach ($gap as $key => $value) {
+                        foreach ($gap['gap'] as $key => $value) {
                             if ($value['idp_id'] != false || $value['idp_id'] != null) {
                                 echo "<tr>
                                         <td class='text-center'>ปิดจุดอ่อน</td>
@@ -268,7 +268,7 @@ $idp = $report->cal_idp($per_cardno,$years);
                                         <td class='text-center'>".($value['idp_training_hour']!="" ? $value['idp_training_hour']." ชม." : "" )." </td>
                                         <td class='text-center'>".($value['idp_training_hour_success']!= "" ? $value['idp_training_hour_success']." ชม." : "-" )." </td>
                                         <td class='text-center'> 
-                                        <button type='button' class='btn btn-info btn-xs fa fa-edit' onclick='assign_gap(`".json_encode($gap[$key])."`)'></button>";
+                                        <button type='button' class='btn btn-info btn-xs fa fa-edit' onclick='assign_gap(`".json_encode($gap['gap'][$key])."`)'></button>";
 
                                 echo    ($value['idp_id']!=''?"<button type='button' class='btn btn-danger btn-xs fa fa-eraser idp-confrim-delete' onclick='idp_delete(".$value['idp_id'].")'> </button>":"");
                                 echo    "</td>
@@ -283,7 +283,7 @@ $idp = $report->cal_idp($per_cardno,$years);
                                         <td class='text-center'> - </td>
                                         <td class='text-center'> - </td>
                                         <td class='text-center'> 
-                                        <button type='button' class='btn btn-info btn-xs fa fa-edit' onclick='assign_gap(`".json_encode($gap[$key])."`)'></button> ";
+                                        <button type='button' class='btn btn-info btn-xs fa fa-edit' onclick='assign_gap(`".json_encode($gap['gap'][$key])."`)'></button> ";
                                        
                                         echo         ($value['idp_id']!=''?"<button type='button' class='btn btn-danger btn-xs fa fa-eraser idp-confrim-delete' onclick='idp_delete(".$value['idp_id'].")'> </button>":"");
                                         echo    "</td>
@@ -294,8 +294,8 @@ $idp = $report->cal_idp($per_cardno,$years);
                       ?>
 
                       <?php 
-                      if (isset($idp['result']) && count($idp['result']) > 0 ) {
-                        foreach ($idp['result'] as $key => $value) {
+                      if (isset($idp['idp']) && count($idp['idp']) > 0 ) {
+                        foreach ($idp['idp'] as $key => $value) {
                             echo "<tr>
                             <td class='text-center'>เพิ่มจุดแข็ง</td>
                             <td>[".$value['question_code']."] ".$value['question_title']." </td>
@@ -303,7 +303,7 @@ $idp = $report->cal_idp($per_cardno,$years);
                             <td class='text-center'>".$value['idp_training_hour']." ชม.</td>
                             <td class='text-center'>".($value['idp_training_hour_success'] != "" ? $value['idp_training_hour_success']." ชม." :"-" ) ." </td>
                             <td class='text-center'> 
-                            <button type='button' class='btn btn-info btn-xs fa fa-edit' onclick='assign_idp(`".json_encode($idp['result'][$key])."`)'></button> 
+                            <button type='button' class='btn btn-info btn-xs fa fa-edit' onclick='assign_idp(`".json_encode($idp['idp'][$key])."`)'></button> 
                             <button type='button' class='btn btn-danger btn-xs fa fa-eraser idp-confrim-delete' onclick='idp_delete(".$value['idp_id'].")'> </button>
                             </td>
                             </tr>";

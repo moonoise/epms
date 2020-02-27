@@ -34,13 +34,13 @@ include_once "../report/class-report.php";
             $success['data'][$key] = $value;
             $checkKPI = $report->kpiQueryScore($value['per_cardno'],$tableYears['data']['table_year']);
             $checkCPC = $report->cpcQueryScore($value['per_cardno'],$tableYears['data']['table_year']);
-
             
             $c = $checkCPC['result'][0]['cpc_score_result_head'] * ($checkCPC['result'][0]['scoring'] /100);
             $k = $checkKPI['result'][0]['kpi_score_result'] * ($checkKPI['result'][0]['scoring'] / 100);
-            $sum = round($c + $k  , 2) ;
 
-            $success['data'][$key]['sum_CPC_KPI'] = $sum;
+            $sum = round( $c + $k , 2) ;
+
+            $success['data'][$key]['sum_CPC_KPI'] = $sum ;
            
         }
         

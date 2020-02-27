@@ -45,26 +45,26 @@ $myClass = new myClass;
 
 $currentYear = $myClass->callYear();
 $years = __year__;
-(!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$years,$tbl_kpi_score) : $kpiResult);
+(!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$currentYear['data']['table_year'],$currentYear['data']['per_personal'],$currentYear['data']['kpi_score']) : $kpiResult);
 
 $kpi = $report->reportKPI1($kpiResult);
 $kpiUpdateResutl =  $report->kpiResultUpdate($kpi,$currentYear['data']);
 // echo "<pre>";
-// print_r($kpiUpdateResutl);
+// print_r($kpiResult);
 // echo "</pre>";
-(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$years,$cpcTypeKey,$tbl_per_personal,$tbl_cpc_score) : $cpcResult);
+(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$currentYear['data']['table_year'],$cpcTypeKey,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']) : $cpcResult);
 $cpc = $report->reportCPC1($cpcResult);
 $updateResutl = $report->cpcResultUpdate($cpc,$currentYear['data']);
 // echo "<pre>";
-// print_r($updateResutl);
+// print_r($cpc);
 // echo "</pre>";
 $profile = new proFile;
 $personal = $profile->detail($per_cardno);
 
-(!empty($per_cardno)? $cpcResult2 =  $report->tableCPC($per_cardno,$years,$cpcTypeKey2,$tbl_per_personal,$tbl_cpc_score) : $cpcResult);
+(!empty($per_cardno)? $cpcResult2 =  $report->tableCPC($per_cardno,$currentYear['data']['table_year'],$cpcTypeKey2,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']) : $cpcResult);  // cpcTypeKey2 1,2,3,4,5,6
 $r = $report->cal_gap_chart($cpcResult2);
 $gap = $report->cal_gap($r);
-$idp = $report->cal_idp($per_cardno,$years);
+$idp = $report->cal_idp($per_cardno,$currentYear['data']['table_year']);
 $gapUpdate = array();
 
 foreach ($r as $keyGapUpdate => $valueGapUpdate) {
@@ -72,6 +72,10 @@ foreach ($r as $keyGapUpdate => $valueGapUpdate) {
     $gapUpdate[] = $report->gapUpdateByid($valueGapUpdate['pointEqual_OverGap'],$valueGapUpdate['gap_status'],$valueGapUpdate['cpc_score_id'],$currentYear['data']['cpc_score']);
 
 }
+
+// echo "<pre>";
+// print_r($r );
+// echo "</pre>";
 
 if ($personal['through_trial'] == 1) {
     $AverageKPI = 70;
@@ -511,71 +515,71 @@ if ($k_user != "-" && $c_user != "-") {
     //     saveScoreKPI()
     // }
 
-    function saveScoreCPC() {
-        var per_cardno = '<?php echo $per_cardno;?>'
+    // function saveScoreCPC() {
+    //     var per_cardno = '<?php echo $per_cardno;?>'
        
-        var AverageCPC = '<?php echo $AverageCPC;?>'
+    //     var AverageCPC = '<?php echo $AverageCPC;?>'
        
-        var cpcScore = '<?php echo ($cpc['cpcSum2'] != "-"? $cpc['cpcSum2'] : "") ; ?>'
-        var years = '<?php echo $years;?>'
+    //     var cpcScore = '<?php echo ($cpc['cpcSum2'] != "-"? $cpc['cpcSum2'] : "") ; ?>'
+    //     var years = '<?php echo $years;?>'
 
-        if (cpcScore != "" || AverageCPC != "" ) {
-            var data = {"cpcScore" : cpcScore ,
-                        "AverageCPC" : AverageCPC,
-                        "per_cardno" : per_cardno,
-                        "years" : years}
-            $.ajax({
-                url: "module/report/save-score-cpc.php",
-                dataType: "json",
-                type:"POST",
-                data: data,
-                success:function (result) {
-                    if (result.success == true) {
-                        // notify('การบันทึกคะแนน','บันทึก สมรรถนะ เรียบร้อยแล้ว','success')
-                    }else{
-                        // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้'+result.msg,'warning')
-                    }
-                }
-            })
-        }else{
-            // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้','warning')
-        }
-    }
+    //     if (cpcScore != "" || AverageCPC != "" ) {
+    //         var data = {"cpcScore" : cpcScore ,
+    //                     "AverageCPC" : AverageCPC,
+    //                     "per_cardno" : per_cardno,
+    //                     "years" : years}
+    //         $.ajax({
+    //             url: "module/report/save-score-cpc.php",
+    //             dataType: "json",
+    //             type:"POST",
+    //             data: data,
+    //             success:function (result) {
+    //                 if (result.success == true) {
+    //                     // notify('การบันทึกคะแนน','บันทึก สมรรถนะ เรียบร้อยแล้ว','success')
+    //                 }else{
+    //                     // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้'+result.msg,'warning')
+    //                 }
+    //             }
+    //         })
+    //     }else{
+    //         // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้','warning')
+    //     }
+    // }
 
-    function saveScoreKPI() {
-        var per_cardno = '<?php echo $per_cardno;?>'
-        var AverageKPI = '<?php echo $AverageKPI; ?>'
+    // function saveScoreKPI() {
+    //     var per_cardno = '<?php echo $per_cardno;?>'
+    //     var AverageKPI = '<?php echo $AverageKPI; ?>'
       
-        var kpiScore = '<?php echo ($kpi['kpiSum2'] != "-" ? $kpi['kpiSum2'] : "" ); ?>'
+    //     var kpiScore = '<?php echo ($kpi['kpiSum2'] != "-" ? $kpi['kpiSum2'] : "" ); ?>'
        
-        var years = '<?php echo $years;?>'
+    //     var years = '<?php echo $years;?>'
 
-        if (  kpiScore != "" || AverageKPI != "") {
-            var data = {
-                        "kpiScore" : kpiScore,
-                        "AverageKPI" : AverageKPI,
-                        "per_cardno" : per_cardno,
-                        "years" : years}
+    //     if (  kpiScore != "" || AverageKPI != "") {
+    //         var data = {
+    //                     "kpiScore" : kpiScore,
+    //                     "AverageKPI" : AverageKPI,
+    //                     "per_cardno" : per_cardno,
+    //                     "years" : years}
             
-            $.ajax({
-                url: "module/report/save-score-kpi.php",
-                dataType: "json",
-                type:"POST",
-                data: data,
-                success:function (result) {
-                    // console.log(result.success)
-                    if (result.success == true) {
-                        // notify('การบันทึกคะแนน','บันทึก ดัชนีชี้วัดผลสัมฤทธิ์  เรียบร้อยแล้ว ','success')
-                    }else{
-                        // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้ '+result.msg,'warning')
+    //         $.ajax({
+    //             url: "module/report/save-score-kpi.php",
+    //             dataType: "json",
+    //             type:"POST",
+    //             data: data,
+    //             success:function (result) {
+    //                 // console.log(result.success)
+    //                 if (result.success == true) {
+    //                     // notify('การบันทึกคะแนน','บันทึก ดัชนีชี้วัดผลสัมฤทธิ์  เรียบร้อยแล้ว ','success')
+    //                 }else{
+    //                     // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้ '+result.msg,'warning')
 
-                    }
-                }
-            })
-        }else{
-            // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้','warning')
-        }
-    }
+    //                 }
+    //             }
+    //         })
+    //     }else{
+    //         // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้','warning')
+    //     }
+    // }
 
     function notify(nTitle,nText,nType,timeOut,nHide) {
         var h = (nHide != '' ? true : nHide);
