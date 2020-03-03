@@ -6,12 +6,17 @@ include_once "../report/class-report.php";
 include_once "..//myClass.php";
 $classReport = new report;
 $myClass = new myClass;
+$currentYear = $myClass->callYear();
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$year = $currentYear['data']['table_year'];
+$personalTable = $currentYear['data']['per_personal'];
 
 $updateResult = array("success" => null,
                     "result" => null,
                     "msg" => null );
 
-$currentYear = $myClass->callYear();
+
 $cpcTypeKey = array(1,2,3);
 $cpcTypeKey2 = array(1,2,3,4,5,6);
 
@@ -23,7 +28,7 @@ $msg_error = "";
 $doneScore = $classReport->CPCscoreDone($_POST['per_cardno'],$_POST['cpc_score'],$_POST['table_year']);
 if ($doneScore['result'] === 0) {   //เท่ากับ 0 ให้ save คะแนน
 
-    $cpcResult =  $classReport->tableCPC($_POST['per_cardno'],$currentYear['data']['table_year'],$cpcTypeKey,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']);
+    $cpcResult =  $classReport->tableCPC($_POST['per_cardno'],$year,$cpcTypeKey,$personalTable,$cpcScoreTable);
     $cpc = $classReport->reportCPC1($cpcResult);
     $updateResutl = $report->cpcResultUpdate($cpc,$currentYear['data']);
     
@@ -61,7 +66,7 @@ if ($doneScore['result'] === 0) {   //เท่ากับ 0 ให้ save ค
 //KPI
 $kpiDone = $classReport->KPIscoreDone($_POST['per_cardno'],$_POST['kpi_score'],$_POST['table_year']);
 if ($kpiDone['success'] == true && $kpiDone['result'] === 0 && $kpiDone['checkaccept'] === 0 ) {
-    $kpiResult = $classReport->tableKPI($_POST['per_cardno'],$_POST['table_year'],$_POST['kpi_score']) ;
+    $kpiResult = $classReport->tableKPI($_POST['per_cardno'],$_POST['table_year'],$personalTable,$_POST['kpi_score']) ;
     $kpi = $classReport->reportKPI1($kpiResult);
     $ThroughTrial = $classReport->personalThroughTrial($_POST['per_cardno'],$_POST['per_personal']);
 

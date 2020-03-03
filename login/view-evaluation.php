@@ -4,6 +4,7 @@ include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "includes/class.permission.php";
 include_once "includes/class-date.php";
+include_once "module/myClass.php";
 
 if(!isset($_SESSION[__USER_ID__]) ){ 
   header("location:login-dpis.php");
@@ -24,6 +25,14 @@ if (($success['success'] === true)   ) {
     }
 }  
 activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
+
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$year = $currentYear['data']['table_year'];
+$idpScoreTable = $currentYear['data']['idp_score'];
+$personalTable = $currentYear['data']['per_personal'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$detailYear = $currentYear['data']['detail'];
 
 
 // $per_cardno = 3100500699317;
@@ -142,7 +151,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                   </div>
                   <div class="x_content">
                   <a class="date-title">
-                        <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                        <small class="date-title-text"><?php echo $detailYear; ?></small>
                     </a>
                     <table id="evaluation-table" class="table table-hover table-bordered" style="width:100%">
                         <thead class="thead-for-user">
@@ -175,7 +184,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                   </div>
                   <div class="x_content">
                   <a class="date-title">
-                        <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                        <small class="date-title-text"><?php echo $detailYear; ?></small>
                     </a>
                     <table id="kpi-evaluation-table" class="table table-hover table-bordered" style="width:100%">
                         <thead class="thead-for-user">

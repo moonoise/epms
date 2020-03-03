@@ -2,15 +2,24 @@
 session_start();
 include_once '../../config.php';
 include_once '../../includes/dbconn.php';
+include_once "../myClass.php";
 
 $success = array();
 $db = new DbConn;
 $success['msg'] = "";
 
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$personalTable = $currentYear['data']['per_personal'];
+$kpiComment = $currentYear['data']['kpi_comment'];
+$idpScoreTable = $currentYear['data']['idp_score'];
+
 if ($_POST['hiden_idp_id'] != "") {
     try{
 
-        $sqlUpdate = "UPDATE ".$db->tbl_idp_score." SET `idp_title` = :idp_title ,
+        $sqlUpdate = "UPDATE $idpScoreTable SET `idp_title` = :idp_title ,
         `idp_training_method` = :idp_training_method,
         `idp_training_hour` = :idp_training_hour 
         WHERE `idp_id` =  :idp_id ";
@@ -30,7 +39,7 @@ if ($_POST['hiden_idp_id'] != "") {
 }else {
     try{
 
-        $sqlInsert = "INSERT INTO ".$db->tbl_idp_score." (`idp_id` , `per_cardno` , `years` ,`idp_type` , `idp_title`, `idp_training_method` ,`idp_training_hour`,`cpc_score_id`,`question_no`) 
+        $sqlInsert = "INSERT INTO $idpScoreTable (`idp_id` , `per_cardno` , `years` ,`idp_type` , `idp_title`, `idp_training_method` ,`idp_training_hour`,`cpc_score_id`,`question_no`) 
                     VALUES (NULL, :per_cardno ,:years ,:idp_type , :idp_title , :idp_training_method ,:idp_training_hour , :cpc_score_id , :question_no ) ";
         $stm = $db->conn->prepare($sqlInsert);
         

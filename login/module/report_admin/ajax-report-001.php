@@ -45,23 +45,23 @@ try {
 if ($errYears == "") {
 
     $per_personal = $resultYear[0]['per_personal'];
-    $cpc_score_result = $resultYear[0]['cpc_score_result'];
-    $kpi_score_result = $resultYear[0]['kpi_score_result'];
+    $cpcScoreResult = $resultYear[0]['cpc_score_result'];
+    $kpiScoreResultTable = $resultYear[0]['kpi_score_result'];
 
     try {
         $sqlResultScore = "
-        select  $per_personal.per_cardno ,
-            per_org.org_name,
-            $cpc_score_result.scoring,
-            $cpc_score_result.cpc_score_result_head,
-            $kpi_score_result.scoring,
-            $kpi_score_result.kpi_score_result,
-            ( ROUND(($cpc_score_result.cpc_score_result_head * (0.01 * $cpc_score_result.scoring) ) + ( $kpi_score_result.kpi_score_result * (0.01 * $kpi_score_result.scoring)  ) , 2)  ) as totalScore
+        select `$per_personal`.`per_cardno` ,
+            `per_org`.`org_name`,
+            `$cpcScoreResult`.`scoring`,
+            `$cpcScoreResult`.`cpc_score_result_head`,
+            `$kpiScoreResultTable`.`scoring`,
+            `$kpiScoreResultTable`.`kpi_score_result`,
+            ( ROUND((`$cpcScoreResult`.`cpc_score_result_head` * (0.01 * `$cpcScoreResult`.`scoring`) ) + ( `$kpiScoreResultTable`.`kpi_score_result` * (0.01 * `$kpiScoreResultTable`.`scoring`)  ) , 2)  ) as totalScore
         FROM $per_personal 
-        LEFT JOIN $cpc_score_result on $cpc_score_result.per_cardno = $per_personal.per_cardno 
-        LEFT JOIN $kpi_score_result on $kpi_score_result.per_cardno = $per_personal.per_cardno
-        LEFT JOIN per_org on per_org.org_id = $per_personal.org_id
-        WHERE $per_personal.login_status = 1  
+        LEFT JOIN `$cpcScoreResult` on `$cpcScoreResult`.`per_cardno` = `$per_personal`.`per_cardno` 
+        LEFT JOIN `$kpiScoreResultTable` on `$kpiScoreResultTable`.`per_cardno` = $per_personal.`per_cardno`
+        LEFT JOIN per_org on `per_org`.`org_id` = `$per_personal`.`org_id`
+        WHERE `$per_personal`.`login_status` = 1  
         
         " ;
         if ($orgSelect != '77' ) {

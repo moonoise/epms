@@ -15,20 +15,25 @@ if(isset($_POST['cpc_score5']) and strlen($_POST['cpc_score5']) > 0 ){ $cpc_scor
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "../cpc/class-cpc.php";
+    include_once "../myClass.php";
 
     $cpc = new cpc;
-    $checkScore = $cpc->cpcBtnStatus1($_POST['cpc_score_id']);
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $cpc_score = $currentYear['data']['cpc_score'];
+
+    $checkScore = $cpc->cpcBtnStatus1($_POST['cpc_score_id'],$cpcScoreTable);
     if ($checkScore['success'] === false) {  // ถ้ากรอกคะแนนยังไม่สมบูรณ์
         try{
         $dateNow = date("Y-m-d H:i:s");
-        $sqlUpdate = "UPDATE `$tbl_cpc_score` 
+        $sqlUpdate = "UPDATE `$cpc_score` 
                     SET `cpc_score1` = :cpc_score1, 
                     `cpc_score2` = :cpc_score2, 
                     `cpc_score3` = :cpc_score3, 
                     `cpc_score4` = :cpc_score4, 
                     `cpc_score5` = :cpc_score5,
                     `date_key_score` = :dateNow
-                    WHERE `$tbl_cpc_score`.`cpc_score_id` = :cpc_score_id";
+                    WHERE `$cpc_score`.`cpc_score_id` = :cpc_score_id";
         
         $stm = $cpc->conn->prepare($sqlUpdate);
         $stm->bindParam(":cpc_score1",$cpc_score1);

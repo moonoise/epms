@@ -22,15 +22,20 @@ if(isset($_POST['cpc_comment5']) and strlen($_POST['cpc_comment5']) > 0 ){ $cpc_
     include_once "../../config.php";
     include_once "../../includes/dbconn.php"; 
     include_once "../cpc/class-cpc.php";
+    include_once "../myClass.php";
     $cpc = new cpc;
-    $checkAccept = $cpc->cpcBtnStatus2($_POST['cpc_score_id']);
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $cpcScoreTable = $currentYear['data']['cpc_score'];
+    
+    $checkAccept = $cpc->cpcBtnStatus2($_POST['cpc_score_id'],$cpcScoreTable);
     if ($checkAccept['success'] === false) {  // ถ้ากรอกคะแนนยังไม่สมบูรณ์
         
         try{
         
         $dateNow = date("Y-m-d H:i:s");
         $who_is_accept = $_SESSION[__USER_ID__];
-        $sqlUpdate = "UPDATE ".$tbl_cpc_score." 
+        $sqlUpdate = "UPDATE ".$cpcScoreTable." 
                     SET `cpc_accept1` = :cpc_accept1, 
                     `cpc_accept2` = :cpc_accept2, 
                     `cpc_accept3` = :cpc_accept3, 
@@ -43,7 +48,7 @@ if(isset($_POST['cpc_comment5']) and strlen($_POST['cpc_comment5']) > 0 ){ $cpc_
                     `cpc_comment5` = :cpc_comment5,
                     `who_is_accept` = :who_is_accept,
                     `date_who_id_accept` = :dateNow
-                    WHERE ".$tbl_cpc_score.".`cpc_score_id` = :cpc_score_id";
+                    WHERE ".$cpcScoreTable.".`cpc_score_id` = :cpc_score_id";
         
         $stm = $cpc->conn->prepare($sqlUpdate);
         $stm->bindParam(":cpc_accept1",$cpc_accept1);

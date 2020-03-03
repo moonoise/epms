@@ -4,19 +4,19 @@ include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-person.php";
 include_once "../../includes/ociConn.php";
-// include_once "../module_dpis/class-dpis.php";
+include_once "../myClass.php";
 
 $person = new person;
-// $dpis = new dpis;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$personalTable = $currentYear['data']['per_personal'];
+
 $r ='';
 $r2 ='';
 $org = '';
 $org2 = '';
-$result = $person->personSelect($_GET['per_cardno']);
-// $queryDPIS = $dpis->queryPersonal($_GET['per_cardno']);
-// echo "<pre>";
-//    print_r($queryDPIS);
-// echo "</pre>";
+$result = $person->personSelect($_GET['per_cardno'],$personalTable);
+
 echo "<div class='row'>";
 if (count($result['result']) == 1) {
         if ($result['result'][0]['org_name'] != '') {

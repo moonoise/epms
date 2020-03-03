@@ -4,11 +4,17 @@ include_once "../../includes/dbconn.php";
 include_once '../../module/cpc/class-cpc.php';
 include_once '../../module/kpi/class-kpi.php';
 include_once "class-evaluation.php";
+include_once "../myClass.php";
 
 
 $kpi = new kpi;
 $cpc = new cpc;
 $evaluationClass = new evaluation;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$cpcScoreTable = $currentYear['data']['kpi_score'];
+$year = $currentYear['data']['table_year'];
 
 $kpiResult = array("success" => "",
                     "result" => "",
@@ -17,24 +23,22 @@ $cpcResult = array("success" => "",
                     "result" => "",
                     "msg" => "");
 
-$years = __year__;
+
 // 3930100498198
 
-$cpcStatus3 = $cpc->cpcStatus3($_POST['accept_per_cardno'],$_POST['accept_year']);
-$kpiStatus3 = $kpi->kpiStatus3($_POST['accept_per_cardno'],$_POST['accept_year']);
+$cpcStatus3 = $cpc->cpcStatus3($_POST['accept_per_cardno'],$year,$cpcScoreTable );
+$kpiStatus3 = $kpi->kpiStatus3($_POST['accept_per_cardno'],$year,$kpiScoreTable );
 
 if ($cpcStatus3['total_choise'] > 0 && $kpiStatus3['total_choise'] > 0) {
     if ( ($cpcStatus3['total_choise'] == $cpcStatus3['choiseFinish'] ) && $kpiStatus3['total_choise'] == $kpiStatus3['choiseFinish']  ) {
-           $tableYear = $evaluationClass->getTableYear($_POST['accept_year']);
-           $score =  $evaluationClass->cpcQueryScore($_POST['accept_per_cardno'],$_POST['accept_year'],$tableYear['data'][0]['cpc_score']);
+
+           $score =  $evaluationClass->cpcQueryScore($_POST['accept_per_cardno'],$year,$cpcScoreTable);
         //    echo json_encode($score);
             foreach ($score['data'] as $key => $v) {
-                $result[] = $evaluationClass->cpcUpdateScoreAccept($tableYear['data'][0]['cpc_score'],$v);
+                $result[] = $evaluationClass->cpcUpdateScoreAccept($cpcScoreTable,$v);
             }
-        
-
-        $result[] = $evaluationClass->kpiAcceptUpdate($tableYear['data'][0]['kpi_score'],$_POST['accept_year'],$_POST['accept_per_cardno'],1);
-
+        $result[] = $evaluationClass->kpiAcceptUpdate($cpcScoreTable,$year,$_POST['accept_per_cardno'],1);
         echo json_encode($result);
+        
         }
 }

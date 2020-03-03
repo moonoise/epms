@@ -16,12 +16,12 @@ if (isset($_POST['org_id_2']) and $_POST['org_id_2'] != "") {
     $orgSelect = $_POST['org_id'];
 }
 //  $years = explode("#",$_POST['selectYears']);
- $years = $_POST['selectYears'];
+ $yearsId = $_POST['selectYears'];
 
-    $sql_table_year = "SELECT * FROM `table_year` WHERE `table_year`.`table_year` = :table_year";
+    $sql_table_year = "SELECT * FROM `table_year` WHERE `table_year`.`table_id` = :table_id";
     
     $stm_table_year = $db->conn->prepare($sql_table_year);
-    $stm_table_year->bindParam(':table_year',$years);
+    $stm_table_year->bindParam(':table_id',$yearsId);
     $stm_table_year->execute();
     $result_table_year = $stm_table_year->fetchAll(PDO::FETCH_ASSOC);
     // $sql = "SELECT t1.*,
@@ -46,7 +46,7 @@ if (isset($_POST['org_id_2']) and $_POST['org_id_2'] != "") {
 
             FROM ".$result_table_year[0]['per_personal']." t1 
             LEFT JOIN per_level ON per_level.level_no = t1.level_no
-            where t1.org_id = :org_id OR t1.org_id_1 = :org_id OR t1.org_id_2 = :org_id  ";
+            where (t1.org_id = :org_id OR t1.org_id_1 = :org_id OR t1.org_id_2 = :org_id ) and `login_status` = 1 ";
 
 // echo $sql; 
     // $sql = "select * from ".$years[1]." where org_id = :org_id OR org_id_1 = :org_id OR org_id_2 = :org_id  ";

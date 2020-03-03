@@ -14,7 +14,13 @@
     $kpi = new kpi;
     $db = new DbConn;
     $myClass = new myClass;
-    $result = $kpi->KpiScoreSelect($_POST['per_cardno']);
+    $currentYear = $myClass->callYear();
+
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
+    $per_personalTable = $currentYear['data']['per_personal'];
+    $year = $currentYear['data']['table_year'];
+    $result = $kpi->KpiScoreSelect($_POST['per_cardno'],$kpiScoreTable,$year);
     if ($result['success'] == true && count($result['result']) > 0) {
         
         foreach ($result['result'] as $key => $value) {

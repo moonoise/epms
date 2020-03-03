@@ -39,13 +39,13 @@ class person extends DbConn
   } 
 
 
-  function OrgAdd($per_cardno,$data) {
+  function OrgAdd($per_cardno,$data,$personalTable) {
     $err = "";
     $success = array();
     $r = '';
     try
     {
-      $sqlInsert = "UPDATE ".$this->tbl_per_personal." SET 
+      $sqlInsert = "UPDATE $personalTable SET 
                     `org_id` = :org_id,
                     `org_name` = :org_name,
                     `org_id_1` = :org_id_1,
@@ -113,12 +113,12 @@ class person extends DbConn
   }
 
 // ใช้กับไฟล์ ajax-modal-move_person-show.php
-  function personSelect($per_cardno) {
+  function personSelect($per_cardno,$personalTable) {
     $err = "";
     $success = array();
     try
     {
-        $sql = "SELECT * FROM ".$this->tbl_per_personal." WHERE per_cardno = :per_cardno ";
+        $sql = "SELECT * FROM $personalTable WHERE per_cardno = :per_cardno ";
         $stm = $this->conn->prepare($sql);
         $stm->bindParam(":per_cardno",$per_cardno);
         $stm->execute();
@@ -276,7 +276,7 @@ class person extends DbConn
     }else return $rootPath."user.png";
   }
 
-  function perHead($per_cardno) {  
+  function perHead($per_cardno,$personalTable) {  
     $success = array();
     $success['msg'] = "";
     try{
@@ -285,9 +285,7 @@ class person extends DbConn
                         `per_name`,
                         `per_surname`,
                         per_picture
-                 FROM ".$this->tbl_per_personal
-                ."  where per_cardno = (select head from ".$this->tbl_per_personal
-                ." where per_cardno = :per_cardno) ";
+                 FROM $personalTable  where per_cardno = (select head from $personalTable where per_cardno = :per_cardno) ";
 
         $stm = $this->conn->prepare($sql);
         $stm->bindParam(":per_cardno",$per_cardno);

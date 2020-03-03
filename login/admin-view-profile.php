@@ -3,6 +3,7 @@
 include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "includes/class.permission.php";
+include_once "module/myClass.php";
 
 session_start();
   
@@ -75,9 +76,9 @@ if(!(isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__],array(1,
         <!-- page content -->
         <?php
         if($permission['per_type'] == 1 || $permission['per_type'] == 2 || $permission['per_type'] == 3){
-        include_once "module/module_profile/class.profile.php";
-        $profile = new proFile;
-        $result = $profile->detail($_SESSION[__USER_NAME__]);
+        $myClass = new myClass;
+        $currentYear = $myClass->callYear();
+        $result = $myClass->detail($_SESSION[__USER_NAME__],$currentYear['data']['per_personal']);
 
         ?>
         <div class="right_col" role="main">

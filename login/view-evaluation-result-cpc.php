@@ -41,15 +41,19 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
 // echo "</pre>";
 
 $report = new report;
-$myClass = new myClass;
 
+$myClass = new myClass;
 $currentYear = $myClass->callYear();
-// echo $per_cardno;
-$years = __year__;
-(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$years,$cpcTypeKey,$tbl_per_personal,$tbl_cpc_score) : $cpcResult);
+$idpScoreTable = $currentYear['data']['idp_score'];
+$year = $currentYear['data']['table_year'];
+$personalTable = $currentYear['data']['per_personal'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$detailYear = $currentYear['data']['detail'];
+
+(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$year,$cpcTypeKey,$personalTable,$cpcScoreTable) : $cpcResult);
 $r = $report->cal_gap_chart($cpcResult);
-$gap = $report->cal_gap($r);
-$idp = $report->cal_idp($per_cardno,$years);
+$gap = $report->cal_gap($r,$idpScoreTable);
+$idp = $report->cal_idp($per_cardno,$year,$idpScoreTable);
 
 // $gapUpdate = array();
 
@@ -175,7 +179,7 @@ $idp = $report->cal_idp($per_cardno,$years);
                     </div>
                     <div class="x_content">
                     <a class="date-title">
-                        <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                        <small class="date-title-text"><?php echo $detailYear ;?></small>
                     </a>
                         <table class="table table-bordered">
                             <thead class="thead-for-user"> 
@@ -497,7 +501,7 @@ $idp = $report->cal_idp($per_cardno,$years);
             <input type="hidden" name="new_per_cardno" id="new_per_cardno" value="<?php echo $_SESSION[__USER_ID__];?>">
             <input type="hidden" name="new_question_no" id="new_question_no">
             <input type="hidden" name="hidden_new_idp_cpcType" id="hidden_new_idp_cpcType">
-            <input type="hidden" name="new_years" id="new_years" value="<?php echo __year__;?>"> 
+            <input type="hidden" name="new_years" id="new_years" value="<?php echo $year;?>"> 
             <button type="submit" class="btn btn-info"  id="btn-submit-new-gap">บันทึก</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">ปิด</button>
             </div>
@@ -577,7 +581,7 @@ $idp = $report->cal_idp($per_cardno,$years);
 </html>
 <script>
 
-gap_chart('<?php echo $per_cardno;?>','<?php echo $years; ?>')
+gap_chart('<?php echo $per_cardno;?>','<?php echo $year; ?>')
 function gap_chart(per_cardno,years) {
     var loop = new Await;
     var question_code = [];

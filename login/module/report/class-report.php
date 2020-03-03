@@ -31,13 +31,13 @@ class report extends DbConn
         return $diff;
     }
 
-    function  throughTrial($per_cardno,$dateEvaluation) {   //เช็คว่า ผ่านงานแล้วหรือยัง  เช็คจากอายุงาน -> แล้วก็เช็คจาก mov_code  true=ผ่านงาน false=ไม่ผ่านงาน
+    function  throughTrial($per_cardno,$dateEvaluation,$personalTable) {   //เช็คว่า ผ่านงานแล้วหรือยัง  เช็คจากอายุงาน -> แล้วก็เช็คจาก mov_code  true=ผ่านงาน false=ไม่ผ่านงาน
         $err = '';
         $success = array();
         // $d = date("Y-m-d");
         $db = new DbConn;
         try{
-            $sql = "SELECT per_startdate,mov_code From ".$db->tbl_per_personal." WHERE per_cardno = :per_cardno ";
+            $sql = "SELECT per_startdate,mov_code From $personalTable WHERE per_cardno = :per_cardno ";
             $stm = $db->conn->prepare($sql);
             $stm->bindParam(":per_cardno",$per_cardno);
             $stm->execute();
@@ -116,30 +116,30 @@ class report extends DbConn
     }
 
 
-    function tableKPI($per_cardno,$years,$tablePersonal,$tbl_kpi_score) {
+    function tableKPI($per_cardno,$years,$tablePersonal,$kpiScoreTable) {
         // $dbConn = new DbConn;
         $err = "";
         $success = array();
-        // $years = __year__;
+       
         try{
             
-            $sqlKPI = "SELECT ".$tbl_kpi_score.".`kpi_score_id`,
-            ".$tbl_kpi_score.".`kpi_code`,
-            ".$tbl_kpi_score.".`per_cardno`,
-            ".$tbl_kpi_score.".`id_admin`,
-            ".$tbl_kpi_score.".`kpi_score`,
-            ".$tbl_kpi_score.".`kpi_score_raw`,
-            ".$tbl_kpi_score.".`weight`,
-            ".$tbl_kpi_score.".`kpi_accept`,
+            $sqlKPI = "SELECT ".$kpiScoreTable.".`kpi_score_id`,
+            ".$kpiScoreTable.".`kpi_code`,
+            ".$kpiScoreTable.".`per_cardno`,
+            ".$kpiScoreTable.".`id_admin`,
+            ".$kpiScoreTable.".`kpi_score`,
+            ".$kpiScoreTable.".`kpi_score_raw`,
+            ".$kpiScoreTable.".`weight`,
+            ".$kpiScoreTable.".`kpi_accept`,
             `kpi_question`.`kpi_code_org`,
             `kpi_question`.`kpi_title`,
             ".$tablePersonal.".`through_trial`
-                FROM ".$tbl_kpi_score." 
+                FROM ".$kpiScoreTable." 
                 LEFT JOIN `kpi_question` 
-                ON ".$tbl_kpi_score.".`kpi_code` = `kpi_question`.`kpi_code`
+                ON ".$kpiScoreTable.".`kpi_code` = `kpi_question`.`kpi_code`
                 LEFT JOIN `$tablePersonal` 
-                ON ".$tablePersonal.".`per_cardno` = ".$tbl_kpi_score.".`per_cardno`
-                WHERE ".$tbl_kpi_score.".`per_cardno` = :per_cardno AND ".$tbl_kpi_score.".`years` = :years AND ".$tbl_kpi_score.".`soft_delete` = 0";
+                ON ".$tablePersonal.".`per_cardno` = ".$kpiScoreTable.".`per_cardno`
+                WHERE ".$kpiScoreTable.".`per_cardno` = :per_cardno AND ".$kpiScoreTable.".`years` = :years AND ".$kpiScoreTable.".`soft_delete` = 0";
             $stmKPI = $this->conn->prepare($sqlKPI);
             $stmKPI->bindParam(":per_cardno",$per_cardno);
             $stmKPI->bindParam(":years",$years);
@@ -161,11 +161,11 @@ class report extends DbConn
     
     }
 
-    function reportKPIresult($per_cardno,$years) {  //ไม่ได้ใช้ กะว่าจะลบออก มันรกเกินไป
+    function reportKPIresult($per_cardno,$years,$kpiScoreResult) {  //ไม่ได้ใช้ กะว่าจะลบออก มันรกเกินไป
         $err = "";
         $success = array();
         try{
-            $sql = "SELECT * FROM ".$this->tbl_kpi_score_result." 
+            $sql = "SELECT * FROM $kpiScoreResult 
                     WHERE `per_cardno` = :per_cardno 
                     AND `years` = :years 
                     AND soft_delete = 0 ";
@@ -196,7 +196,7 @@ class report extends DbConn
        
         $err = "";
         $success = array();
-        // $years = __year__;
+
         try{
             
             $sqlKPI = "SELECT ".$kpi_table.".`kpi_score_id`,
@@ -250,7 +250,7 @@ class report extends DbConn
         // $dbConn = new DbConn;
         $err = "";
         $cpcType = implode(",",$cpcTypeKey);
-        //$years = __year__;
+        
         try{
             
             $sqlCPC = "
@@ -419,11 +419,11 @@ class report extends DbConn
 
  
 
-    function cpcQueryScore($per_cardno,$years) {
+    function cpcQueryScore($per_cardno,$years,$cpcScoreResult) {
         $err = "";
         $success = array();
         try{
-            $sql = "SELECT * FROM ".$this->tbl_cpc_score_result." WHERE  `per_cardno` = :per_cardno AND years = :years ";
+            $sql = "SELECT * FROM $cpcScoreResult WHERE  `per_cardno` = :per_cardno AND years = :years ";
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":per_cardno",$per_cardno);
             $stm->bindParam(":years",$years);
@@ -443,11 +443,11 @@ class report extends DbConn
         return $success;
     }
     
-    function kpiQueryScore($per_cardno,$years) {
+    function kpiQueryScore($per_cardno,$years,$kpiScoreResultTable) {
         $err = "";
         $success = array();
         try{
-            $sql = "SELECT * FROM ".$this->tbl_kpi_score_result." WHERE  `per_cardno` = :per_cardno AND years = :years ";
+            $sql = "SELECT * FROM $kpiScoreResultTable WHERE  `per_cardno` = :per_cardno AND years = :years ";
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":per_cardno",$per_cardno);
             $stm->bindParam(":years",$years);
@@ -554,6 +554,7 @@ class report extends DbConn
             $kpi['kpiSum2_'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : null ); //ถ้ายืนยันยังไม่ครบส่ง null
             $kpi['kpiSum2_user'] =  ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2_user,2) : "-" )   ;
             $kpi['kpiCheckSumAll'] = ($kpiCheckSumAll == 0? $kpi['kpiSum2'] : "-" );
+            $kpi['scoring'] = ($kpiResult['result'][0]['through_trial'] == 2 ? 50 : 70 );
             $kpi['through_trial'] = $kpiResult['result'][0]['through_trial'];
         }
 
@@ -594,7 +595,10 @@ class report extends DbConn
             //-----------
             $sum1_user = (($total_user*$value['cpc_weight']*20)/100);
             $cpcSum2_user = $cpcSum2_user + $sum1_user;
-            $cpcSumWeight = $cpcSumWeight + $value['cpc_weight'];
+
+            if ($value['question_type'] == 1 OR  $value['question_type'] == 2 OR $value['question_type'] == 3) {
+                $cpcSumWeight = $cpcSumWeight + $value['cpc_weight'];
+            }
 
             $arr = array(
                             "cpc_score_id" => $value['cpc_score_id'],
@@ -611,7 +615,8 @@ class report extends DbConn
                         );
             $cpc['text'][] = $arr;
             $cpcCheckSum_user = 0;
-        }   $cpc['per_cardno'] = $value['per_cardno'];
+        }   
+            $cpc['per_cardno'] = $value['per_cardno'];
             $cpc['cpcSumWeight'] = ($cpcSumWeight != "" ? $cpcSumWeight : "-" );
             $cpc['cpcSumWeight_'] = ($cpcSumWeight != "" ? $cpcSumWeight : NULL );
             $cpc['cpcSum2'] = ($cpcCheckSumAll > 0 && $cpcSum2 == 0 ?"-":round($cpcSum2,2)) ;  //ถ้ายังยืนยันผลไม่เสร็จให้ส่งค่าเป็น -  ใช้กับ report
@@ -673,6 +678,7 @@ class report extends DbConn
  
         } // end foreach
 
+
         try {
             $sqlScoreResultUpdate = "UPDATE $cpc_score_result SET 
                                         `cpc_score_result_yourself` = :cpcSum2_user,
@@ -697,6 +703,7 @@ class report extends DbConn
                                                                         `cpc_score_result_head`,
                                                                         `cpc_sum_weight`,
                                                                         `scoring`,
+                                                                        `years`,
                                                                         `timestamp`
                                                                         ) VALUES (
                                                                             :per_cardno,
@@ -704,6 +711,7 @@ class report extends DbConn
                                                                             :cpcSum2_,
                                                                             :cpc_sum_weight,
                                                                             :scoring,
+                                                                            :years,
                                                                             current_timestamp
                                                                         )";
                 $stmScoreInsert = $this->conn->prepare($sqlScoreResultInsert);
@@ -712,13 +720,14 @@ class report extends DbConn
                 $stmScoreInsert->bindParam(":cpcSum2_",$cpc['cpcSum2_']);
                 $stmScoreInsert->bindParam(":cpc_sum_weight",$cpc['cpcSumWeight_']);
                 $stmScoreInsert->bindParam(":scoring",$cpcScoring);
+                $stmScoreInsert->bindParam(":years",$years);
                 $stmScoreInsert->execute();
             }
 
         } catch (\Exception $e) {
             $errUpdate = $e->getMessage();
 
-            $log_['per_cardno'] = $value['per_cardno'];
+            $log_['per_cardno'] = $cpc['per_cardno'];
             $log_['id'] = NULL;
             $log_['error'] = $cpc_score_result ." ".$errUpdate;
             $log[] = $log_;
@@ -770,7 +779,7 @@ class report extends DbConn
                 } catch (\Exception $e) {
                     $errUpdate = $e->getMessage();
                     
-                    $log_['per_cardno'] = $value['per_cardno'];
+                    $log_['per_cardno'] = $kpi['per_cardno'];
                     $log_['id'] = $value['kpi_score_id'];
                     $log_['error'] = $kpi_score ." ".$errUpdate;
                     $log[] = $log_;
@@ -781,31 +790,33 @@ class report extends DbConn
 
             try {
                 $sqlKPIResultUpdate = "UPDATE $kpi_score_result SET 
-                                        kpi_weight_sum = :kpi_weight_sum ,
-                                        kpi_score_result = :kpi_score_result,
+                                        `kpi_weight_sum` = :kpi_weight_sum ,
+                                        `kpi_score_result` = :kpi_score_result,
                                         `scoring` = :scoring,
-                                        `timestamp` = current_timestamp
-                                        WHERE per_cardno = :per_cardno ";
+                                        `time_stamp` = current_timestamp
+                                        WHERE `per_cardno` = :per_cardno ";
                 $stmKPIResultUpdate = $this->conn->prepare($sqlKPIResultUpdate);
                 $stmKPIResultUpdate->bindParam(":kpi_score_result",$kpi['kpiSum2_']);
                 $stmKPIResultUpdate->bindParam(":kpi_weight_sum",$kpi['kpiWeightSum_']);
                 $stmKPIResultUpdate->bindParam(":scoring",$kpiScoring);
                 $stmKPIResultUpdate->bindParam(":per_cardno",$kpi['per_cardno']);
-
+                
                 $stmKPIResultUpdate->execute();
 
                 if ($stmKPIResultUpdate->rowCount() == 0) {
-                    $sqlKpiResultInsert = "INSERT $kpi_score_result INTO (
+                    $sqlKpiResultInsert = "INSERT INTO $kpi_score_result  (
                                                                          `per_cardno`,
                                                                          `kpi_score_result`,
                                                                          `kpi_weight_sum`,
                                                                          `scoring`,
+                                                                         `years`,
                                                                          `time_stamp`
                                                                         ) VALUES (
                                                                             :per_cardno,
                                                                             :kpi_score_result,
                                                                             :kpi_weight_sum,
                                                                             :scoring,
+                                                                            :years,
                                                                             current_timestamp
                                                                         )"; 
                     $stmKpiResultInsert = $this->conn->prepare($sqlKpiResultInsert);
@@ -813,13 +824,15 @@ class report extends DbConn
                     $stmKpiResultInsert->bindParam(":kpi_score_result",$kpi['kpiSum2_']);
                     $stmKpiResultInsert->bindParam(":kpi_weight_sum",$kpi['kpiWeightSum_']);
                     $stmKpiResultInsert->bindParam(":scoring",$kpiScoring);
+                    $stmKpiResultInsert->bindParam(":years",$years);
+                    $stmKpiResultInsert->execute();
 
                 }
 
             } catch (\Exception $e) {
                 $errUpdate = $e->getMessage();
 
-                $log_['per_cardno'] = $value['per_cardno'];
+                $log_['per_cardno'] = $kpi['per_cardno'];
                 $log_['id'] = NULL;
                 $log_['error'] = $kpi_score_result ." ".$errUpdate;
                 $log[] = $log_;
@@ -832,10 +845,11 @@ class report extends DbConn
             $success['error'] = $log_;
         }else {
             $success['success'] = true;
+            $success['error'] = $log_;
             // $success['error'] = $kpi['kpiWeightSum_'];
         }
             
-        return $success;
+        return $success ;
 
    }
 
@@ -1006,7 +1020,7 @@ class report extends DbConn
     // }
 
 // cal_gap ใช้งานในไฟล์ view-evatuation-result.php
-    function cal_gap($setData){ // cal_gap_chart->cal_gap คำนวณหา gap โดยใช้ข้อมูลจาก cal_gap_chart
+    function cal_gap($setData,$idpScoreTable){ // cal_gap_chart->cal_gap คำนวณหา gap โดยใช้ข้อมูลจาก cal_gap_chart
         $gapArr = array();
         $db = new DbConn;
         $success = array(
@@ -1019,7 +1033,7 @@ class report extends DbConn
             if ($value['result_minus'] < 0 ) {
                 
                 try{
-                    $sql = "SELECT * From ".$db->tbl_idp_score."  WHERE cpc_score_id = :cpc_score_id AND years = :years ";
+                    $sql = "SELECT * From $idpScoreTable  WHERE cpc_score_id = :cpc_score_id AND years = :years ";
                     $stm = $db->conn->prepare($sql);
                     $stm->bindParam(":cpc_score_id",$value['cpc_score_id']);
                     $stm->bindParam(":years",$value['years']);
@@ -1099,7 +1113,7 @@ class report extends DbConn
 
 
    // การเพ่ิมจุดแข็ง
-    function cal_idp($per_cardno,$years) {  //คำนวณหา gap ที่เป็นการเพิ่มเองโดยไม่ได้อ้างอิงกับตัวที่ตก หรือที่เรียกกว่า การพัฒนาตัวเองเพื่อเพิ่มจุดแข็ง 
+    function cal_idp($per_cardno,$years,$idpScoreTable) {  //คำนวณหา gap ที่เป็นการเพิ่มเองโดยไม่ได้อ้างอิงกับตัวที่ตก หรือที่เรียกกว่า การพัฒนาตัวเองเพื่อเพิ่มจุดแข็ง 
                                 // และจะได้ตัวที่มีการล้างข้อมูล แล้วมีการคำนวณคะแนนใหม่ ซึ่งที่จริงกันต้องถูกลบออกให้ตอนที่มีการล้างข้อมูลด้วย 
         $db = new DbConn;
         $success = array(
@@ -1109,12 +1123,12 @@ class report extends DbConn
                          'msg'=>'');
 
         try{
-            $sql = "SELECT `".$db->tbl_idp_score."`.*,
+            $sql = "SELECT `$idpScoreTable`.*,
                             `cpc_question`.`question_title`,
                             `cpc_question`.`question_code`
-                FROM `".$db->tbl_idp_score."`
-                LEFT JOIN `cpc_question` ON `cpc_question`.question_no = `".$db->tbl_idp_score."`.question_no
-                WHERE `".$db->tbl_idp_score."`.per_cardno = :per_cardno AND `".$db->tbl_idp_score."`.years = :years AND `".$db->tbl_idp_score."`.cpc_score_id is null ";
+                FROM `$idpScoreTable`
+                LEFT JOIN `cpc_question` ON `cpc_question`.question_no = `$idpScoreTable`.question_no
+                WHERE `$idpScoreTable`.per_cardno = :per_cardno AND `$idpScoreTable`.years = :years AND `$idpScoreTable`.cpc_score_id is null ";
                 // echo $sql;
                 $stm = $db->conn->prepare($sql);
                 $stm->bindParam(":per_cardno",$per_cardno);
@@ -1257,7 +1271,7 @@ class report extends DbConn
 
     }
 
-    function cpcUpdateScoreResult($cpc_score_result_table,$per_cardno,$cpc_score_result_head,$scoring,$years) {
+    function cpcUpdateScoreResult($cpc_score_result_table,$per_cardno,$cpc_score_result_head,$cpc_score_result_yourself,$scoring,$years,$cpc_sum_weight) {
         $db = new DbConn;
         $success  = array('success' => null,
                         'result' => null,
@@ -1266,23 +1280,41 @@ class report extends DbConn
         try {
 
            $sql_update = "UPDATE $cpc_score_result_table SET `cpc_score_result_head` = :cpc_score_result_head ,
-                                                            `scoring` = :scoring ,
+                                                              `cpc_score_result_yourself`  = :cpc_score_result_yourself,
+                                                             `scoring` = :scoring ,
+                                                            `cpc_sum_weight` = :cpc_sum_weight,
                                                             `timestamp` = current_timestamp
                                 WHERE `per_cardno` = :per_cardno AND `years` = :years  "; 
 
             $stm_update = $db->conn->prepare($sql_update);
             $stm_update->bindParam(":cpc_score_result_head",$cpc_score_result_head);
+            $stm_update->bindParam(":cpc_score_result_yourself",$cpc_score_result_yourself);
             $stm_update->bindParam(":scoring",$scoring);
+            $stm_update->bindParam(":cpc_sum_weight",$cpc_sum_weight);
             $stm_update->bindParam(":per_cardno",$per_cardno);
             $stm_update->bindParam(":years",$years);
             $stm_update->execute();
 
             if ($stm_update->rowCount() == 0) {
-                $sql_insert = "INSERT INTO $cpc_score_result_table (`per_cardno`,`cpc_score_result_head`,`scoring`,`years`,`timestamp`) 
-                                VALUES (:per_cardno,:cpc_score_result_head,:scoring,:years,current_timestamp)  ";
+                $sql_insert = "INSERT INTO $cpc_score_result_table (`per_cardno`,
+                                                                    `cpc_score_result_head`,
+                                                                    `cpc_score_result_yourself`,
+                                                                    `scoring`,
+                                                                    `cpc_sum_weight`,
+                                                                    `years`,
+                                                                    `timestamp`) 
+                                                            VALUES (:per_cardno,
+                                                                    :cpc_score_result_head,
+                                                                    :cpc_score_result_yourself,
+                                                                    :scoring,
+                                                                    :cpc_sum_weight,
+                                                                    :years,
+                                                                    current_timestamp)  ";
                 $stm_insert = $db->conn->prepare($sql_insert);
                 $stm_insert->bindParam(":cpc_score_result_head",$cpc_score_result_head);
+                $stm_insert->bindParam(":cpc_score_result_yourself",$cpc_score_result_yourself);
                 $stm_insert->bindParam(":scoring",$scoring);
+                $stm_insert->bindParam(":cpc_sum_weight",$cpc_sum_weight);
                 $stm_insert->bindParam(":per_cardno",$per_cardno);
                 $stm_insert->bindParam(":years",$years);
                 $stm_insert->execute();
@@ -1309,7 +1341,7 @@ class report extends DbConn
         return $success;
     }
 
-    function KPIupdateScoreResult($kpi_score_result_table,$per_cardno,$kpi_score_result,$scoring,$years) {
+    function KPIupdateScoreResult($kpi_score_result_table,$per_cardno,$kpi_score_result,$scoring,$years,$kpi_weight_sum) {
         $db = new DbConn;
         $success  = array('success' => null,
                         'result' => null,
@@ -1319,22 +1351,36 @@ class report extends DbConn
         try {
             $sql_update = "UPDATE $kpi_score_result_table SET `kpi_score_result` = :kpi_score_result ,
                                                                `scoring` = :scoring,
+                                                               `kpi_weight_sum` = :kpi_weight_sum,
                                                                `time_stamp` = current_timestamp 
                                                         WHERE `per_cardno` = :per_cardno AND `years` = :years  ";
 
             $stm_update = $db->conn->prepare($sql_update);
             $stm_update->bindParam(":kpi_score_result",$kpi_score_result);
+            $stm_update->bindParam(":kpi_weight_sum",$kpi_weight_sum);
             $stm_update->bindParam(":scoring",$scoring);
             $stm_update->bindParam(":per_cardno",$per_cardno);
             $stm_update->bindParam(":years",$years);
             $stm_update->execute();
 
             if ($stm_update->rowCount() == 0) {
-                $sql_insert = "INSERT INTO $kpi_score_result_table  ( `per_cardno`, `kpi_score_result` , `scoring` , `years`,`time_stamp`) 
-                                VALUES (:per_cardno , :kpi_score_result, :scoring , :years ,current_timestamp)";
+                $sql_insert = "INSERT INTO $kpi_score_result_table  ( `per_cardno`, 
+                                                                        `kpi_score_result` , 
+                                                                        `scoring` , 
+                                                                        `kpi_weight_sum`,
+                                                                        `years`,
+                                                                        `time_stamp`
+                                                                    ) 
+                                                            VALUES (:per_cardno , 
+                                                            :kpi_score_result, 
+                                                            :scoring , 
+                                                            :kpi_weight_sum,
+                                                            :years ,
+                                                            current_timestamp)";
                 $stm_insert = $db->conn->prepare($sql_insert);
                 $stm_insert->bindParam(":per_cardno",$per_cardno);
                 $stm_insert->bindParam(":kpi_score_result",$kpi_score_result);
+                $stm_insert->bindParam(":kpi_weight_sum",$kpi_weight_sum);
                 $stm_insert->bindParam(":scoring",$scoring);
                 $stm_insert->bindParam(":years",$years);
                 $stm_insert->execute();
@@ -1457,7 +1503,8 @@ class report extends DbConn
                                 'msg' => $sqlIN );
              }else {
                  $per_cardnoCount = count($arr_per_cardno);
-                 @$sum = floor((($cpcCount+$kpiCount) / ($kpiTotal + $cpcTotal) ) * 100)    ;
+                //  @$sum = floor((($cpcCount+$kpiCount) / ($kpiTotal + $cpcTotal) ) * 100)    ;
+                 @$sum = floor((($cpcCount+$kpiCount) / ($per_cardnoCount*2) ) * 100)    ;
     
     
                  $success  = array('success' => true,
@@ -1472,6 +1519,11 @@ class report extends DbConn
         }
 
          return $success;
+    }
+
+    function sum_cpc_kpi($CPCscore,$KPIscore,$cpc_ratio,$kpi_ratio) {
+        $sum = ($CPCscore * ($cpc_ratio / 100) ) + ( $KPIscore * ($kpi_ratio / 100) );
+        return round($sum,2)  ;
     }
     
 }

@@ -8,32 +8,22 @@ $success = array('success' => null,
                 'msg' => null );
     $db = new DbConn;
     $report = new report;
+    $myClass = new myClass;
+    $tableYears = $myClass->callYear();
+    $year = $tableYears['data']['table_year'];
+    $cpcScoreResultTable = $tableYears['data']['cpc_score_result'];
+    $kpiScoreResultTable = $tableYears['data']['kpi_score_result'];
+    $personalTable = $tableYears['data']['per_personal'];
+
+    $checkKPI = $report->kpiQueryScore($_POST['per_cardno'],$year,$kpiScoreResultTable);
  
-    $checkKPI = $report->kpiQueryScore($_POST['per_cardno'],__year__);
-    try {
-        $sqlYear  = "SELECT  * FROM `table_year` WHERE table_year = :selectYears " ;
-        $stmYear = $db->conn->prepare($sqlYear);
-        $y = __year__;
-        $stmYear->bindParam(":selectYears" , $y );
-        $stmYear->execute();
-        $resultYear = $stmYear->fetchAll(PDO::FETCH_ASSOC);
-        
-        $count = $stmYear->rowCount();
-        
-        } catch (\Exception $e) {
-            $success['msg'] = $e->getMessage();
-            // echo $errYears;
-        }
        $countCheck =  count($checkKPI['result']);
     if ($checkKPI['success'] === true AND  $countCheck == 1) {
       
             if ($count > 0 ) {
                 
-                $cpc_score_result = $resultYear[0]['cpc_score_result'];
-                $kpi_score_result = $resultYear[0]['kpi_score_result'];
-
                 try {
-                    $sqlUpdateKPI = "UPDATE $kpi_score_result SET kpi_score_result = :kpi_score_result WHERE per_cardno = :per_cardno ";
+                    $sqlUpdateKPI = "UPDATE $kpiScoreResultTable SET kpi_score_result = :kpi_score_result WHERE per_cardno = :per_cardno ";
                     $stmUpdateKPI = $db->conn->prepare($sqlUpdateKPI);
                     $stmUpdateKPI->bindParam(":kpi_score_result",$_POST['kpi_score']); 
                     $stmUpdateKPI->bindParam(":per_cardno",$_POST['per_cardno']); 
@@ -47,18 +37,16 @@ $success = array('success' => null,
 
     }elseif ($checkKPI['success'] === true AND count($checkKPI['result'])  == 0) {
         if ($count == 0 ) {
-            $per_personal = $resultYear[0]['per_personal'];
-            $kpi_score_result = $resultYear[0]['kpi_score_result'];
-            $table_year = $resultYear[0]['table_year'];
+    
 
             try {
-                $sqlPersonal = "SELECT through_trial FROM $per_personal WHERE per_cardno = :per_cardno ";
+                $sqlPersonal = "SELECT through_trial FROM $personalTable WHERE per_cardno = :per_cardno ";
                 $stmPersonal = $db->conn->prepare($sqlPersonal);
                 $stmPersonal->bindParam(":per_cardno" , $_POST['per_cardno'] );
                 $resultPersonal =  $stmPersonal->fetchAll(PDO::FETCH_ASSOC);
                 
                     try {
-                        $sqlInsertKPI = "INSERT INTO $kpi_score_result 
+                        $sqlInsertKPI = "INSERT INTO $kpiScoreResultTable 
                                         (`per_cardno`,`kpi_score_result`,`scoring`,`years` ) 
                                         VALUES (:per_cardno , :kpi_score_result , :scoring , :years ) ";
                         $stmInsert = $db->conn->prepare($sqlInsertKPI);

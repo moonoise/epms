@@ -4,6 +4,7 @@ include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "includes/class.permission.php";
 include_once "module/module_person/class-person.php";
+include_once "module/myClass.php";
 
 if(!isset($_SESSION[__USER_ID__]) ){ 
   header("location:login-dpis.php");
@@ -31,7 +32,13 @@ if (!empty($_POST['per_cardno'])) {
      $name = $_POST['name'];
 }
 $person = new person;
-$detail_person = $person->personSelect($_POST['per_cardno']);
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$personalTable = $currentYear['data']['per_personal'];
+$year = $currentYear['data']['table_year'];
+$detailYear = $currentYear['data']['detail'];
+$detail_person = $person->personSelect($_POST['per_cardno'],$personalTable);
+
 // $per_cardno = 5120100048111;
 //  $name = "test";
 // $level_no ="D1";
@@ -157,7 +164,7 @@ $detail_person = $person->personSelect($_POST['per_cardno']);
                   </div>
                   <div class="x_content">
                   <a class="date-title">
-                        <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                        <small class="date-title-text"><?php echo $detailYear ;?></small>
                     </a>
                     <table id="evaluation-table" class="table table-hover table-bordered" style="width:100%">
                         <thead class="thead-for-user">
@@ -192,7 +199,7 @@ $detail_person = $person->personSelect($_POST['per_cardno']);
                   </div>
                   <div class="x_content">
                   <a class="date-title">
-                        <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                        <small class="date-title-text"><?php echo $detailYear;?></small>
                     </a>
                     <table id="kpi-evaluation-table" class="table table-hover table-bordered" style="width:100%">
                         <thead class="thead-for-user">

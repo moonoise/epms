@@ -6,10 +6,20 @@
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "class-kpi.php";
+    include_once "../myClass.php";
 
     
     $kpi = new kpi;
-    $result = $kpi->KpiScoreSelect($_GET['per_cardno']);
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
+    $per_personalTable = $currentYear['data']['per_personal'];
+    $year = $currentYear['data']['table_year'];
+
+    $result = $kpi->KpiScoreSelect($_GET['per_cardno'],$kpiScoreTable,$year);
+    
     if ($result['success'] == true) {
         $t = "";
         $n = 1;

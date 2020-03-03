@@ -5,14 +5,18 @@ if (!empty($_GET['cpc_score_id'])) {
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "class-cpc.php";
+    include_once "../myClass.php";
    
     $cpc = new cpc;
     $err = '';
     $success = array();
 
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $cpc_score = $currentYear['data']['cpc_score'];
     try
     {
-        $sql = "DELETE FROM $tbl_cpc_score WHERE cpc_score_id = :cpc_score_id";
+        $sql = "DELETE FROM $cpc_score WHERE cpc_score_id = :cpc_score_id";
         $stm = $cpc->conn->prepare($sql);
         $stm->bindParam(":cpc_score_id",$_GET['cpc_score_id']);
 

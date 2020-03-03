@@ -2,19 +2,30 @@
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "../kpi/class-kpi.php";
+include_once "../myClass.php";
+
 if (!empty($_GET['per_cardno'])) 
 {
     $kpi = new kpi;
-    $result = $kpi->KpiScoreSelect($_GET['per_cardno']);
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
+    $per_personalTable = $currentYear['data']['per_personal'];
+    $year = $currentYear['data']['table_year'];
+
+    $result = $kpi->KpiScoreSelect($_GET['per_cardno'],$kpiScoreTable,$year);
+
     if ($result['success'] == true) {
     $t = "";
     $n = 1;
     foreach ($result['result'] as $row) {
-    $s = $kpi->kpiBtnStatus1($row['kpi_score_id']);
+    $s = $kpi->kpiBtnStatus1($row['kpi_score_id'],$kpiScoreTable);
     if ($s['success'] === true) {
         $msg = 'ยืนยัน';
         $color = 'btn-info';
-        $ss = $kpi->kpiBtnStatus2($row['kpi_score_id']);
+        $ss = $kpi->kpiBtnStatus2($row['kpi_score_id'],$kpiScoreTable);
         if ($ss['success'] === true) {
             $msg = 'ยืนยันแล้ว';
             $color = 'btn-success';

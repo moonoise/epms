@@ -1,6 +1,7 @@
 <?php
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
+include_once "../myClass.php";
 
 if(!empty($_GET['per_cardno']))
 {   $err = '';
@@ -8,7 +9,11 @@ if(!empty($_GET['per_cardno']))
     try
     {
         $db = new DbConn;
-        $sql = "UPDATE ".$db->tbl_per_personal." SET head = null WHERE per_cardno = :per_cardno";
+        $myClass = new myClass;
+        $currentYear = $myClass->callYear();
+        $personalTable = $currentYear['data']['per_personal'];
+
+        $sql = "UPDATE $personalTable SET head = null WHERE per_cardno = :per_cardno";
 
         $stm = $db->conn->prepare($sql);
         $stm->bindParam(":per_cardno",$_GET['per_cardno']);

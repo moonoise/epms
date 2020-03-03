@@ -2,14 +2,18 @@
 session_start();
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
+include_once "../myClass.php";
+
 
 $db = new DbConn;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$year = $currentYear['data']['table_year'];
 
-$years = __year__;
 $pl_code = array();
 $sqlCheckConfig = "SELECT * FROM `config` WHERE `config_name` = :years ";
 $stmConfig = $db->conn->prepare($sqlCheckConfig);
-$stmConfig->bindParam(":years",$years);
+$stmConfig->bindParam(":years",$year);
 $stmConfig->execute();
 $countConfig = $stmConfig->rowCount();
 if($countConfig == 0){

@@ -160,11 +160,11 @@ class dpis extends ociConn
         oci_close($this->ociConn);
     }
 
-    function updatePer_Personal($data) {
+    function updatePer_Personal($data,$personalTable) {
         $success = array();
         $err = '';
         try{
-            $sql = "UPDATE  ".$this->db_epm->tbl_per_personal."  SET 
+            $sql = "UPDATE  ".$personalTable."  SET 
                                                     `per_id` = :per_id ,  
                                                     `pn_name` = :pn_name , 
                                                     `per_name` = :per_name , 
@@ -257,14 +257,14 @@ class dpis extends ociConn
         return $success;
     }
 
-    function insertPer_Personal($data) {
+    function insertPer_Personal($data,$personalTable) {
         $success = array();
         $err = '';
         //  echo "<pre>";
         // print_r($data[0]['PER_ID']);
         // echo "</pre>";
         try{
-            $sql = "INSERT INTO ".$this->db_epm->tbl_per_personal." (
+            $sql = "INSERT INTO ".$personalTable." (
                                                     `per_id`, 
                                                     `per_cardno`, 
                                                     `pn_name`, 

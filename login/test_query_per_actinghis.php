@@ -3,18 +3,25 @@ session_start();
 include_once "config.php";
 include_once "includes/dbconn.php";
 include_once "includes/ociConn.php";
+include_once "module/myClass.php";
+
 $err = "";
 $dbConn = new DbConn;
 $ociDB = new ociConn;
 $ociConn = $ociDB->ociConnect();
+
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$per_personal = $currentYear['data']['per_personal'];
+
 $id = array();
 // $sqlOracle = array();
 $moveCode = array();
 $sqlID = array();
 $i = 0;
 try{
-    $sql = "SELECT per_cardno FROM ".$dbConn->tbl_per_personal;
-    // $sql = "SELECT per_cardno FROM ".$dbConn->tbl_per_personal ." LIMIT 0,1000";
+    $sql = "SELECT per_cardno FROM ".$per_personal;
+   
     $stm = $dbConn->conn->prepare($sql);
     $stm->execute();
     $result = $stm->fetchAll(PDO::FETCH_NUM);
@@ -55,7 +62,7 @@ function updateMovCode($moveCode) {
     $dbConn = new DbConn;
     $i = 0;
     try{
-        $sqlUpdate = "UPDATE `per_personal_2561` SET `mov_code` = :mov_code WHERE per_cardno = :per_cardno ";
+        $sqlUpdate = "UPDATE `$per_personal` SET `mov_code` = :mov_code WHERE per_cardno = :per_cardno ";
         $stm = $dbConn->conn->prepare($sqlUpdate);
         $stm->bindValue(":mov_code",10211);
         echo count($moveCode)."<br>";

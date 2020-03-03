@@ -5,6 +5,7 @@ include_once 'includes/dbconn.php';
 include_once "includes/class-date.php";
 include_once "includes/class-userOnline.php";
 include_once "includes/class.permission.php";
+include_once "module/myClass.php";
 
 $newDate = new dateCovert;
 $userOnline = new userOnline;
@@ -27,7 +28,9 @@ function checkPicture($namePicture) {
   }else return "../external/images_profile/user.png";
 }
     
- 
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$result = $myClass->detail($_SESSION[__USER_NAME__],$currentYear['data']['per_personal']);
 ?>
 
 <!DOCTYPE html>
@@ -90,13 +93,6 @@ function checkPicture($namePicture) {
         <!-- /top navigation -->
 
         <!-- page content -->
-        <?php
-        
-        include_once "module/module_profile/class.profile.php";
-        $profile = new proFile;
-        $result = $profile->detail($_SESSION[__USER_NAME__]);
-
-        ?>
         <div class="right_col" role="main">
           <div class="">
             <div class="page-title">

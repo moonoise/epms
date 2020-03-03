@@ -5,10 +5,16 @@
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "../cpc/class-cpc.php";
+    include_once "../myClass.php";
     $t = "";
     $n = 1;
     $cpc = new cpc;
-    // $years = __year__;
+  
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $cpcScoreTable = $currentYear['data']['cpc_score'];
+    
+
     $scoreC =  array( 1 => "cpc_score1",
                       2 => "cpc_score2",
                       3 => "cpc_score3",
@@ -57,44 +63,44 @@
 ///////////////////////////////////
 
         $sqlCPC_score = "SELECT
-        `$tbl_cpc_score`.`cpc_score_id`,
-        `$tbl_cpc_score`.`question_no`,
-        `$tbl_cpc_score`.`per_cardno`,
-        `$tbl_cpc_score`.`id_admin`,
-        `$tbl_cpc_score`.`cpc_score1`,
-        `$tbl_cpc_score`.`cpc_score2`,
-        `$tbl_cpc_score`.`cpc_score3`,
-        `$tbl_cpc_score`.`cpc_score4`,
-        `$tbl_cpc_score`.`cpc_score5`,
-        `$tbl_cpc_score`.`years`,
-        `$tbl_cpc_score`.`date_key_score`,
-        `$tbl_cpc_score`.`cpc_divisor`,
-        `$tbl_cpc_score`.`cpc_accept1`,
-        `$tbl_cpc_score`.`cpc_accept2`,
-        `$tbl_cpc_score`.`cpc_accept3`,
-        `$tbl_cpc_score`.`cpc_accept4`,
-        `$tbl_cpc_score`.`cpc_accept5`,
-        `$tbl_cpc_score`.`cpc_comment1`,
-        `$tbl_cpc_score`.`cpc_comment2`,
-        `$tbl_cpc_score`.`cpc_comment3`,
-        `$tbl_cpc_score`.`cpc_comment4`,
-        `$tbl_cpc_score`.`cpc_comment5`
+        `$cpcScoreTable`.`cpc_score_id`,
+        `$cpcScoreTable`.`question_no`,
+        `$cpcScoreTable`.`per_cardno`,
+        `$cpcScoreTable`.`id_admin`,
+        `$cpcScoreTable`.`cpc_score1`,
+        `$cpcScoreTable`.`cpc_score2`,
+        `$cpcScoreTable`.`cpc_score3`,
+        `$cpcScoreTable`.`cpc_score4`,
+        `$cpcScoreTable`.`cpc_score5`,
+        `$cpcScoreTable`.`years`,
+        `$cpcScoreTable`.`date_key_score`,
+        `$cpcScoreTable`.`cpc_divisor`,
+        `$cpcScoreTable`.`cpc_accept1`,
+        `$cpcScoreTable`.`cpc_accept2`,
+        `$cpcScoreTable`.`cpc_accept3`,
+        `$cpcScoreTable`.`cpc_accept4`,
+        `$cpcScoreTable`.`cpc_accept5`,
+        `$cpcScoreTable`.`cpc_comment1`,
+        `$cpcScoreTable`.`cpc_comment2`,
+        `$cpcScoreTable`.`cpc_comment3`,
+        `$cpcScoreTable`.`cpc_comment4`,
+        `$cpcScoreTable`.`cpc_comment5`
         FROM
-        `$tbl_cpc_score`
-        WHERE `$tbl_cpc_score`.`cpc_score_id` = :cpc_score_id ";
+        `$cpcScoreTable`
+        WHERE `$cpcScoreTable`.`cpc_score_id` = :cpc_score_id ";
 
         $stmCS = $cpc->conn->prepare($sqlCPC_score);
         $stmCS->bindParam(":cpc_score_id",$_GET['cpc_score_id']);
         $stmCS->execute();
         $r = $stmCS->fetchAll();
 
-        $checkScore = $cpc->cpcBtnStatus1($_GET['cpc_score_id']);
+        $checkScore = $cpc->cpcBtnStatus1($_GET['cpc_score_id'],$cpcScoreTable);
         
         if ($checkScore['success'] === true) {
             $scoreDisabled  = 'Disabled';
             $acceptDisabled = '';
 
-            $checkaccept = $cpc->cpcBtnStatus2($_GET['cpc_score_id']);
+            $checkaccept = $cpc->cpcBtnStatus2($_GET['cpc_score_id'],$cpcScoreTable);
             if ($checkaccept['success'] === true) {
                 $acceptDisabled = 'Disabled';
             }

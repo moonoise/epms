@@ -2,19 +2,21 @@
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-person.php";
+include_once "../myClass.php";
 
 $db = new DbConn;
-
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
 $err = "";
 $success = array();
 
 try{
-    $sql =  "UPDATE ".$tbl_per_personal." SET login_status = IF(login_status = 1,0,1) WHERE `per_cardno` = :per_cardno";
+    $sql =  "UPDATE ".$currentYear['data']['per_personal']." SET login_status = IF(login_status = 1,0,1) WHERE `per_cardno` = :per_cardno";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':per_cardno',$_POST['per_cardno']);
     $stm->execute();
 
-    $sql2 = "SELECT `login_status` FROM  ".$tbl_per_personal." WHERE `per_cardno` = :per_cardno " ;
+    $sql2 = "SELECT `login_status` FROM  ".$currentYear['data']['per_personal']." WHERE `per_cardno` = :per_cardno " ;
     $stm2 = $db->conn->prepare($sql2);
     $stm2->bindParam(':per_cardno',$_POST['per_cardno']);
     $stm2->execute();

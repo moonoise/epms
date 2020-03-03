@@ -34,36 +34,36 @@ class cpc extends DbConn
    }
 
 
-   function cpcScoreSelect($data) {  // ใช้กับไฟล์ ajax-modal-cpc_score-show.php และ ajax-modal-clear_score.php
+   function cpcScoreSelect($data,$cpcScoreTable) {  // ใช้กับไฟล์ ajax-modal-cpc_score-show.php และ ajax-modal-clear_score.php
     $err = '';
     $success = array();
     try{
         $sql = "SELECT
-                ".$this->tbl_cpc_score.".`cpc_score_id`,
-                ".$this->tbl_cpc_score.".`question_no`,
-                ".$this->tbl_cpc_score.".`per_cardno`,
-                ".$this->tbl_cpc_score.".`cpc_divisor`,
-                ".$this->tbl_cpc_score.".`cpc_score1`,
-                ".$this->tbl_cpc_score.".`cpc_score2`,
-                ".$this->tbl_cpc_score.".`cpc_score3`,
-                ".$this->tbl_cpc_score.".`cpc_score4`,
-                ".$this->tbl_cpc_score.".`cpc_score5`,
-                ".$this->tbl_cpc_score.".`cpc_accept1`,
-                ".$this->tbl_cpc_score.".`cpc_accept2`,
-                ".$this->tbl_cpc_score.".`cpc_accept3`,
-                ".$this->tbl_cpc_score.".`cpc_accept4`,
-                ".$this->tbl_cpc_score.".`cpc_accept5`,
+                ".$cpcScoreTable.".`cpc_score_id`,
+                ".$cpcScoreTable.".`question_no`,
+                ".$cpcScoreTable.".`per_cardno`,
+                ".$cpcScoreTable.".`cpc_divisor`,
+                ".$cpcScoreTable.".`cpc_score1`,
+                ".$cpcScoreTable.".`cpc_score2`,
+                ".$cpcScoreTable.".`cpc_score3`,
+                ".$cpcScoreTable.".`cpc_score4`,
+                ".$cpcScoreTable.".`cpc_score5`,
+                ".$cpcScoreTable.".`cpc_accept1`,
+                ".$cpcScoreTable.".`cpc_accept2`,
+                ".$cpcScoreTable.".`cpc_accept3`,
+                ".$cpcScoreTable.".`cpc_accept4`,
+                ".$cpcScoreTable.".`cpc_accept5`,
                 `cpc_question`.`question_code`,
                 `cpc_question`.`question_title`,
                 `cpc_question`.`question_type`
                 FROM
-                ".$this->tbl_cpc_score."
+                ".$cpcScoreTable."
                 RIGHT JOIN `cpc_question`
-                ON ".$this->tbl_cpc_score.".`question_no` = `cpc_question`.`question_no`
+                ON ".$cpcScoreTable.".`question_no` = `cpc_question`.`question_no`
                 AND `cpc_question`.`question_type` = :question_type
-                WHERE ".$this->tbl_cpc_score.".`per_cardno` = :per_cardno 
-                AND ".$this->tbl_cpc_score.".`soft_delete` = :soft_delete
-                AND ".$this->tbl_cpc_score.".`years` = :years
+                WHERE ".$cpcScoreTable.".`per_cardno` = :per_cardno 
+                AND ".$cpcScoreTable.".`soft_delete` = :soft_delete
+                AND ".$cpcScoreTable.".`years` = :years
                 ORDER BY `cpc_question`.`question_no` ASC
                 ";
         $stm = $this->conn->prepare($sql);
@@ -88,13 +88,13 @@ class cpc extends DbConn
 
    }
 //มี cpc_score ว่ามี record นั้นอยู่ไหม  ว่ามีส่ง -> true  ไม่มีส่ง->false  error -> null  
-   function cpcScoreCheck($data) {
+   function cpcScoreCheck($data,$cpcScoreTable) {
     $err = '';
     $success = array();
     $n= '';
     try
     {
-        $sql = "SELECT cpc_score_id FROM ".$this->tbl_cpc_score." 
+        $sql = "SELECT cpc_score_id FROM $cpcScoreTable 
                 WHERE question_no = :question_no
                       AND per_cardno = :per_cardno
                       AND years = :years
@@ -169,12 +169,12 @@ class cpc extends DbConn
         return $success;
    }
    // insert ข้อมูลที่ได้จาก cpcScoreGetDefault  มาใส่ใน cpc_score
-   function cpcScoreSet($data) {
+   function cpcScoreSet($data,$cpcScoreTable) {
         $err = '';
         $success = array();
         try
         {
-            $sqlInsert = "INSERT INTO ".$this->tbl_cpc_score."
+            $sqlInsert = "INSERT INTO $cpcScoreTable
                             (
                             `question_no`,
                             `per_cardno`,
@@ -289,13 +289,13 @@ class cpc extends DbConn
    }
 
    // ลบข้อมูล อัพเดท sofe_delete
-   function cpcScoreSoftDeleteByPer_cardno($data) 
+   function cpcScoreSoftDeleteByPer_cardno($data,$cpcScoreTable) 
    {
     $err = '';
     $success = array();
     try
         {
-            $sql = "UPDATE ".$this->tbl_cpc_score." 
+            $sql = "UPDATE $cpcScoreTable 
                     SET soft_delete = :soft_delete, 
                         id_admin = :id_admin,
                         date_key_score = :date_key_score
@@ -329,13 +329,13 @@ class cpc extends DbConn
         return $success;
     }
     // update soft_delete ทีละ field
-    function cpcScoreSoftDeleteByCpc_score_id($data) 
+    function cpcScoreSoftDeleteByCpc_score_id($data,$cpcScoreTable) 
     {
     $err = '';
     $success = array();
     try
         {
-            $sql = "UPDATE ".$this->tbl_cpc_score." 
+            $sql = "UPDATE $cpcScoreTable
                     SET soft_delete = :soft_delete, 
                         id_admin = :id_admin,
                         date_key_score = :date_key_score
@@ -365,13 +365,13 @@ class cpc extends DbConn
     }
 
     // update delete จริง หลายๆ  field พร้อมกัน status soft_delete ตามกำหนด
-    function cpcScoreDeleteByPer_cardno($data) 
+    function cpcScoreDeleteByPer_cardno($data,$cpcScoreTable) 
     {
     $err = '';
     $success = array();
     try
         {
-            $sql = "DELETE FROM ".$this->tbl_cpc_score."
+            $sql = "DELETE FROM $cpcScoreTable
                     WHERE per_cardno = :per_cardno 
                     AND soft_delete = :soft_delete
                     AND years = :years";
@@ -400,7 +400,7 @@ class cpc extends DbConn
         return $success;
     }
 
-    function cpcBtnStatus1($cpc_score_id) {  //รอยืนยัน
+    function cpcBtnStatus1($cpc_score_id,$cpcScoreTable) {  //รอยืนยัน
         $err = '';
         $success = array();
         try
@@ -413,7 +413,7 @@ class cpc extends DbConn
                     OR  `cpc_score5` IS NULL
                     THEN 'true' ELSE 'false' 
                     END
-                    FROM ".$this->tbl_cpc_score."
+                    FROM $cpcScoreTable
                     WHERE   `cpc_score_id` = :cpc_score_id" ;
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":cpc_score_id",$cpc_score_id);
@@ -443,7 +443,7 @@ class cpc extends DbConn
         return $success;
     }
 
-    function cpcBtnStatus2($cpc_score_id) {  //เช็คว่าผู้บังคับบัญชายืนยันครบยัง
+    function cpcBtnStatus2($cpc_score_id,$cpcScoreTable) {  //เช็คว่าผู้บังคับบัญชายืนยันครบยัง
         $err = '';
         $success = array();
         try
@@ -456,7 +456,7 @@ class cpc extends DbConn
                     OR  `cpc_accept5` IS NULL
                     THEN 'true' ELSE 'false' 
                     END
-                    FROM ".$this->tbl_cpc_score."
+                    FROM $cpcScoreTable
                     WHERE   `cpc_score_id` = :cpc_score_id" ;
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":cpc_score_id",$cpc_score_id);
@@ -481,14 +481,14 @@ class cpc extends DbConn
     }
 
 
-    function cpcStatus3($per_cardno,$years) {  // เช็ดว่า  ผู้ประเมิน ทำประเมินครบแล้วยัง  return ออกมาเป็นจำนวนที่ประเมิน และจำนวนเป็นเสร็จแล้ว และจำนวนที่ Accept แล้ว
+    function cpcStatus3($per_cardno,$years,$cpcScoreTable) {  // เช็ดว่า  ผู้ประเมิน ทำประเมินครบแล้วยัง  return ออกมาเป็นจำนวนที่ประเมิน และจำนวนเป็นเสร็จแล้ว และจำนวนที่ Accept แล้ว
         $err = '';
         $success = array();
         $choiseFinish = 0;
         $choiseAccepted = 0;
         // soft_delete = 0 ;
         try{
-            $sql = "SELECT * FROM ".$this->tbl_cpc_score." 
+            $sql = "SELECT * FROM $cpcScoreTable 
                     WHERE `per_cardno` = :per_cardno 
                     AND years = :years 
                     AND soft_delete = 0";
@@ -501,10 +501,10 @@ class cpc extends DbConn
         $count = $stm->rowCount();
         if ($count > 0 ) {
             foreach ($result as $key => $value) {
-                $cpc1 = $this->cpcBtnStatus1($value['cpc_score_id']);
+                $cpc1 = $this->cpcBtnStatus1($value['cpc_score_id'],$cpcScoreTable);
                 if ($cpc1['success'] === true) {
                     $choiseFinish++;
-                    $cpc2 = $this->cpcBtnStatus2($value['cpc_score_id']);
+                    $cpc2 = $this->cpcBtnStatus2($value['cpc_score_id'],$cpcScoreTable);
                     if ($cpc2['success'] === true) {
                         $choiseAccepted++;
                     }
@@ -534,7 +534,7 @@ class cpc extends DbConn
 
     function cpcStatus4($per_cardno,$years) { //เช็ดว่า  ผู้ประเมิน ทำประมาณครบแล้วยัง  return true / false
         $success = array();
-        $result = $this->cpcStatus3($per_cardno,$years);
+        $result = $this->cpcStatus3($per_cardno,$years,$cpcScoreTable);
 
         if($result['total_choise'] == $result['choiseAccepted']){
             $success['result'] = true;

@@ -15,8 +15,9 @@
     $report = new report;
 
     $tableYears = $myClass->callYear();
+    $year = $tableYears['data']['table_year'];
 
-    $table_cpc = $report->tableCPC($_POST['per_cardno'],$tableYears['data']['table_year'],array(1,2,3),$tableYears['data']['per_personal'],$tableYears['data']['cpc_score']);
+    $table_cpc = $report->tableCPC($_POST['per_cardno'],$year,array(1,2,3),$tableYears['data']['per_personal'],$tableYears['data']['cpc_score']);
     
     if ( count($table_cpc['result']) > 0 ) {
 

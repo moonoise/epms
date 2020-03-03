@@ -130,7 +130,4 @@ class evaluation extends DbConn
        
     }
 
-    function sum_cpc_kpi($CPCscore,$KPIscore,$cpc_ratio,$kpi_ratio) {
-        return ($CPCscore * ($cpc_ratio / 100) ) + ( $KPIscore * ($kpi_ratio / 100) ) ;
-    }
 }

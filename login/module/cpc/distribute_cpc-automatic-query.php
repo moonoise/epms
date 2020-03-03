@@ -3,11 +3,17 @@ session_start();
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-cpc.php";
+include_once "../myClass.php";
 
 $cpc = new cpc;
 $db = new DbConn;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$per_personal = $currentYear['data']['per_personal'];
+$cpcScoreTable  = $currentYear['data']['cpc_score'];
+$year = $currentYear['data']['table_year'];
 
-$sqlPer = "SELECT * FROM $db->tbl_per_personal ";
+$sqlPer = "SELECT * FROM $per_personal ";
 $stmPer = $db->conn->prepare($sqlPer);
 $stmPer->execute();
 $resultPer = $stmPer->fetchAll();
@@ -22,10 +28,10 @@ foreach ($resultPer as $key => $v) {
                                "id_admin" => $_SESSION[__USER_ID__],
                                "date_key_score" => $d,
                                "per_cardno" => $v['per_cardno'],
-                               "years" => __year__
+                               "years" => $year
                                 );
 
-    $softDelete = $cpc->cpcScoreSoftDeleteByPer_cardno($setDataSoftDelete);
+    $softDelete = $cpc->cpcScoreSoftDeleteByPer_cardno($setDataSoftDelete,$cpcScoreTable);
 
     if ($softDelete['success'] == true) {
         try
@@ -36,13 +42,13 @@ foreach ($resultPer as $key => $v) {
                $setData = array("question_no" => $value['question_no'],
                                 "per_cardno" => $value['per_cardno'],
                                 "id_admin" => $_SESSION[__USER_ID__],
-                                "years" => __year__ ,
+                                "years" => $year ,
                                 "cpc_divisor" => $value['cpc_divisor'],
                                 "date_key_score" => $d,
                                 "soft_delete" => 0
                                 );
                // echo '<pre>'; print_r($setData); echo '</pre>';
-               $result =  $cpc->cpcScoreSet($setData);
+               $result =  $cpc->cpcScoreSet($setData,$cpcScoreTable);
                //echo '<pre>'; print_r($result); echo '</pre>';
                $ok[] = $result;                 
             }

@@ -4,9 +4,12 @@ include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-person.php";
 include_once "../report/class-report.php";
+include_once "../myClass.php";
 
 $db = new DbConn;
 $person = new person;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
 // foreach ($_POST as $key => $value) {
 //    echo $key ."->". $value;
 // }
@@ -15,8 +18,8 @@ if ( $_POST['per_name'] != "" AND $_POST['org_id'] != "") {
     $orgSelect = $_POST['org_id'];
     $s = ($orgSelect==77?"":" AND (org_id = $orgSelect OR org_id_1 = $orgSelect OR org_id_2 = $orgSelect)");
 
-    $sql = "SELECT  *,per_level.position_level FROM ".$db->tbl_per_personal." 
-    LEFT JOIN per_level ON per_level.level_no = ".$tbl_per_personal.".level_no WHERE  (`per_name` LIKE CONCAT('%',SUBSTRING_INDEX(:per_name,' ',1),'%') 
+    $sql = "SELECT  *,per_level.position_level FROM ".$currentYear['data']['per_personal']." 
+    LEFT JOIN per_level ON per_level.level_no = ".$currentYear['data']['per_personal'].".level_no WHERE  (`per_name` LIKE CONCAT('%',SUBSTRING_INDEX(:per_name,' ',1),'%') 
             OR `per_surname` LIKE CONCAT('%',SUBSTRING_INDEX(:per_name,' ',-1),'%') ) ".$s;
     
     $stm = $db->conn->prepare($sql);

@@ -2,6 +2,7 @@
 include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "includes/class.permission.php";
+include_once 'module/myClass.php';
 
 session_start();
 
@@ -24,6 +25,13 @@ if (($success['success'] === true)   ) {
     }
 }  
 activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
+
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$idpScoreTable = $currentYear['data']['idp_score'];
+$year = $currentYear['data']['table_year'];
+$personalTable = $currentYear['data']['per_personal'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
 
 ?>
 
@@ -150,7 +158,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                 <div class="col-md-12 col-xs-12 col-sm-12">
                     <div class="x_panel">
                         <div class="x_title x_title-for-user">
-                            <h5 class="head-text-user">แบบรายงาน<small></small></h5>
+                            <h3 class="head-text-user">แบบรายงาน<small class="text text-danger"> (รอบปัจจุบัน)</small></h3>
                             <!-- <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -184,7 +192,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                                        
                                         <form action="module/report_admin/export-rid135-all-new.php" method="post" target="rid135">
                                             <input type="hidden" name="per_cardno" value="<?php echo  $_SESSION[__USER_ID__];?>">
-                                            <input type="hidden" name="years" value="<?php echo  __year__;?>">
+                                            <input type="hidden" name="years" value="<?php echo  $year ;?>">
                                             <button  class="btn btn-app" type="submit"><i class="fa fa-print text-success"></i> พิมพ์</button>
                                         </form>
                                         
@@ -198,7 +206,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                                     <td>
                                         <form action="module/report_admin/export-kpi135-1-new.php" method="post" target="kpi135">
                                             <input type="hidden" name="per_cardno" value="<?php echo  $_SESSION[__USER_ID__];?>">
-                                            <input type="hidden" name="years" value="<?php echo  __year__;?>">
+                                            <input type="hidden" name="years" value="<?php echo  $year;?>">
                                             <button  class="btn btn-app" type="submit"><i class="fa fa-print text-success"></i> พิมพ์</button>
                                         </form>
                                     </td>
@@ -210,7 +218,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                                     <td>
                                         <form action="module/report_admin/export-rid135-2-1-new.php" method="post" target="rid135-2">
                                                 <input type="hidden" name="per_cardno" value="<?php echo  $_SESSION[__USER_ID__];?>">
-                                                <input type="hidden" name="years" value="<?php echo  __year__;?>">
+                                                <input type="hidden" name="years" value="<?php echo  $year;?>">
                                                 <button  class="btn btn-app" type="submit"><i class="fa fa-print text-success"></i> พิมพ์</button>
                                         </form>
                                     </td>

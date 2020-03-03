@@ -82,7 +82,7 @@ $cpcError = "";
 $kpi_score_result = "";
 $cpc_score_result_head = "";
 
-  (!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$_POST['years'],$tableKPIscore) : $kpiResult);
+  (!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$_POST['years'],$tablePersonal,$tableKPIscore) : $kpiResult);
   $kpi = $report->reportKPI1($kpiResult);
   
   (!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$_POST['years'],$cpcTypeKey,$tablePersonal,$tableCPCscore) : $cpcResult);

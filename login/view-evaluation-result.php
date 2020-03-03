@@ -41,53 +41,52 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
 
 
 $report = new report;
-$myClass = new myClass;
 
+$myClass = new myClass;
 $currentYear = $myClass->callYear();
-$years = __year__;
-(!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$currentYear['data']['table_year'],$currentYear['data']['per_personal'],$currentYear['data']['kpi_score']) : $kpiResult);
+$year = $currentYear['data']['table_year'];
+$idpScoreTable = $currentYear['data']['idp_score'];
+$personalTable = $currentYear['data']['per_personal'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$detailYear = $currentYear['data']['detail'];
+
+(!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$year ,$personalTable,$currentYear['data']['kpi_score']) : $kpiResult);
 
 $kpi = $report->reportKPI1($kpiResult);
 $kpiUpdateResutl =  $report->kpiResultUpdate($kpi,$currentYear['data']);
 // echo "<pre>";
-// print_r($kpiResult);
+// print_r($kpi['through_trial']);
 // echo "</pre>";
-(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$currentYear['data']['table_year'],$cpcTypeKey,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']) : $cpcResult);
+(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$year,$cpcTypeKey,$personalTable,$cpcScoreTable) : $cpcResult);
 $cpc = $report->reportCPC1($cpcResult);
 $updateResutl = $report->cpcResultUpdate($cpc,$currentYear['data']);
 // echo "<pre>";
-// print_r($cpc);
+// print_r($kpi);
 // echo "</pre>";
-$profile = new proFile;
-$personal = $profile->detail($per_cardno);
 
-(!empty($per_cardno)? $cpcResult2 =  $report->tableCPC($per_cardno,$currentYear['data']['table_year'],$cpcTypeKey2,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']) : $cpcResult);  // cpcTypeKey2 1,2,3,4,5,6
+(!empty($per_cardno)? $cpcResult2 =  $report->tableCPC($per_cardno,$year ,$cpcTypeKey2,$personalTable,$cpcScoreTable) : $cpcResult);  // cpcTypeKey2 1,2,3,4,5,6
 $r = $report->cal_gap_chart($cpcResult2);
-$gap = $report->cal_gap($r);
-$idp = $report->cal_idp($per_cardno,$currentYear['data']['table_year']);
+$gap = $report->cal_gap($r,$idpScoreTable);
+$idp = $report->cal_idp($per_cardno,$year,$idpScoreTable);
 $gapUpdate = array();
 
 foreach ($r as $keyGapUpdate => $valueGapUpdate) {
 
-    $gapUpdate[] = $report->gapUpdateByid($valueGapUpdate['pointEqual_OverGap'],$valueGapUpdate['gap_status'],$valueGapUpdate['cpc_score_id'],$currentYear['data']['cpc_score']);
+    $gapUpdate[] = $report->gapUpdateByid($valueGapUpdate['pointEqual_OverGap'],$valueGapUpdate['gap_status'],$valueGapUpdate['cpc_score_id'],$cpcScoreTable);
 
 }
 
 // echo "<pre>";
 // print_r($r );
 // echo "</pre>";
+$AverageKPI = $kpi['scoring'];
+$AverageKPI2 = $kpi['scoring']/100;
+$AverageCPC = $cpc['scoring']; 
+$AverageCPC2 =  $cpc['scoring'] / 100; 
 
-if ($personal['through_trial'] == 1) {
-    $AverageKPI = 70;
-    $AverageKPI2 = 0.7;
-    $AverageCPC = 30; 
-    $AverageCPC2 = 0.3; 
+if ($kpi['through_trial'] == 1) {
     $txt = '';
-}elseif ($personal['through_trial'] == 2) {
-    $AverageKPI = 50;
-    $AverageKPI2 = 0.5;
-    $AverageCPC = 50; 
-    $AverageCPC2 = 0.5;
+}elseif ($kpi['through_trial'] == 2) {
     $txt = '<b class="text-danger text-center">อยู่ในช่วงทดลองงาน</b>';
 }else{
     $AverageKPI = 70;
@@ -261,7 +260,7 @@ if ($k_user != "-" && $c_user != "-") {
                     </div>
                     <div class="x_content">
                         <a class="date-title">
-                            <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                            <small class="date-title-text"><?php $detailYear;?></small>
                         </a>
                         <table class="table table-bordered">
                             <thead class="thead-for-user">

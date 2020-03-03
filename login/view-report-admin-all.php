@@ -4,8 +4,19 @@ include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "includes/class-userOnline.php";
 include_once "includes/class.permission.php";
+include_once "module/myClass.php";
+
 $userOnline = new userOnline;
 $_SESSION[__USERONLINE__] = $userOnline->usersOnline();
+
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$idpScoreTable = $currentYear['data']['idp_score'];
+$yearID = $currentYear['data']['table_id'];
+$year = $currentYear['data']['table_year'];
+$personalTable = $currentYear['data']['per_personal'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$detailYear = $currentYear['data']['detail'];
 
 if(!(isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__],array(4,5,6,7))) ){ 
   header("location:disallow.php");
@@ -175,7 +186,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                           <b class="green">รายงานความคืบหน้า</b>
                         </a>
                         <form method="post" name="form_update_score_all" id="form_update_score_all">
-                          <input type="hidden" name="years" value="<?php echo __year__ ;?>">
+                          <input type="hidden" name="years" value="<?php echo $yearID  ;?>">
                           <input type="hidden" name="org_id" value="<?php echo $_SESSION[__ADMIN_ORG_ID__];?>">
                           <input type="hidden" name="org_id_1" value="<?php echo $_SESSION[__ADMIN_ORG_ID_1__];?>">
                           <input type="hidden" name="org_id_2" value="<?php echo $_SESSION[__ADMIN_ORG_ID_2__];?>">
@@ -184,7 +195,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                      
                     </div>
                     <div class="row">
-                      <div class="col-md-3 col-sm-3 col-xs-3">
+                      <div class="col-md-2 col-sm-2 col-xs-2">
                         <div class="progress" data-toggle="popover" data-id="test" data-placement='right'>
                           <div id="percent_completeID"  class='progress-bar progress-bar-success progress-bar-striped active' 
                             role='progressbar' aria-pause="" 
@@ -195,14 +206,18 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                         </div>
                       </div>
                       <div class="col-md-3 col-sm-3 col-xs-3">
-                        <span id="personTotalID" class="text text-info">จำนวนรายชื่อทั้งหมด: คน</span>
+                        <span id="personTotalID" class="text text-info"></span>
                       </div>
-                      <div class="col-md-3 col-sm-3 col-xs-3">
-                        <span id="cpcTotalID" class="text text-info">ประเมินสมรรถนะเสร็จจำนวน:  คน</span>
+                      <div class="col-md-2 col-sm-2 col-xs-2">
+                        <span id="cpcTotalID" class="text text-info"></span>
                       </div>
-                      <div class="col-md-3 col-sm-3 col-xs-3">
-                        <span id="kpiTotalID" class="text text-info">ประเมินตัวชี้วัดเสร็จจำนวน:  คน</span>
+                      <div class="col-md-2 col-sm-2 col-xs-2">
+                        <span id="kpiTotalID" class="text text-info"></span>
                       </div>
+                      <div class="col-md-2 col-sm-2 col-xs-2">
+                        <span id="login_status" class="text text-info"></span>
+                      </div>
+
                     </div>
 
 
@@ -238,7 +253,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                         
                      
 
-                      <div class="col-md-4 col-sm-4 col-xs-4" >
+                      <div class="col-md-5 col-sm-5 col-xs-5" >
                           <label for="selectYears" class="control-label col-md-3 col-sm-3 col-xs-3 form-group">ปีงบประมาณ:</label>
                         <div class="col-md-9 col-sm-9 col-xs-9 form-group">  
                           <select name="selectYears" id="selectYears" class="form-control">
@@ -250,7 +265,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
                           <!-- <input type="submit" value"เลือก" class="btn btn-primary" style="margin-top: 25px;"> -->
                           <button type="button" class="form-control btn btn-primary" id="submit-org" >เลือก</button>
                         </div>
-                        <div class="col-md-2 col-sm-2 col-xs-2">
+                        <div class="col-md-1 col-sm-1 col-xs-1">
 
                         </div> 
                         <div class="col-md-2 col-sm-2 col-xs-2">
@@ -421,10 +436,16 @@ $(document).ready(function () {
     url: "module/report_admin/ajax-load-json-years.php",
     dataType: "JSON",
     success: function (response) {
+      var c = "";
       $.each(response.result, function (indexInArray, valueOfElement) { 
-        var y = valueOfElement["table_year"].split("-");
-        var y543 = parseInt(y[0]) + 543
-         $("#selectYears").append("<option value=\""+valueOfElement["table_year"]+"\" >ปี "+ y543 +" รอบ "+y[1]+" </option>");
+        // var y = valueOfElement["table_year"].split("-");
+        // var y543 = parseInt(y[0]) + 543
+        if (valueOfElement['default_status'] == 1) {
+          c = "selected"
+        }else{
+          c = ""
+        }
+         $("#selectYears").append("<option value=\""+valueOfElement['table_id']+"\" "+c+">"+valueOfElement['detail_short']+" </option>");
         // console.log(valueOfElement['cpc_score'])
       });
     }
@@ -439,7 +460,7 @@ $(document).ready(function () {
    
       // response.result
       // console.log(response.result)
-      percent_complete_view(response.result,response.table_year.cpc_score_result,response.table_year.kpi_score_result,response.table_year.table_year)
+      percent_complete_view(response.result,response.table_year.cpc_score_result,response.table_year.kpi_score_result,response.table_year.table_year,response.login_status_0_count)
      
     
     }
@@ -456,7 +477,7 @@ function percent_complete(org_id,org_id_1,org_id_2,years) {
    
       // response.result
       // console.log(response.result)
-      percent_complete_view(response.result,response.table_year.cpc_score_result,response.table_year.kpi_score_result,response.table_year.table_year)
+      percent_complete_view(response.result,response.table_year.cpc_score_result,response.table_year.kpi_score_result,response.table_year.table_year,response.login_status_0_count)
      
     
     }
@@ -464,7 +485,7 @@ function percent_complete(org_id,org_id_1,org_id_2,years) {
 }
 
 
-function percent_complete_view(arr_per_cardno,cpc_score_result,kpi_score_result,table_year) {
+function percent_complete_view(arr_per_cardno,cpc_score_result,kpi_score_result,table_year,login_status_0_count) {
   $.ajax({
         type: "POST",
         url: "module/report_admin/ajax-percent_complete.php",
@@ -478,17 +499,19 @@ function percent_complete_view(arr_per_cardno,cpc_score_result,kpi_score_result,
         success: function (response) {
           // console.log(response)
           $("#percent_completeID").attr("aria-pause", response.percentComplete);
-          $("#personTotalID").html("จำนวนรายชื่อทั้งหมด: "+response.personCount+" คน");
-          $("#cpcTotalID").html("ประเมินสมรรถนะเสร็จจำนวน: "+response.cpcComplete+" คน");
-          $("#kpiTotalID").html("ประเมินตัวชี้วัดเสร็จจำนวน: "+response.kpiComplete+" คน");
+          $("#personTotalID").html("จำนวนรายชื่อผู้รับการประเมิน: "+response.personCount+" คน");
+          $("#cpcTotalID").html("ประเมินสมรรถนะเสร็จ: "+response.cpcComplete+" คน");
+          $("#kpiTotalID").html("ประเมินตัวชี้วัดเสร็จ: "+response.kpiComplete+" คน");
+          $("#login_status").html("ไม่ต้องรับการประเมิน: "+login_status_0_count+" คน");
           progressBar("#percent_completeID")
           // console.log(response.msg)
         },
           error: function (textStatus, errorThrown) {
             $("#percent_completeID").attr("aria-pause", 0);
-            $("#personTotalID").html("จำนวนรายชื่อทั้งหมด: "+0+" คน");
-            $("#cpcTotalID").html("ประเมินสมรรถนะเสร็จจำนวน: "+0+" คน");
-            $("#kpiTotalID").html("ประเมินตัวชี้วัดเสร็จจำนวน: "+0+" คน");
+            $("#personTotalID").html("จำนวนรายชื่อผู้รับการประเมิน: "+0+" คน");
+            $("#cpcTotalID").html("ประเมินสมรรถนะเสร็จ: "+0+" คน");
+            $("#kpiTotalID").html("ประเมินสมรรถนะเสร็จ: "+0+" คน");
+            $("#login_status").html("ไม่ต้องรับการประเมิน: "+0+" คน");
             progressBar("#percent_completeID") 
               }
       });
@@ -745,7 +768,7 @@ function cpc135_2(per_cardno,years) {
                 // console.log(arrPer_cardno)
                                 // var e =  $("#id2").append("<li></li>")
                 $.ajax({
-                    url: "module/report_admin/ajax-query-update_score.php",
+                    url: "module/report_admin/ajax-query-update_score3.php",
                     dataType: "json",
                     type: "POST",
                     data: {"per_cardno":per_cardno,
@@ -760,7 +783,7 @@ function cpc135_2(per_cardno,years) {
                             "end_evaluation":response.table_year.end_evaluation,
                             "table_year":response.table_year.table_year },
                     success: function (result) {
-                        $("#id2").prepend("<li>"+result.result+"</li>")
+                        $("#id2").prepend("<li>"+result.result+"</li>") 
                     },
                     error: function (textStatus, errorThrown) {
                             per_cardno_err.push(per_cardno) 
@@ -801,20 +824,20 @@ function cpc135_2(per_cardno,years) {
             per_cardno_err.forEach(function(per_cardno){
         
               $.ajax({
-                      url: "module/report_admin/ajax-query-update_score.php",
+                      url: "module/report_admin/ajax-query-update_score3.php",
                       dataType: "json",
                       type: "POST",
                       data: {"per_cardno":per_cardno,
-                              "per_personal":response.result.per_personal,
-                              "cpc_score":response.result.cpc_score,
-                              "cpc_score_result":response.result.cpc_score_result,
-                              "kpi_score":response.result.kpi_score,
-                              "kpi_score_result":response.result.kpi_score_result,
-                              "kpi_comment":response.result.kpi_comment,
-                              "idp_score":response.result.idp_score,
-                              "start_evaluation":response.result.start_evaluation,
-                              "end_evaluation":response.result.end_evaluation,
-                              "table_year":response.result.table_year },
+                              "per_personal":response.data.per_personal,
+                              "cpc_score":response.data.cpc_score,
+                              "cpc_score_result":response.data.cpc_score_result,
+                              "kpi_score":response.data.kpi_score,
+                              "kpi_score_result":response.data.kpi_score_result,
+                              "kpi_comment":response.data.kpi_comment,
+                              "idp_score":response.data.idp_score,
+                              "start_evaluation":response.data.start_evaluation,
+                              "end_evaluation":response.data.end_evaluation,
+                              "table_year":response.data.table_year },
                       success: function (result) {
                         $("#id2").prepend("<li>"+result.result+"</li>")
                         i = per_cardno_err.indexOf(per_cardno.toString())

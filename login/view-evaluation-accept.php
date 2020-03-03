@@ -6,8 +6,16 @@ include_once 'module/module_person/class-person.php';
 include_once 'module/cpc/class-cpc.php';
 include_once 'module/kpi/class-kpi.php';
 include_once "includes/class.permission.php";
+include_once "module/myClass.php";
 
 
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$per_personal = $currentYear['data']['per_personal'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$detailYear = $currentYear['data']['detail'];
+$year = $currentYear['data']['table_year'];
 
 if(!isset($_SESSION[__USER_ID__]) ){ 
   header("location:login-dpis.php");
@@ -46,7 +54,7 @@ $SelectSubordinate = "SELECT `per_id`,
                               `level_name`,
                               `per_picture`,
                               `head` 
-                       FROM ".$person->tbl_per_personal.
+                       FROM ".$per_personal.
                       " WHERE head = :head ";
                     
 $stm = $person->conn->prepare($SelectSubordinate);
@@ -345,9 +353,9 @@ function createButton($cpcStatus,$kpiStatus,$per_cardno,$name,$years) {
                     <div class="col-md-12 col-sm-12 col-xs-12">
                           <?php
                             if (count($result) > 0) {
-                              $part = explode("-",__year__);
+                              
                              echo '<a class="date-title">
-                                      <small class="date-title-text">ประเมินรอบที่ '.$part[1].' ประจำปีงบประมาณ '.($part[0]+543).'</small>
+                                      <small class="date-title-text">'.$detailYear.'</small>
                                   </a>';
                               echo '<table id="evaluation-table" class="table table-hover table-bordered" >
                                     <thead class="thead-for-user">
@@ -361,8 +369,8 @@ function createButton($cpcStatus,$kpiStatus,$per_cardno,$name,$years) {
                                     </thead>
                                     <tbody id="evaluation-table-tbody">';
                                     foreach ($result as $key => $value) {
-                                      $cpcStatus3 = $cpc->cpcStatus3($value['per_cardno'],__year__);
-                                      $kpiStatus3 = $kpi->kpiStatus3($value['per_cardno'],__year__);
+                                      $cpcStatus3 = $cpc->cpcStatus3($value['per_cardno'],$year,$cpcScoreTable);
+                                      $kpiStatus3 = $kpi->kpiStatus3($value['per_cardno'],$year,$kpiScoreTable );
                                       $name = $value['per_name']." ".$value['per_surname'];
                                       echo "<tr>";
                                       echo "<td>".
@@ -381,7 +389,7 @@ function createButton($cpcStatus,$kpiStatus,$per_cardno,$name,$years) {
                                              ".Createbar($cpcStatus3,$kpiStatus3,$value['per_cardno'])."
                                            
                                           </td>";
-                                      echo "<td>".createButton($cpcStatus3,$kpiStatus3,$value['per_cardno'],$name,__year__)."</td>";
+                                      echo "<td>".createButton($cpcStatus3,$kpiStatus3,$value['per_cardno'],$name,$year)."</td>";
                                       echo "<td class='text-center'>-</td>";
                                       echo "</tr>";
                                     }
@@ -471,7 +479,7 @@ function createButton($cpcStatus,$kpiStatus,$per_cardno,$name,$years) {
                 <div class="col-md-4 col-sm-4 col-xs-4">
                     <form action="" method="post" name="frm_accept_all" id="frm_accept_all">
                       <input type="hidden" name="accept_per_cardno" id="accept_per_cardno"> 
-                      <input type="hidden" name="accept_year" id="accept_year">
+                      <!-- <input type="hidden" name="accept_year" id="accept_year"> -->
                     </form>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-4" id="div_accept_all">
@@ -612,7 +620,7 @@ function confrim_bypass_load(per_cardno,years,name) {
         }else{
           $("#head-scoreSum-cpc-kpi").html("-");
           $("#accept_per_cardno").val(per_cardno);
-          $("#accept_year").val(years);
+          // $("#accept_year").val(years);
           $("#btn_accept_all").prop("disabled",false);
         }
 
@@ -636,7 +644,7 @@ $("#btn_accept_all").click(function (e) {
         dataType: "JSON",
         success: function (resYear) {
           $.ajax({
-                  url: "module/report_admin/ajax-query-update_score.php",
+                  url: "module/report_admin/ajax-query-update_score3.php",
                   dataType: "json",
                   type: "POST",
                   data: {"per_cardno":$("#accept_per_cardno").val(),

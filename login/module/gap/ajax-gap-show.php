@@ -3,6 +3,7 @@ session_start();
 include_once '../../config.php';
 include_once '../../includes/dbconn.php';
 include_once "class-report.php";
+include_once "../myClass.php";
 
 
 $cpcResult = array("success" => "",
@@ -12,8 +13,12 @@ $cpcTypeKey = array(1,2,3,4,5,6);
 $success =  array();
 $success['text'] = "";
 $report = new report;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$year = $currentYear['data']['table_year'];
+$cpcScoreTable = $currentYear['data']['cpc_score'];
 
-(!empty($_POST['per_cardno'])? $cpcResult =  $report->tableCPC($_POST['per_cardno'],$_POST['years'],$cpcTypeKey,$tbl_per_personal,$tbl_cpc_score) : $cpcResult);
+(!empty($_POST['per_cardno'])? $cpcResult =  $report->tableCPC($_POST['per_cardno'],$year,$cpcTypeKey,$currentYear['data']['per_personal'],$cpcScoreTable) : $cpcResult);
 $r = $report->cal_gap_chart($cpcResult);
 
 foreach ($r as $key => $value) {

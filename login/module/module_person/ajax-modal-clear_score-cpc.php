@@ -1,10 +1,13 @@
 <?php
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
-
+include_once "../myClass.php";
 $db = new DbConn;
 $success = array();
 $test = "";
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$cpc_score = $currentYear['data']['cpc_score'];
 // echo "<pre>";
 // print_r($_POST['cpc_score_id']);
 // echo "</pre>";
@@ -14,7 +17,7 @@ if(!empty($_POST['cpc_score_id'])){
     $sqlIN = implode(",",$text);
    
     if ($_POST['typeClear'] == 1) {
-        $sql = "UPDATE $tbl_cpc_score SET 
+        $sql = "UPDATE $cpc_score SET 
                 cpc_score1 = null ,
                 cpc_score2 = null ,
                 cpc_score3 = null ,
@@ -32,7 +35,7 @@ if(!empty($_POST['cpc_score_id'])){
                 cpc_comment5 = null
                 WHERE  cpc_score_id IN ($sqlIN) ";
     }elseif ($_POST['typeClear'] == 2) {
-        $sql = "UPDATE $tbl_cpc_score SET 
+        $sql = "UPDATE $cpc_score SET 
                 cpc_accept1 = null ,
                 cpc_accept2 = null ,
                 cpc_accept3 = null ,

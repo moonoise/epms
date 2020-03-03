@@ -55,7 +55,7 @@ if ($doneScore['result'] === 0) {   //เท่ากับ 0 ให้ save ค
 //KPI
 $kpiDone = $classReport->KPIscoreDone($_POST['per_cardno'],$_POST['kpi_score'],$_POST['table_year']);
 if ($kpiDone['success'] == true && $kpiDone['result'] === 0 && $kpiDone['checkaccept'] === 0 ) {
-    $kpiResult = $classReport->tableKPI($_POST['per_cardno'],$_POST['table_year'],$_POST['kpi_score']) ;
+    $kpiResult = $classReport->tableKPI($_POST['per_cardno'],$_POST['table_year'],$_POST['per_personal'],$_POST['kpi_score']) ;
     $kpi = $classReport->reportKPI1($kpiResult);
     $ThroughTrial = $classReport->personalThroughTrial($_POST['per_cardno'],$_POST['per_personal']);
 

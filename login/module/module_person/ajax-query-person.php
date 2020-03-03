@@ -1,14 +1,17 @@
 <?php
-//include_once "../../config.php";
-//include_once "../../includes/dbconn.php";
+include_once "../../config.php";
+include_once "../../includes/dbconn.php";
+include_once "../myClass.php";
 
 $db = new DbConn;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
 // foreach ($_POST as $key => $value) {
 //    echo $key ."->". $value;
 // }
 if(isset($_POST['org_id_2']) and $_POST['org_id_2'] != ""){
 
-    $sql = "select * from ".$tbl_per_personal." where org_id_2 = :org_id_2";
+    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id_2 = :org_id_2";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id_2',$_POST['org_id_2']);
     $stm->execute();
@@ -18,7 +21,7 @@ if(isset($_POST['org_id_2']) and $_POST['org_id_2'] != ""){
     
 }elseif (isset($_POST['org_id_1']) and $_POST['org_id_1'] != "") {
 
-    $sql = "select * from ".$tbl_per_personal." where org_id_1 = :org_id_1";
+    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id_1 = :org_id_1";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id_1',$_POST['org_id_1']);
     $stm->execute();
@@ -27,7 +30,7 @@ if(isset($_POST['org_id_2']) and $_POST['org_id_2'] != ""){
     createButton($result);
   
 }elseif (isset($_POST['org_id']) and $_POST['org_id'] != "") {
-    $sql = "select * from ".$tbl_per_personal." where org_id = :org_id";
+    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id = :org_id";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id',$_POST['org_id']);
     $stm->execute();

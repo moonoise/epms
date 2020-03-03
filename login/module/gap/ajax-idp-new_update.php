@@ -2,14 +2,23 @@
 session_start();
 include_once '../../config.php';
 include_once '../../includes/dbconn.php';
+include_once "../myClass.php";
 
 $success = array();
 $db = new DbConn;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$personalTable = $currentYear['data']['per_personal'];
+$kpiComment = $currentYear['data']['kpi_comment'];
+$idpScoreTable = $currentYear['data']['idp_score'];
+
 $success['msg'] = "";
 
 if ($_POST['new_idp_id'] == "") {
     try{
-        $sql = "INSERT INTO ".$db->tbl_idp_score." (`idp_id` , `per_cardno` , `years` ,
+        $sql = "INSERT INTO $idpScoreTable (`idp_id` , `per_cardno` , `years` ,
                                      `idp_type` , `idp_type_detail` ,`idp_title` ,`idp_training_method` ,
                                      `idp_training_hour` ,`question_no` ) 
                 VALUES (NULL , :per_cardno , :years ,
@@ -39,7 +48,7 @@ if ($_POST['new_idp_id'] == "") {
 }else {
     
     try{
-        $sqlUpdate = "UPDATE ".$db->tbl_idp_score." SET  `idp_type` = :idp_type,
+        $sqlUpdate = "UPDATE $idpScoreTable SET  `idp_type` = :idp_type,
                                              `idp_type_detail` = :idp_type_detail, 
                                              `idp_title` = :idp_title,
                                              `idp_training_method` = :idp_training_method,

@@ -4,8 +4,12 @@ include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-person.php";
 include_once "../report/class-report.php";
+include_once "../myClass.php";
+
 $db = new DbConn;
 $person = new person;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
 // foreach ($_POST as $key => $value) {
 //    echo $key ."->". $value;
 // }
@@ -18,10 +22,10 @@ if (isset($_POST['org_id_2']) and $_POST['org_id_2'] != "") {
 }
 
 
-    $sql = "select * ,per_level.position_level from ".$tbl_per_personal." 
-            LEFT JOIN per_level ON per_level.level_no = ".$tbl_per_personal.".level_no
+    $sql = "select * ,per_level.position_level from ".$currentYear['data']['per_personal']." 
+            LEFT JOIN per_level ON per_level.level_no = ".$currentYear['data']['per_personal'].".level_no
             where org_id = :org_id OR org_id_1 = :org_id OR org_id_2 = :org_id ";
-    // $sql = "select * from ".$tbl_per_personal." 
+    // $sql = "select * from ".$currentYear['data']['per_personal']." 
     // where org_id = :org_id OR org_id_1 = :org_id OR org_id_2 = :org_id ";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id',$orgSelect);

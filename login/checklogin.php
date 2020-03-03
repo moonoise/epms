@@ -3,7 +3,6 @@
 //'true' triggers login success
 ob_start();
 include 'config.php';
-// require 'includes/functions.php';
 include_once 'includes/ociConn.php';
 include_once 'includes/dbconn.php';
 include_once 'includes/respobj.php';
@@ -11,6 +10,8 @@ include_once 'includes/loginform.php';
 
 include_once "includes/class.password-hash.php";
 include_once "includes/class-userOnline.php";
+include_once "module/myClass.php";
+
 // Define $myusername and $mypassword
 $username = $_POST['myusername'];
 $password = $_POST['mypassword'];
@@ -21,11 +22,13 @@ $password = stripslashes($password);
 
 $response = '';
 $loginCtl = new LoginForm;
-// $conf = new GlobalConf;
+
 $userOnline = new userOnline;
 $db = new DbConn;
 
-
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$per_personal = $currentYear['data']['per_personal'];
 
 //-------------------------------
 $response = $loginCtl->checkLogin($username, $password);
@@ -60,20 +63,7 @@ if ($response['check'] == 'true') {
                 $_SESSION[__EVALUATION_ON_OFF__] = "disabled";
         }
 
-        // $sqlSelectTableYear = "SELECT * FROM `table_year` WHERE `table_year`.`table_year` = (SELECT config_value FROM config WHERE config_name = '__year__')"; 
-        // $stmY = $db->conn->prepare($sqlSelectTableYear);
-        // $stmY->execute();
-        // $resultY = $stmY->fetchAll(PDO::FETCH_ASSOC);
-        // $_SESSION['per_personal'] =  $resultY[0]['per_personal'];
-        // $_SESSION['cpc_score'] =  $resultY[0]['cpc_score']; 
-        // $_SESSION['cpc_score_result'] =  $resultY[0]['cpc_score_result']; 
-        // $_SESSION['kpi_score'] =  $resultY[0]['kpi_score']; 
-        // $_SESSION['kpi_score_result'] =  $resultY[0]['kpi_score_result']; 
-        // $_SESSION['kpi_comment'] =  $resultY[0]['kpi_comment']; 
-        // $_SESSION['idp_score'] =  $resultY[0]['idp_score'];
-        // $_SESSION['start_evaluation'] =  $resultY[0]['start_evaluation']; 
-        // $_SESSION['end_evaluation'] =  $resultY[0]['end_evaluation']; 
-        // $_SESSION['table_year'] =  $resultY[0]['table_year'];   
+
 
         $resp = new RespObj($username, $response['check']);
         $jsonResp = json_encode($resp);

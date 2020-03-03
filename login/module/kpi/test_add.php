@@ -2,8 +2,16 @@
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-kpi.php";
+include_once "../myClass.php";
 
  $kpi = new kpi;
+ $myClass = new myClass;
+ $currentYear = $myClass->callYear();
+
+ $kpiScoreTable = $currentYear['data']['kpi_score'];
+ $kpiComment = $currentYear['data']['kpi_comment'];
+ $per_personalTable = $currentYear['data']['per_personal'];
+
 $d = date("Y-m-d H:i:s");
 $setData = array("kpi_code" => "1234",
                 "per_cardno" => "1111",
@@ -19,7 +27,7 @@ $setData = array("kpi_code" => "1234",
                 "date_who_id_accept" => $d
                  );
 
-$n = $kpi->kpiScoreAdd($setData);
+$n = $kpi->kpiScoreAdd($setData,$kpiScoreTable);
 
 if ($n['success'] != true ) {
     echo $n['success'] ."<br>". $n['msg'];

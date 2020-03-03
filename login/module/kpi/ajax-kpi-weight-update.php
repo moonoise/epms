@@ -7,6 +7,7 @@
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "class-kpi.php";
+    include_once "../myClass.php";
 
     $d = date("Y-m-d H:i:s");
     $dateSet = array('per_cardno' => $_GET['per_cardno'],
@@ -15,8 +16,14 @@
                     'date_key_score' => $d  );
                     
     $kpi = new kpi;
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
+    $per_personalTable = $currentYear['data']['per_personal'];
   
-    $success = $kpi->KpiScoreUpdateWeight($dateSet);
+    $success = $kpi->KpiScoreUpdateWeight($dateSet,$kpiScoreTable);
 
 
 

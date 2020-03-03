@@ -4,20 +4,26 @@
         include_once "../../config.php";
         include_once "../../includes/dbconn.php";
         include_once "class-cpc.php";
+        include_once "../myClass.php";
+
         $success = array();
 
         $cpc = new cpc;
+        $myClass = new myClass;
+        $currentYear = $myClass->callYear();
+        $cpcScoreTable = $currentYear['data']['cpc_score'];
+        $year = $currentYear['data']['table_year'];
         
         $n = 1;                
         foreach ($cpcType as $key => $value) {
            
            
             $dataSet = array('per_cardno' => $_GET['per_cardno'],
-                         'years' => __year__,
+                         'years' => $year,
                         'soft_delete' => 0,
                         'question_type' => $key
                         );
-            $result = $cpc->cpcScoreSelect($dataSet);
+            $result = $cpc->cpcScoreSelect($dataSet,$cpcScoreTable);
             if (count($result['result']) > 0) {
                 echo "<tr>";
                 echo "<td class='success' colspan= '5'>".$value."</td>";

@@ -5,6 +5,7 @@ include_once 'includes/dbconn.php';
 include_once "module/report/class-report.php";
 include_once "module/module_profile/class.profile.php";
 include_once "includes/class.permission.php";
+include_once "module/myClass.php";
 $per_cardno ="";
 $kpiResult = array("success" => "",
                     "result" => "",
@@ -30,14 +31,14 @@ if(!isset($_SESSION[__USER_ID__]) ){
         header("location:login-dpis.php");
     }
 activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
+$myClass = new myClass;
+$callYearsOld = $myClass->callYearsOld();
+// echo "<pre>";
+// print_r($callYearsOld);
+// echo "</pre>";
 
-$db = new DbConn;
-$sql = "SELECT * FROM `table_year` " ;
-$stm = $db->conn->prepare($sql);
-$stm->execute();
-$listYear = $stm->fetchAll(PDO::FETCH_ASSOC);
 $listHTML = '<option value="">เลือกรอบการประเมิน</option>';
-foreach( $listYear as $key => $value){
+foreach( $callYearsOld['data'] as $key => $value){
     $partY = explode("-",$value['table_year']);
     $listHTML .= '<option value="'.$value['table_year'].'">'.($partY[0]+543).' (รอบที่ '.$partY[1].')</option>';
     // $listHTML .= '<option value="'.$value['table_year'].'-2">'.($value['table_year']+543).' (รอบที่ 2)</option>'; 

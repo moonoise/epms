@@ -3,17 +3,23 @@
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "../kpi/class-kpi.php";
+    include_once "../myClass.php";
 
     $t = "";
     $kpi = new kpi;
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $per_personalTable = $currentYear['data']['per_personal'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
 
-    $checkScore = $kpi->kpiBtnStatus1($_GET['kpi_score_id']);
+    $checkScore = $kpi->kpiBtnStatus1($_GET['kpi_score_id'],$kpiScoreTable);
 
     if ($checkScore['success'] === true) {
         $scoreDisabled  = 'Disabled';
         $acceptDisabled = '';
 
-        $checkaccept = $kpi->kpiBtnStatus2($_GET['kpi_score_id']);
+        $checkaccept = $kpi->kpiBtnStatus2($_GET['kpi_score_id'],$kpiScoreTable);
         if ($checkaccept['success'] === true) {
             $acceptDisabled = 'Disabled';
         }
@@ -37,14 +43,14 @@
                         `works_name`,
                         `kpi_accept`,
                         `kpi_comment`
-                    FROM ".$kpi->tbl_kpi_score."
+                    FROM  $kpiScoreTable
                     WHERE `kpi_score_id` = :kpi_score_id ";
     $stm2 = $kpi->conn->prepare($sqlKpiScore);
     $stm2->bindParam(":kpi_score_id",$_GET['kpi_score_id']);
     $stm2->execute();
     $r = $stm2->fetchAll();
 
-    $sqlComment = "SELECT * FROM ".$kpi->tbl_kpi_comment." WHERE  `kpi_score_id` = :kpi_score_id ";
+    $sqlComment = "SELECT * FROM $kpiComment WHERE  `kpi_score_id` = :kpi_score_id ";
     $stm3 = $kpi->conn->prepare($sqlComment);
     $stm3->bindParam(":kpi_score_id",$_GET['kpi_score_id']);
     $stm3->execute();
@@ -123,7 +129,7 @@
         if ($cComment > 0 ) {
             $t .= "<tr><td colspan='6'><label> <h5 class='text text-info'>ความเห็นของผู้บังคับบัญชา </h5></lable></td></tr>";
             foreach ($rComment as $key => $value) {
-                $h = $kpi->WhoIsHead($value['kpi_score_id']);
+                $h = $kpi->WhoIsHead($value['kpi_score_id'],$per_personalTable,$kpiScoreTable);
                 // echo "<pre>";
                 // print_r($h);
                 // echo "</pre>";

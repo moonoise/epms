@@ -1,11 +1,16 @@
 <?php
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
+include_once "../myClass.php";
 
 if(!empty($_GET['head']))
 {
     $db = new DbConn;
-    $sql = "SELECT * FROM ".$db->tbl_per_personal." WHERE head = :head";
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $personalTable = $currentYear['data']['per_personal'];
+
+    $sql = "SELECT * FROM $personalTable WHERE head = :head";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(":head",$_GET['head']);
     $stm->execute();

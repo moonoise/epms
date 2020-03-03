@@ -2,9 +2,15 @@
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "../kpi/class-kpi.php";
+include_once "../myClass.php";
 $err = '';
 $success = array();
-
+$kpi = new kpi;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$per_personalTable = $currentYear['data']['per_personal'];
+$kpiComment = $currentYear['data']['kpi_comment'];
 // foreach ($_POST as $key => $value) {
 //     echo $key ."->". $value ."<br>";
 // }
@@ -14,16 +20,13 @@ if(isset($_POST['works_name']) and strlen($_POST['works_name'])>0 ){ $works_name
 
 if (!empty($_POST['kpi_score_id']) && !empty($_POST['kpi_code']) ) {
     
-        $kpi = new kpi;
-        
-       
                 try{
                     if (is_numeric($_POST['modal_kpi_score_raw'])) {
                         $s = $kpi->processScoreType2($_POST['kpi_code'],$_POST['modal_kpi_score_raw']);
                         if ($s['success'] === true or $s['success'] === false) {
                             $ss = round($s['result'], 2);  //แปลงทศนิยมให้เหลือ 2 ตำแหน่ง
 
-                            $sql = "UPDATE ".$kpi->tbl_kpi_score." SET `kpi_score_raw` = :modal_kpi_score_raw,
+                            $sql = "UPDATE $kpiScoreTable SET `kpi_score_raw` = :modal_kpi_score_raw,
                                                             `kpi_score` = :kpi_score
                                                             WHERE `kpi_score_id` = :kpi_score_id 
                                                             AND (`kpi_accept` <> 1 OR `kpi_accept` IS NULL)";
@@ -53,7 +56,7 @@ if (!empty($_POST['kpi_score_id']) && !empty($_POST['kpi_code']) ) {
                         $success['msg_score'] = "ต้องเป็นตัวเลข 1-100 เท่านั้น";
                     }
 
-                    $sql = "UPDATE ".$kpi->tbl_kpi_score." SET `works_name` = :works_name
+                    $sql = "UPDATE $kpiScoreTable SET `works_name` = :works_name
                             WHERE `kpi_score_id` = :kpi_score_id ";
                     $stm = $kpi->conn->prepare($sql);
                     $stm->bindParam(":works_name",$works_name);

@@ -1,14 +1,17 @@
 <?php
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
+include_once "../myClass.php";
 
 $db = new DbConn;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
 // foreach ($_POST as $key => $value) {
 //     echo $key."->".$value;
 // }
 if(isset($_POST['org_id_2-head']) and $_POST['org_id_2-head'] != ""){
 
-    $sql = "select * from ".$tbl_per_personal." where org_id_2 = :org_id_2 and (head != :head or head IS NULL ) AND  per_cardno != :head  ";
+    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id_2 = :org_id_2 and (head != :head or head IS NULL ) AND  per_cardno != :head  ";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id_2',$_POST['org_id_2-head']);
     $stm->bindParam(':head',$_POST['modal-per_cardno-settingHead-input']);
@@ -19,7 +22,7 @@ if(isset($_POST['org_id_2-head']) and $_POST['org_id_2-head'] != ""){
     
 }elseif (isset($_POST['org_id_1-head']) and $_POST['org_id_1-head'] != "") {
 
-    $sql = "select * from ".$tbl_per_personal." where org_id_1 = :org_id_1 and (head != :head or head IS NULL) AND  per_cardno != :head";
+    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id_1 = :org_id_1 and (head != :head or head IS NULL) AND  per_cardno != :head";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id_1',$_POST['org_id_1-head']);
     $stm->bindParam(':head',$_POST['modal-per_cardno-settingHead-input']);
@@ -29,7 +32,7 @@ if(isset($_POST['org_id_2-head']) and $_POST['org_id_2-head'] != ""){
     dataTable($result);
   
 }elseif (isset($_POST['org_id-head']) and $_POST['org_id-head'] != "") {
-    $sql = "select * from ".$tbl_per_personal." where org_id = :org_id and (head != :head or head IS NULL ) AND  per_cardno != :head";
+    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id = :org_id and (head != :head or head IS NULL ) AND  per_cardno != :head";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id',$_POST['org_id-head']);
     $stm->bindParam(':head',$_POST['modal-per_cardno-settingHead-input']);

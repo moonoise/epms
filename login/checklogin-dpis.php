@@ -8,6 +8,7 @@ include_once 'includes/class.login-dpis.php';
 include_once 'includes/dbconn.php';
 include_once 'includes/respobj.php';
 include_once "includes/class-userOnline.php";
+include_once "module/myClass.php";
 // Define $myusername and $mypassword
 $username = $_POST['myusername'];
 $password = $_POST['mypassword'];
@@ -22,8 +23,11 @@ $response = '';
 $loginCtl = new LoginDPIS;
 $userOnline = new userOnline;
 $db = new DbConn;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$per_personal = $currentYear['data']['per_personal'];
 
-$s = "SELECT `login_status` FROM ".$db->tbl_per_personal." WHERE `per_cardno` = :username";
+$s = "SELECT `login_status` FROM ".$per_personal." WHERE `per_cardno` = :username";
 $stmStatus = $db->conn->prepare($s);
 
 $stmStatus->bindParam(":username",$username);
@@ -32,12 +36,12 @@ $resultStatus = $stmStatus->fetchAll();
 $c = $stmStatus->rowCount();
 if($c == 1) {
         if ($resultStatus[0]['login_status'] == 1 ) {
-                $response = $loginCtl->checkLogin($username, $password);
+                $response = $loginCtl->checkLogin($username, $password,$per_personal);
                 if ($response['check'] == 'true') {
         
                         
                        
-                        $sql = "SELECT org_id,org_id_1,org_id_2 FROM ".$db->tbl_per_personal." WHERE per_cardno = :user_id";
+                        $sql = "SELECT org_id,org_id_1,org_id_2 FROM ".$per_personal." WHERE per_cardno = :user_id";
                         $stm = $db->conn->prepare($sql);
                         $stm->bindParam(":user_id",$response['user_id']);
                         $stm->execute();
@@ -47,22 +51,6 @@ if($c == 1) {
                              $_SESSION[__ORG_ID_1__] =  $result[0]['org_id_1']; 
                              $_SESSION[__ORG_ID_2__] =  $result[0]['org_id_2']; 
                         }
-                        
-                        // $sqlSelectTableYear = "SELECT * FROM `table_year` WHERE `table_year`.`table_year` = (SELECT config_value FROM config WHERE config_name = '__year__')"; 
-                        // $stmY = $db->conn->prepare($sqlSelectTableYear);
-                        // $stmY->execute();
-                        // $resultY = $stmY->fetchAll(PDO::FETCH_ASSOC);
-                        // $_SESSION['per_personal'] =  $resultY[0]['per_personal'];
-                        // $_SESSION['cpc_score'] =  $resultY[0]['cpc_score']; 
-                        // $_SESSION['cpc_score_result'] =  $resultY[0]['cpc_score_result']; 
-                        // $_SESSION['kpi_score'] =  $resultY[0]['kpi_score']; 
-                        // $_SESSION['kpi_score_result'] =  $resultY[0]['kpi_score_result']; 
-                        // $_SESSION['kpi_comment'] =  $resultY[0]['kpi_comment']; 
-                        // $_SESSION['idp_score'] =  $resultY[0]['idp_score'];
-                        // $_SESSION['start_evaluation'] =  $resultY[0]['start_evaluation']; 
-                        // $_SESSION['end_evaluation'] =  $resultY[0]['end_evaluation']; 
-                        // $_SESSION['table_year'] =  $resultY[0]['table_year'];   
-
 
                         $_SESSION[__USER_ID__]   =  $response['user_id'] ;
                         $_SESSION[__USER_NAME__] = $response['username'] ;

@@ -1,12 +1,16 @@
 <?php
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
+include_once "../myClass.php";
 
     $err = "";
     $success = array();
     $success['msg'] = "";
     try{
     $db = new DbConn;
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
+    $personalTable = $currentYear['data']['per_personal'];
 
     $sql = "SELECT  `per_cardno` ,
                      `pn_name`, 
@@ -16,7 +20,7 @@ include_once "../../includes/dbconn.php";
                     `org_name`,
                     `org_name1`,
                     `org_name2`
-                     FROM ".$db->tbl_per_personal." 
+                     FROM $personalTable
                      WHERE `per_name` = :fname AND `per_surname` like :lname AND per_cardno <> :per_cardno_user ";
     $stm = $db->conn->prepare($sql);
     $lname = "%".$_POST['lname']."%";

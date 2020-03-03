@@ -3,13 +3,13 @@
 // @include_once "../../includes/dbconn.php";
 class kpi extends DbConn {
 
-    function kpiScoreAdd($data) {
+    function kpiScoreAdd($data,$kpiScoreTable) {
         $err = "";
         $success = array();
    
             try{
                
-                $sql = "INSERT INTO ".$this->tbl_kpi_score." 
+                $sql = "INSERT INTO $kpiScoreTable 
                     (`kpi_code`,
                     `per_cardno`,
                     `id_admin`,
@@ -63,17 +63,17 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function KpiScoreUpdateWeight($data) {
+    function KpiScoreUpdateWeight($data,$kpiScoreTable) {
         $err = "";
         $success = array();
    
             try{
                 
                 $checkWeight = "SELECT sum(t1.`weight`) as result FROM  
-                                    (SELECT ".$this->tbl_kpi_score.".`weight` FROM `".$this->tbl_kpi_score."`  
-                                     WHERE ".$this->tbl_kpi_score.".`per_cardno` = :per_cardno 
-                                     AND ".$this->tbl_kpi_score.".`soft_delete` = 0
-                                     AND ".$this->tbl_kpi_score.".`kpi_score_id` <> :kpi_score_id) as t1";
+                                    (SELECT `$kpiScoreTable`.`weight` FROM $kpiScoreTable  
+                                     WHERE `$kpiScoreTable`.`per_cardno` = :per_cardno 
+                                     AND `$kpiScoreTable`.`soft_delete` = 0
+                                     AND `$kpiScoreTable`.`kpi_score_id` <> :kpi_score_id) as t1";
                 $checkStm = $this->conn->prepare($checkWeight);
                 $checkStm->bindParam(":per_cardno",$data['per_cardno']);
                 $checkStm->bindParam(":kpi_score_id",$data['kpi_score_id']);
@@ -89,7 +89,7 @@ class kpi extends DbConn {
                     $success['success'] = false;
                     $success['msg'] = "ค่าน้ำหนักของท่านเกิน 100 <br> รวมค่าน้ำหนักที่ได้คือ <b class='text-danger'>$c</b> ";
                   }else {
-                    $sql = "UPDATE ".$this->tbl_kpi_score." SET `weight` = :weightScore ,`date_key_score` = :date_key_score WHERE `kpi_score_id` = :kpi_score_id ";
+                    $sql = "UPDATE $kpiScoreTable SET `weight` = :weightScore ,`date_key_score` = :date_key_score WHERE `kpi_score_id` = :kpi_score_id ";
                      $stm = $this->conn->prepare($sql);
                     $stm->bindParam(":kpi_score_id",$data['kpi_score_id']);
                     $stm->bindParam(":weightScore",$data['weight']);
@@ -103,7 +103,7 @@ class kpi extends DbConn {
                         $success['success'] = false;
                         $success['msg'] = "ค่าน้ำหนักของท่านเกิน 100 <br> รวมค่าน้ำหนักที่ได้คือ <b class='text-danger'>".$data['weight']."</b> ";
                       }else {
-                        $sql = "UPDATE ".$this->tbl_kpi_score." SET `weight` = :weightScore ,`date_key_score` = :date_key_score WHERE `kpi_score_id` = :kpi_score_id ";
+                        $sql = "UPDATE $kpiScoreTable SET `weight` = :weightScore ,`date_key_score` = :date_key_score WHERE `kpi_score_id` = :kpi_score_id ";
                          $stm = $this->conn->prepare($sql);
                         $stm->bindParam(":kpi_score_id",$data['kpi_score_id']);
                         $stm->bindParam(":weightScore",$data['weight']);
@@ -122,13 +122,13 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function KpiScoreSoftDelete($data) {
+    function KpiScoreSoftDelete($data,$kpiScoreTable) {
         $err = "";
         $success = array();
    
             try{
                 
-                $sql = "UPDATE ".$this->tbl_kpi_score." SET `soft_delete` = :soft_delete ,`date_key_score` = :date_key_score 
+                $sql = "UPDATE $kpiScoreTable SET `soft_delete` = :soft_delete ,`date_key_score` = :date_key_score 
                 WHERE `kpi_score_id` = :kpi_score_id ";
                 $stm = $this->conn->prepare($sql);
                 //echo $data['weight'];
@@ -150,13 +150,13 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function KpiScoreDelete($data) {
+    function KpiScoreDelete($data,$kpiScoreTable) {
         $err = "";
         $success = array();
    
             try{
                
-                $sql = "DELETE FROM ".$this->tbl_kpi_score." 
+                $sql = "DELETE FROM $kpiScoreTable 
                 WHERE `kpi_score_id` = :kpi_score_id ";
                 $stm = $this->conn->prepare($sql);
                 //echo $data['weight'];
@@ -175,35 +175,35 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function KpiScoreSelect($per_cardno) { //ใช้ครับ ไฟล์ ajax-modal-kpi-score-show.php และ ajax-modal-clear_score.php
+    function KpiScoreSelect($per_cardno,$kpiScoreTable,$year) { //ใช้ครับ ไฟล์ ajax-modal-kpi-score-show.php และ ajax-modal-clear_score.php
         $err = "";
         $success = array();
-        $years = __year__;
+        
             try{
                 
                 $sql = "SELECT
-                ".$this->tbl_kpi_score.".`kpi_score_id`,
-                ".$this->tbl_kpi_score.".`kpi_code`,
-                ".$this->tbl_kpi_score.".`per_cardno`,
-                ".$this->tbl_kpi_score.".`weight`,
-                ".$this->tbl_kpi_score.".`works_name`,
-                ".$this->tbl_kpi_score.".`kpi_score`,
-                ".$this->tbl_kpi_score.".`kpi_accept`,
+                `$kpiScoreTable`.`kpi_score_id`,
+                `$kpiScoreTable`.`kpi_code`,
+                `$kpiScoreTable`.`per_cardno`,
+                `$kpiScoreTable`.`weight`,
+                `$kpiScoreTable`.`works_name`,
+                `$kpiScoreTable`.`kpi_score`,
+                `$kpiScoreTable`.`kpi_accept`,
                 `kpi_question`.`kpi_code_org`,
                 `kpi_question`.`kpi_title`,
                 `kpi_question`.`kpi_type`,
                 `kpi_question`.`kpi_type2`
                 FROM
-                ".$this->tbl_kpi_score."
+                $kpiScoreTable
                 RIGHT JOIN `kpi_question`
-                ON ".$this->tbl_kpi_score.".`kpi_code` = `kpi_question`.`kpi_code`
-                WHERE ".$this->tbl_kpi_score.".`per_cardno` = :per_cardno 
-                AND ".$this->tbl_kpi_score.".`soft_delete` = 0 
-                AND ".$this->tbl_kpi_score.".`years` = :years
-                ORDER BY ".$this->tbl_kpi_score.".`kpi_score_id` asc";
+                ON `$kpiScoreTable`.`kpi_code` = `kpi_question`.`kpi_code`
+                WHERE `$kpiScoreTable`.`per_cardno` = :per_cardno 
+                AND `$kpiScoreTable`.`soft_delete` = 0 
+                AND `$kpiScoreTable`.`years` = :years
+                ORDER BY `$kpiScoreTable`.`kpi_score_id` asc";
                 $stm = $this->conn->prepare($sql);
                 $stm->bindParam(":per_cardno",$per_cardno);
-                $stm->bindParam(":years",$years);
+                $stm->bindParam(":years",$year);
                 $stm->execute();
                 
                 $result = $stm->fetchAll();
@@ -251,12 +251,12 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function ckData($per_cardno,$kpi_code) {
+    function ckData($per_cardno,$kpi_code,$kpiScoreTable) {
         $success = array();
         $err = '';
         try{
             
-            $sql = "SELECT kpi_score_id FROM ".$this->tbl_kpi_score." WHERE kpi_code = :kpi_code AND per_cardno = :per_cardno AND soft_delete = 0";
+            $sql = "SELECT kpi_score_id FROM $kpiScoreTable WHERE kpi_code = :kpi_code AND per_cardno = :per_cardno AND soft_delete = 0";
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":per_cardno",$per_cardno);
             $stm->bindParam(":kpi_code",$kpi_code);
@@ -449,13 +449,13 @@ class kpi extends DbConn {
     }
 
 
-    function kpiBtnStatus1($kpi_score_id) {  //รอยืนยัน
+    function kpiBtnStatus1($kpi_score_id,$kpiScoreTable) {  //รอยืนยัน
         $err = '';
         $success = array();
         try
         {
             $sql = "SELECT `kpi_score`
-                    FROM ".$this->tbl_kpi_score."
+                    FROM $kpiScoreTable
                     WHERE   `kpi_score_id` = :kpi_score_id" ;
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":kpi_score_id",$kpi_score_id);
@@ -486,14 +486,14 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function kpiBtnStatus2($kpi_score_id) {  //รอยืนยัน 
+    function kpiBtnStatus2($kpi_score_id,$kpiScoreTable) {  //รอยืนยัน 
         $err = '';
         $success = array();
         try
         {
             $sql = "SELECT `kpi_accept`,
                            `kpi_comment`
-                    FROM ".$this->tbl_kpi_score."
+                    FROM $kpiScoreTable
                     WHERE   `kpi_score_id` = :kpi_score_id" ;
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":kpi_score_id",$kpi_score_id);
@@ -525,13 +525,13 @@ class kpi extends DbConn {
         return $success;
     }
 
-    function kpiStatus3($per_cardno,$years) {   //สถานะของปุ่ม ผู้ยืนยันผล
+    function kpiStatus3($per_cardno,$years,$kpiScoreTable) {   //สถานะของปุ่ม ผู้ยืนยันผล
         $err = '';
         $success = array();
         $choiseFinish = 0;
         $choiseAccepted = 0;
         try{
-            $sql = "SELECT * FROM ".$this->tbl_kpi_score." 
+            $sql = "SELECT * FROM $kpiScoreTable 
                     WHERE `per_cardno` = :per_cardno 
                     AND years = :years 
                     AND soft_delete = 0";
@@ -568,12 +568,12 @@ class kpi extends DbConn {
 
     }
 
-    function noAccept($kpi_score_id,$comment,$dateNow) {
+    function noAccept($kpi_score_id,$comment,$dateNow,$kpiScoreTable) {
         $err = '';
         $success = array();
         $c= '';
         try{
-            $sql = "SELECT * FROM ".$this->tbl_kpi_score." 
+            $sql = "SELECT * FROM $kpiScoreTable 
                     WHERE `kpi_score_id` = :kpi_score_id ";
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":kpi_score_id",$kpi_score_id);
@@ -586,7 +586,7 @@ class kpi extends DbConn {
                 $c .= "วันที่: ".$dateNow."\t ผู้บัญคับบัญชา: ".$h['per_name']." ".$h['per_surname']."\n"
                       ."เหตุผล : ".$comment."\n";
 
-               $sqlUpdate = "UPDATE ".$this->tbl_kpi_score." SET `kpi_comment` = :c ,
+               $sqlUpdate = "UPDATE $kpiScoreTable SET `kpi_comment` = :c ,
                                     `kpi_score` = :kpi_score ,
                                     `kpi_score_raw` = :kpi_score_raw,
                                     `kpi_accept` = :kpi_accept
@@ -620,20 +620,20 @@ class kpi extends DbConn {
 
     }
 
-    function WhoIsHead($kpi_score_id) {  //accept-ajax-eva-kpi-modal-show-type3.php ,ajax-eva-kpi-modal-show-type2.php,ajax-eva-kpi-modal-show-type3.php
+    function WhoIsHead($kpi_score_id,$per_personal,$kpi_score) {  //accept-ajax-eva-kpi-modal-show-type3.php ,ajax-eva-kpi-modal-show-type2.php,ajax-eva-kpi-modal-show-type3.php
         $err = '';
         $success = array();
         try{
-            $sql = "SELECT * FROM ".$this->tbl_per_personal
-                    ."  where per_cardno = (select per_cardno from ".$this->tbl_per_personal
+            $sql = "SELECT * FROM ".$per_personal
+                    ."  where per_cardno = (select per_cardno from ".$per_personal
                     ." where per_cardno = :head) ";
 
 
-            $sql ="SELECT * FROM ".$this->tbl_per_personal." 
+            $sql ="SELECT * FROM ".$per_personal." 
                     where `per_cardno` = 
-                        (select `head` from ".$this->tbl_per_personal."
+                        (select `head` from ".$per_personal."
                         where `per_cardno` = 
-                            (select `per_cardno` FROM ".$this->tbl_kpi_score." WHERE `kpi_score_id` = :kpi_score_id ))";
+                            (select `per_cardno` FROM ".$kpi_score." WHERE `kpi_score_id` = :kpi_score_id ))";
 
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":kpi_score_id",$kpi_score_id);

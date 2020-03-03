@@ -2,6 +2,7 @@
 include_once '../../config.php';
 include_once '../../includes/dbconn.php';
 include_once "class-person.php";
+include_once "../myClass.php";
 
 $success = array();
 $success['success'] = null;
@@ -13,8 +14,12 @@ $success['head_name'] = null;
 $success['head_picname'] = null;
 
 $person = new person;
-$resultPerson = $person->personSelect($_POST['per_cardno']);
-$perHead = $person->perHead($_POST['per_cardno']);
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$personalTable = $currentYear['data']['per_personal'];
+
+$resultPerson = $person->personSelect($_POST['per_cardno'],$personalTable);
+$perHead = $person->perHead($_POST['per_cardno'],$personalTable);
 
 if ($resultPerson['success'] === true) {
     $success['success'] = true;

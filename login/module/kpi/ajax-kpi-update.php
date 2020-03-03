@@ -4,11 +4,18 @@ if(!emtpy($_GET['per_cardno']) && $_GET['kpi_code'] ){
     include_once "../../config.php";
     include_once "../../includes/dbconn.php";
     include_once "class-kpi.php";
+    include_once "../myClass.php";
     
     $kpi = new kpi;
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
 
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
+    $per_personalTable = $currentYear['data']['per_personal'];
+    $year = $currentYear['data']['table_year'];
     
-   if ($s = $kpi->ckData($_GET['per_cardno'],$_GET['kpi_code']) == true) {
+   if ($s = $kpi->ckData($_GET['per_cardno'],$_GET['kpi_code'],$kpiScoreTable) == true) {
     $d = date("Y-m-d H:i:s");
     $dataSet = array("kpi_code" => $_GET['kpi_code'],
                     "per_cardno" => $_GET['per_cardno'],
@@ -16,7 +23,7 @@ if(!emtpy($_GET['per_cardno']) && $_GET['kpi_code'] ){
                     "kpi_score" => null,
                     "weight" => null,
                    
-                    "years" => __year__,
+                    "years" =>  $year,
                     "date_key_score" => $d,
                     "kpi_accept" => null,
                     "kpi_comment" => null,

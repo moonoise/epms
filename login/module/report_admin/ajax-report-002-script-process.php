@@ -56,7 +56,7 @@ if ($errYears == "") {
         $cpcResult = $report->tableCPC($value['per_cardno'],$years,$cpcTypeKey,$per_personal,$cpc_score);
         $cpc = $report->reportCPC1($cpcResult);
      
-        $kpiResult = $report->tableKPI($value['per_cardno'],$years,$kpi_score);
+        $kpiResult = $report->tableKPI($value['per_cardno'],$years,$per_personal,$kpi_score);
         $kpi = $report->reportKPI1($kpiResult);
         // echo var_dump($kpi);
         if ( array_key_exists('text' , $cpc ) ) {

@@ -4,8 +4,14 @@
  include_once "../../includes/dbconn.php";
  include_once "../cpc/class-cpc.php";
  include_once "../kpi/class-kpi.php";
+ include_once "../myClass.php";
 
 $cpc = new cpc;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$year = $currentYear['data']['table_year'];
 $cpc_html = "";             
 
 $cpc_html .= '<table class="table table-striped">
@@ -30,11 +36,11 @@ $cpc_html .= '<table class="table table-striped">
 foreach ($cpcType as $key => $value) { //$cpcType  เอามาจาก config.php
     
     $dataSet = array('per_cardno' => $_POST['per_cardno'],
-                    'years' => __year__,
+                    'years' => $year,
                 'soft_delete' => 0,
                 'question_type' => $key
                 );
-    $result = $cpc->cpcScoreSelect($dataSet);
+    $result = $cpc->cpcScoreSelect($dataSet,$cpcScoreTable );
    
     foreach ($result['result'] as $row) {
         
@@ -108,7 +114,7 @@ $cpc_html .= '  </tbody>
 
 $kpi_html = '';
 $kpi = new kpi;
-$result = $kpi->KpiScoreSelect($_POST['per_cardno']);
+$result = $kpi->KpiScoreSelect($_POST['per_cardno'],$kpiScoreTable,$year);
 // echo "<pre>";
 // print_r($result);
 // echo "</pre>";

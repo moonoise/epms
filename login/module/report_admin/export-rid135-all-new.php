@@ -99,7 +99,7 @@ $err2 = "";
 $table_cpc = $report->tableCPC($per_cardno,$years,array(1,2,3),$tablePersonal,$tableCPCscore);
 $resultCPC = $report->cpcCalculate_new($table_cpc);  
 
-$kpiResult = $report->tableKPI($per_cardno,$years,$tableKPIscore);
+$kpiResult = $report->tableKPI($per_cardno,$years,$tablePersonal,$tableKPIscore);
 $kpi = $report->reportKPI1($kpiResult);
 
 

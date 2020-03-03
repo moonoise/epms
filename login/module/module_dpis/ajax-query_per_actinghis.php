@@ -4,18 +4,25 @@ include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "../../includes/ociConn.php";
 include_once "../report/class-report.php";
+include_once "../myClass.php";
 $err = "";
 $dbConn = new DbConn;
 $ociDB = new ociConn;
 $ociConn = $ociDB->ociConnect();
+
+$currentYear = $myClass->callYear();
+
+$per_personalTable = $currentYear['data']['per_personal'];
+$year = $currentYear['data']['table_year'];
+
 $id = array();
 // $sqlOracle = array();
 $moveCode = array();
 $sqlID = array();
 $i = 0;
 try{
-    $sql = "SELECT per_cardno FROM ".$dbConn->tbl_per_personal;
-    // $sql = "SELECT per_cardno FROM ".$dbConn->tbl_per_personal ." LIMIT 0,1000";
+    $sql = "SELECT per_cardno FROM ".$per_personalTable;
+    
     $stm = $dbConn->conn->prepare($sql);
     $stm->execute();
     $result = $stm->fetchAll(PDO::FETCH_NUM);
@@ -44,20 +51,20 @@ foreach ($sqlID as $key => $value) {
         array_push($moveCode,$row) ;
      }
 }
-$part = explode("-",__year__);
-$rr = updateMovCode($moveCode);
-$rrr = updatethroughTrial($result,$dateEvaluation[$part[1]]);
+$part = $year;
+$rr = updateMovCode($moveCode,$per_personalTable);
+$rrr = updatethroughTrial($result,$dateEvaluation[$part[1]],$per_personalTable);
 $rrrr = array_merge($rr['msg'],$rrr['msg']);
 echo json_encode($rrrr);
 
-function updateMovCode($moveCode) {
+function updateMovCode($moveCode,$per_personalTable) {
     $err = "";
     $success = array();
     $dbConn = new DbConn;
     $success['msg'] = array();
     $i ;
     try{
-        $sqlUpdate = "UPDATE ".$dbConn->tbl_per_personal." 
+        $sqlUpdate = "UPDATE ".$per_personalTable." 
                         SET `mov_code` = :mov_code
                          WHERE per_cardno = :per_cardno ";
 
@@ -96,7 +103,7 @@ function updateMovCode($moveCode) {
     return $success;
 }
 
-function updatethroughTrial($arrPer_cardno,$e) {
+function updatethroughTrial($arrPer_cardno,$e,$per_personalTable) {
     $report = new report;
     $err = "";
     $success = array();
@@ -104,13 +111,13 @@ function updatethroughTrial($arrPer_cardno,$e) {
     $success['msg'] = array();
     $i ;
     try{
-        $sqlUpdate = "UPDATE ".$dbConn->tbl_per_personal." 
+        $sqlUpdate = "UPDATE ".$per_personalTable." 
                         SET `through_trial` = :through_trial WHERE per_cardno = :per_cardno ";
 
         $stm = $dbConn->conn->prepare($sqlUpdate);
         // echo count($moveCode)."<br>";
         foreach ($arrPer_cardno as $key => $value) {
-            $t = $report->throughTrial($value[0],$e);
+            $t = $report->throughTrial($value[0],$e,$per_personalTable);
             // $tt = ($t["result"] === true ? 1 : 2 );
             if($t["result"] === true){
                 $tt = 1;

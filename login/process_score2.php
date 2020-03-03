@@ -10,23 +10,23 @@ $report = new report;
 $myClass = new myClass;
 
 $currentYear = $myClass->callYear();
+$year = $currentYear['data']['table_year'];
 $cpcTypeKey = array(1,2,3,4,5,6);
 
-$per_cardno = '1559900202540';
+$per_cardno = '3101200086078';
 
 
-(!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$currentYear['data']['table_year'],$currentYear['data']['per_personal'],$currentYear['data']['kpi_score']) : $kpiResult);
+(!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$year ,$currentYear['data']['per_personal'],$currentYear['data']['kpi_score']) : $kpiResult);
 
 $kpi = $report->reportKPI1($kpiResult);
 $kpiUpdateResutl =  $report->kpiResultUpdate($kpi,$currentYear['data']);
 
-(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$currentYear['data']['table_year'],$cpcTypeKey,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']) : $cpcResult);
+(!empty($per_cardno)? $cpcResult =  $report->tableCPC($per_cardno,$year ,$cpcTypeKey,$currentYear['data']['per_personal'],$currentYear['data']['cpc_score']) : $cpcResult);
 $cpc = $report->reportCPC1($cpcResult);
 $updateResutl = $report->cpcResultUpdate($cpc,$currentYear['data']);
 
 $r = $report->cal_gap_chart($cpcResult);
-// $gap = $report->cal_gap($r);
-// $idp = $report->cal_idp($per_cardno,$currentYear['data']['table_year']);
+
 $gapUpdate = array();
 
 foreach ($r as $keyGapUpdate => $valueGapUpdate) {
@@ -44,5 +44,5 @@ foreach ($r as $keyGapUpdate => $valueGapUpdate) {
 // echo "</pre>";
 
 echo "<pre>";
-print_r($gapUpdate);
+print_r($cpc);
 echo "</pre>";

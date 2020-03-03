@@ -2,8 +2,16 @@
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "../kpi/class-kpi.php";
+include_once "../myClass.php";
 $err = '';
 $success = array();
+$kpi = new kpi;
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$per_personalTable = $currentYear['data']['per_personal'];
+$kpiComment = $currentYear['data']['kpi_comment'];
 
 // foreach ($_POST as $key => $value) {
 //     echo $key ."->". $value ."<br>";
@@ -13,12 +21,12 @@ $success['msg'] = "";
 if(isset($_POST['works_name']) and strlen($_POST['works_name']) > 0 ){ $works_name = $_POST['works_name']; }else{ $works_name = null; }
 if (!empty($_POST['kpi_score_id'])) {
    
-        $kpi = new kpi;
+        
        
             try{
             if (is_numeric($_POST['modal_kpi_score']) and $_POST['modal_kpi_score'] >= 0 and $_POST['modal_kpi_score'] <= 5 ) {
 
-                $sql = "UPDATE ".$kpi->tbl_kpi_score." SET `kpi_score` = :modal_kpi_score 
+                $sql = "UPDATE $kpiScoreTable SET `kpi_score` = :modal_kpi_score 
                 WHERE `kpi_score_id` = :kpi_score_id  AND (`kpi_accept` <> 1 OR `kpi_accept` IS NULL)";
                 $stm = $kpi->conn->prepare($sql);
                 $stm->bindParam(":modal_kpi_score",$_POST['modal_kpi_score']);
@@ -40,7 +48,7 @@ if (!empty($_POST['kpi_score_id'])) {
                 $success['msg_score'] = "เป็นตัวเลข 1-5 เท่านั้น";
             }
 
-            $sql = "UPDATE ".$kpi->tbl_kpi_score." SET `works_name` = :works_name
+            $sql = "UPDATE $kpiScoreTable SET `works_name` = :works_name
                     WHERE `kpi_score_id` = :kpi_score_id ";
             $stm = $kpi->conn->prepare($sql);
             $stm->bindParam(":works_name",$works_name);

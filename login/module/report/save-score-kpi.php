@@ -2,17 +2,25 @@
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-report.php";
+include_once "../myClass.php";
+
 $success = array();
 $err = '';
+
+$db = new DbConn;
+$report = new report;
+$myClass = new myClass;
+$tableYears = $myClass->callYear();
+$cpcScoreResultTable = $tableYears['data']['cpc_score_result'];
+$kpiScoreResultTable = $tableYears['data']['kpi_score_result'];
+
 (strlen($_POST['kpiScore'])>0?$kpiScoreAdd = $_POST['kpiScore']:$kpiScoreAdd = null );
 if ($_POST['per_cardno'] != "" || $_POST['AverageKPI'] != "" || $_POST['years'] != "" ) {
-        $db = new DbConn;
-        $report = new report;
-
-        $checkKPI = $report->kpiQueryScore($_POST['per_cardno'],$_POST['years']);
+   
+        $checkKPI = $report->kpiQueryScore($_POST['per_cardno'],$_POST['years'],$kpiScoreResultTable);
         if ($checkKPI['success'] === true AND count($checkKPI['result']) == 1) {
             
-            $sql = "UPDATE ".$db->tbl_kpi_score_result." SET `kpi_score_result` = :kpi_score_result,
+            $sql = "UPDATE $kpiScoreResultTable  SET `kpi_score_result` = :kpi_score_result,
                                                     `scoring` = :scoring  
                     WHERE `per_cardno` = :per_cardno AND `years` = :years AND soft_delete = 0 "; 
             try{
@@ -32,7 +40,7 @@ if ($_POST['per_cardno'] != "" || $_POST['AverageKPI'] != "" || $_POST['years'] 
             }
                     
         }elseif ($checkKPI['success'] === true AND count($checkKPI['result'])  == 0) {
-            $sql = "INSERT INTO ".$db->tbl_kpi_score_result." (`per_cardno`,`kpi_score_result` , `scoring` ,`years` ) 
+            $sql = "INSERT INTO $kpiScoreResultTable  (`per_cardno`,`kpi_score_result` , `scoring` ,`years` ) 
                     VALUES (:per_cardno , :kpi_score_result , :scoring , :years ) ";
             try{
                 $stm = $db->conn->prepare($sql);

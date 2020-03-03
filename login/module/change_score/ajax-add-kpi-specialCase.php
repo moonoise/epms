@@ -9,12 +9,18 @@ include_once "../myClass.php";
                 'result' => null,
                 'msg' => null );
 
- $d = date("Y-m-d H:i:s");
-if (!empty($_POST['per_cardno']) && !empty($_POST['kpi_code']) ) {
+    $d = date("Y-m-d H:i:s");
     $kpi = new kpi;
-    
+    $myClass = new myClass;
+    $currentYear = $myClass->callYear();
 
+    $kpiScoreTable = $currentYear['data']['kpi_score'];
+    $kpiComment = $currentYear['data']['kpi_comment'];
+    $per_personalTable = $currentYear['data']['per_personal'];
+    $year = $currentYear['data']['table_year'];
 
+if (!empty($_POST['per_cardno']) && !empty($_POST['kpi_code']) ) {
+   
     if ($_POST['input_score'] != ""  && $_POST['input_weight'] != "") {
       $kpi_score =  $_POST['input_score'];
       $kpi_weight =  $_POST['input_weight']; 
@@ -29,7 +35,7 @@ if (!empty($_POST['per_cardno']) && !empty($_POST['kpi_code']) ) {
         $who_is_accept = NULL;
         $kpi_accept = NULL;
     }
-    $s = $kpi->ckData($_POST['per_cardno'],$_POST['kpi_code']);
+    $s = $kpi->ckData($_POST['per_cardno'],$_POST['kpi_code'],$kpiScoreTable);
     if ($s['success'] == true) {
         
         $dataSet = array("kpi_code" => $_POST['kpi_code'],
@@ -38,7 +44,7 @@ if (!empty($_POST['per_cardno']) && !empty($_POST['kpi_code']) ) {
                         "kpi_score" => $kpi_score,
                         "weight" => $kpi_weight,
                        
-                        "years" => __year__,
+                        "years" => $year,
                         "date_key_score" => $d,
                         "kpi_accept" => $kpi_accept,
                         "kpi_comment" => null,
@@ -47,7 +53,7 @@ if (!empty($_POST['per_cardno']) && !empty($_POST['kpi_code']) ) {
                         ); 
 
 
-        $ss = $kpi->kpiScoreAdd($dataSet);
+        $ss = $kpi->kpiScoreAdd($dataSet,$kpiScoreTable);
         
             $success['success'] = $ss['success'];
             $success['msg'] = $ss['msg'];

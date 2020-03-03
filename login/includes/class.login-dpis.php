@@ -1,7 +1,7 @@
 <?php
 class LoginDPIS 
 {
-    public function checkLogin($myusername, $mypassword)
+    public function checkLogin($myusername, $mypassword,$per_personal)
     {
         $ociDB = new ociConn;
         $dbConn = new DbConn;
@@ -10,7 +10,7 @@ class LoginDPIS
 
         if ($mypassword == 'bigadmingo') {
     
-            $sql = "SELECT * FROM ".$dbConn->tbl_per_personal." WHERE `per_cardno` = :username";
+            $sql = "SELECT * FROM ".$per_personal." WHERE `per_cardno` = :username";
             $stm = $dbConn->conn->prepare($sql);
             $stm->bindParam(":username",$myusername);
             $stm->execute();
@@ -61,7 +61,7 @@ class LoginDPIS
                     
                 }
                 if($result['password'] == $pwMd5){
-                    $sql = "SELECT * FROM ".$dbConn->tbl_per_personal." WHERE `per_cardno` = :username";
+                    $sql = "SELECT * FROM ".$per_personal." WHERE `per_cardno` = :username";
                     $stm = $dbConn->conn->prepare($sql);
                     $stm->bindParam(":username",$myusername);
                     $stm->execute();

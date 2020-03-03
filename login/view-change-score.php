@@ -4,8 +4,18 @@ include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "includes/class-userOnline.php";
 include_once "includes/class.permission.php";
+include_once "module/myClass.php";
 $userOnline = new userOnline;
 $_SESSION[__USERONLINE__] = $userOnline->usersOnline();
+
+$myClass = new myClass;
+$currentYear = $myClass->callYear();
+
+$cpcScoreTable = $currentYear['data']['cpc_score'];
+$kpiScoreTable = $currentYear['data']['kpi_score'];
+$year = $currentYear['data']['table_year'];
+$personalTable = $currentYear['data']['per_personal'];
+$detailYear = $currentYear['data']['detail'];
 
 if((in_array($_SESSION[__GROUP_ID__],array(4)) || $_SESSION[__USER_ID__] == 'fad009' ) ){ 
   
@@ -125,7 +135,7 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
         <div class="right_col" role="main">
           <div class="">
             <a class="date-title">
-                <small class="date-title-text">ประเมินรอบที่ <?php $part = explode("-",__year__); echo $part[1];?> ประจำปีงบประมาณ <?php echo $part[0]+543;?></small>
+                <small class="date-title-text"><?php echo $detailYear;?></small>
             </a>
             <div class="clearfix"></div>
 
