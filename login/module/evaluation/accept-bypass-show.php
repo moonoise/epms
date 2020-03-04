@@ -68,7 +68,7 @@ if ($cpcStatus3['total_choise'] > 0 && $kpiStatus3['total_choise'] > 0) {
         }
 
         // echo json_encode($cpcResult);
-        echo json_encode($resultSum);
+        echo json_encode($resultSum );
     }else {
         $resultSum['cpcSum2_user'] = "-";
         $resultSum['kpiSum2_user'] = "-";

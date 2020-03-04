@@ -95,7 +95,7 @@
             $t .= "<td>".$kpiCon1."</td>";
             $t .= "<td><input type='text' class='bg-info col-md-12 col-sm-12 col-xs-12' required=''
                         name='modal_kpi_score' id='modal-kpi_score-type3' maxlength='3' placeholder='' 
-                        value='".(!empty($r[0]['kpi_score'])?$r[0]['kpi_score']:"")."' ".$scoreDisabled."></td>";
+                        value='".($r[0]['kpi_score'] != NULL  ?$r[0]['kpi_score']:"")."' ".$scoreDisabled."></td>";
             $t .= "<td>".(!empty($r[0]['weight'])?$r[0]['weight']:"ยังไม่ได้ระบุน้ำหนัก")."</td>";
            
             $t .= "</tr>";     

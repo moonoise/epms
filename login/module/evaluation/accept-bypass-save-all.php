@@ -13,9 +13,9 @@ $evaluationClass = new evaluation;
 $myClass = new myClass;
 $currentYear = $myClass->callYear();
 $cpcScoreTable = $currentYear['data']['cpc_score'];
-$cpcScoreTable = $currentYear['data']['kpi_score'];
+$kpiScoreTable = $currentYear['data']['kpi_score'];
 $year = $currentYear['data']['table_year'];
-
+$kpiScoreCommentTable = $currentYear['data']['kpi_comment'];
 $kpiResult = array("success" => "",
                     "result" => "",
                     "msg" => "");
@@ -37,8 +37,10 @@ if ($cpcStatus3['total_choise'] > 0 && $kpiStatus3['total_choise'] > 0) {
             foreach ($score['data'] as $key => $v) {
                 $result[] = $evaluationClass->cpcUpdateScoreAccept($cpcScoreTable,$v);
             }
-        $result[] = $evaluationClass->kpiAcceptUpdate($cpcScoreTable,$year,$_POST['accept_per_cardno'],1);
+        $result[] = $evaluationClass->kpiAcceptUpdate($kpiScoreTable,$kpiScoreCommentTable,$year,$_POST['accept_per_cardno'],1);
         echo json_encode($result);
         
         }
 }
+
+// echo json_encode($cpcStatus3);

@@ -24,7 +24,7 @@ if (!empty($_POST['kpi_score_id'])) {
         
        
             try{
-            if (is_numeric($_POST['modal_kpi_score']) and $_POST['modal_kpi_score'] >= 0 and $_POST['modal_kpi_score'] <= 5 ) {
+            if (is_numeric($_POST['modal_kpi_score']) and $_POST['modal_kpi_score'] > 0 and $_POST['modal_kpi_score'] <= 5 ) {
 
                 $sql = "UPDATE $kpiScoreTable SET `kpi_score` = :modal_kpi_score 
                 WHERE `kpi_score_id` = :kpi_score_id  AND (`kpi_accept` <> 1 OR `kpi_accept` IS NULL)";
@@ -42,7 +42,10 @@ if (!empty($_POST['kpi_score_id'])) {
                 }
             }elseif (strlen($_POST['modal_kpi_score']) == 0) {
                 $success['success_score'] = false;
-                $success['msg_score'] = "";
+                $success['msg_score'] = "กรุณาใส่คะแนแ 1-5 เท่านั้น";
+            }elseif ($_POST['modal_kpi_score'] === 0) {
+                $success['success_score'] = false;
+                $success['msg_score'] = "เป็นตัวเลข 1-5 เท่านั้น";
             }else {
                 $success['success_score'] = false;
                 $success['msg_score'] = "เป็นตัวเลข 1-5 เท่านั้น";

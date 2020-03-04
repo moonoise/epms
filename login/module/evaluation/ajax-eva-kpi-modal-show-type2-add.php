@@ -21,7 +21,7 @@ if(isset($_POST['works_name']) and strlen($_POST['works_name'])>0 ){ $works_name
 if (!empty($_POST['kpi_score_id']) && !empty($_POST['kpi_code']) ) {
     
                 try{
-                    if (is_numeric($_POST['modal_kpi_score_raw'])) {
+                    if (is_numeric($_POST['modal_kpi_score_raw'] )) {
                         $s = $kpi->processScoreType2($_POST['kpi_code'],$_POST['modal_kpi_score_raw']);
                         if ($s['success'] === true or $s['success'] === false) {
                             $ss = round($s['result'], 2);  //แปลงทศนิยมให้เหลือ 2 ตำแหน่ง

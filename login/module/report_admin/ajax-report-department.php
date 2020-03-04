@@ -17,7 +17,7 @@ $org_percardno = array();
 $r = array();
 
 try {
-    $sql_years = "SELECT * FROM `table_year` WHERE `table_year`.`table_year` = :years ";
+    $sql_years = "SELECT * FROM `table_year` WHERE `table_year`.`table_id` = :years ";
     $stmYears = $db->conn->prepare($sql_years);
     $stmYears->bindParam(':years',$years);
     $stmYears->execute();
@@ -67,7 +67,7 @@ foreach ($orgOutput as $orgKey => $orgValue) {
 
     if ($orgSelect == '77') {
         
-                $sql = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id = :org_id  ";
+                $sql = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id = :org_id AND login_status = 1 ";
                 $stm = $db->conn->prepare($sql);
                 $stm->bindParam(':org_id',$orgValue['org_id']);
                 $stm->execute();
@@ -77,7 +77,7 @@ foreach ($orgOutput as $orgKey => $orgValue) {
                 }
         
     }else {
-        $sql2 = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id_2 = :org_id ";
+        $sql2 = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id_2 = :org_id AND login_status = 1 ";
         $stm2 = $db->conn->prepare($sql2);
         $stm2->bindParam(':org_id',$orgValue['org_id']);
         $stm2->execute();
@@ -86,7 +86,7 @@ foreach ($orgOutput as $orgKey => $orgValue) {
         if (count($result2) > 0) {
             $per_cardnoResult = $result2;
         }else {
-            $sql1 = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id_1 = :org_id ";
+            $sql1 = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id_1 = :org_id AND login_status = 1";
             $stm1 = $db->conn->prepare($sql1);
             $stm1->bindParam(':org_id',$orgValue['org_id']);
             $stm1->execute();
@@ -94,7 +94,7 @@ foreach ($orgOutput as $orgKey => $orgValue) {
             if (count($result1) > 0 ) {
                 $per_cardnoResult = $result1;
             }else {
-                $sql = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id = :org_id  and org_id_1 is null and org_id_2 is null";
+                $sql = "select per_cardno from ".$resultYears[0]['per_personal']." where  org_id = :org_id  and org_id_1 is null and org_id_2 is null AND login_status = 1";
                 $stm = $db->conn->prepare($sql);
                 $stm->bindParam(':org_id',$orgValue['org_id']);
                 $stm->execute();
@@ -116,7 +116,7 @@ foreach ($orgOutput as $orgKey => $orgValue) {
 
 foreach ($r as $cardnoKey => $cardnoValue) {
     // $rr[] = $cardnoValue;
-    $rr[$cardnoKey] = $report->percent_complete($cardnoValue['per_cardno'],$resultYears[0]['cpc_score_result'],$resultYears[0]['kpi_score_result'],$years);
+    $rr[$cardnoKey] = $report->percent_complete($cardnoValue['per_cardno'],$resultYears[0]['cpc_score_result'],$resultYears[0]['kpi_score_result'],$resultYears[0]['table_year']);
     $rr[$cardnoKey]['org_id'] = $cardnoValue['org_id'];
     $rr[$cardnoKey]['org_name'] = $cardnoValue['org_name'];
 }

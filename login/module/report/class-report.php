@@ -552,7 +552,7 @@ class report extends DbConn
             $kpi['kpiWeightSum_'] = ($kpiWeightSum == ""? NULL : $kpiWeightSum) ;
             $kpi['kpiSum2'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : "-" ); //ถ้ายืนยันยังไม่ครบส่ง - ใช้กับ report
             $kpi['kpiSum2_'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : null ); //ถ้ายืนยันยังไม่ครบส่ง null
-            $kpi['kpiSum2_user'] =  ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2_user,2) : "-" )   ;
+            $kpi['kpiSum2_user'] =  $kpiSum2_user   ;
             $kpi['kpiCheckSumAll'] = ($kpiCheckSumAll == 0? $kpi['kpiSum2'] : "-" );
             $kpi['scoring'] = ($kpiResult['result'][0]['through_trial'] == 2 ? 50 : 70 );
             $kpi['through_trial'] = $kpiResult['result'][0]['through_trial'];

@@ -61,7 +61,7 @@ if (isset($_POST['org_id_2']) and $_POST['org_id_2'] != "") {
     // echo "</pre>";
     if(count($result) > 0){
         
-        $data =  $person->dataTablePersonReport($result,$years);
+        $data =  $person->dataTablePersonReport($result,$result_table_year[0]['table_year']);
         $data['success'] = true;
     }else {
         $data['success'] = false;

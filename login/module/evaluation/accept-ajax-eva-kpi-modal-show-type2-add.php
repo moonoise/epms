@@ -3,6 +3,7 @@ session_start();
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "../kpi/class-kpi.php";
+include_once "../myClass.php";
 $err = '';
 $success = array();
 $count = "";
@@ -124,4 +125,4 @@ if (!empty($_POST['kpi_score_id']) ) {
     $success['msg'] = "POST variable not found.";
 }
 
-echo json_encode($success);
+echo json_encode($success );

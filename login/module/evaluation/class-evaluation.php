@@ -33,6 +33,7 @@ class evaluation extends DbConn
         $r = array("CPCsuccess"=> null,
                     "cpc_score_id" => null,
                     "msg"=> null);
+        
         try {
             $sqlUpdate = "UPDATE $cpcScoreTable SET cpc_accept1 = :cpc_accept1,
                                                     cpc_accept2 = :cpc_accept2,
@@ -63,13 +64,16 @@ class evaluation extends DbConn
         } 
     }
 
-    function kpiAcceptUpdate($kpiScoreTable,$year_term,$per_cardno,$kpi_accept) {  // update ให้ผู้บังดับบัญชายื่นยัน ทุกข้อ
+    function kpiAcceptUpdate($kpiScoreTable,$kpiScoreCommentTable,$year_term,$per_cardno,$kpi_accept) {  // update ให้ผู้บังดับบัญชายื่นยัน ทุกข้อ
         $r = array("KPIsuccess"=> null,
                     "per_cardno"=> null,
+                    "kpi_score_id" => null, 
                     "msg"=> null);
-
+        
+                    $rr = array();
         try {
-            $sqlUpdate = "UPDATE $kpiScoreTable SET `kpi_accept` = :v  WHERE per_cardno = :per_cardno AND years = :years ";
+            $sqlUpdate = " UPDATE $kpiScoreTable SET `kpi_accept` = :v  WHERE per_cardno = :per_cardno AND years = :years ; ";
+                            
             $stm = $this->conn->prepare($sqlUpdate);
             $stm->bindParam(":v",$kpi_accept);
             $stm->bindParam(":per_cardno",$per_cardno);
@@ -77,12 +81,42 @@ class evaluation extends DbConn
             $stm->execute();
             $r['KPIsuccess'] = true;
             $r['per_cardno'] = $per_cardno;
-            return $r;
+            
         } catch (\Exception $e) {
             $r['per_cardno'] = $per_cardno;
-            $r['msg'] = $e->getMessage();
-            return $r;
+            $rr[] = $e->getMessage();
+            
         }
+
+
+        try {
+            $sqlSelect = "SELECT  `kpi_score_id` FROM $kpiScoreTable WHERE per_cardno = :per_cardno AND years = :years ; "; 
+            $stmSelect = $this->conn->prepare($sqlSelect);
+            $stmSelect->bindParam(":per_cardno",$per_cardno);
+            $stmSelect->bindParam(":years",$year_term);
+            $stmSelect->execute();
+            $resultKpiScoreID = $stmSelect->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $rr[] = $e->getMessage();
+        }
+
+        if($stmSelect->rowCount() > 0 ){
+            foreach ($resultKpiScoreID as $key => $value) {
+                try {
+                    $sql = "DELETE FROM $kpiScoreCommentTable WHERE  kpi_score_id = :kpi_score_id " ;
+    
+                    $stmdelete = $this->conn->prepare($sql);
+                    $stmdelete->bindParam(":kpi_score_id",$value['kpi_score_id'] );
+                    $stmdelete->execute();
+                } catch (\Exception $e) {
+                    $rr[] = $e->getMessage();
+                }
+            }
+        }
+        
+        $r['msg'] = $rr;
+
+        return $r;
     }
 
     function kpiJoinComment($kpiScoreTable,$kpiScoreComment,$year_term,$per_cardno) {

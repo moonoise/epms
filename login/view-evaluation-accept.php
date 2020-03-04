@@ -139,15 +139,15 @@ function createButton($cpcStatus,$kpiStatus,$per_cardno,$name,$years) {
                     <input type='hidden' name='per_cardno' value='".$per_cardno."'>
                     <input type='hidden' name='name' value='".$name."'>
                       <input type='submit' value='ยืนยันครบแล้ว' class='btn btn-success btn-xs'>
-                      <button type='button' class='btn btn-success btn-xs confrim_bypass' onclick='confrim_bypass(`".$per_cardno."`,`".$years."`,`".$name."`)'>ดูคะแนน</button>
+                      <button type='button' class='btn btn-success btn-xs confrim_bypass' onclick='confrim_bypass(`".$per_cardno."`,`".$name."`)'>ดูคะแนน</button>
                   </form>";
         }else {
           //ยืนยันยังไม่ครบ
          
           if ( ($cpcStatus['total_choise'] == $cpcStatus['choiseFinish'] )  && ($kpiStatus['total_choise'] == $kpiStatus['choiseFinish'] ) ) {
-            $btn_bypass = " <button type='button' class='btn btn-warning btn-xs confrim_bypass' onclick='confrim_bypass(`".$per_cardno."`,`".$years."`,`".$name."`)'>ยืนยันด่วน</button>";
+            $btn_bypass = " <button type='button' class='btn btn-warning btn-xs confrim_bypass' onclick='confrim_bypass(`".$per_cardno."`,`".$name."`)'>ยืนยันด่วน</button>";
           }else {
-            $btn_bypass = " <button type='button' class='btn btn-warning btn-xs confrim_bypass' onclick='confrim_bypass(`".$per_cardno."`,`".$years."`,`".$name."`)'>ดูคะแนน</button>";
+            $btn_bypass = " <button type='button' class='btn btn-warning btn-xs confrim_bypass' onclick='confrim_bypass(`".$per_cardno."`,`".$name."`)'>ดูคะแนน</button>";
           }
           if(($cpcStatus['choiseFinish'] > 0 || $kpiStatus['choiseFinish'] > 0)){
             //รอยืนยันผล
@@ -578,22 +578,22 @@ $('[data-toggle="popover"]').popover({
 });
 
 
-function confrim_bypass(per_cardno,years,name) {
+function confrim_bypass(per_cardno,name) {
   $("#modal-confrim_bypass").modal({
         show:true,
         keyboard:false,
         backdrop:'static'
       })
-  confrim_bypass_load(per_cardno,years,name)
+  confrim_bypass_load(per_cardno,name)
 
 
 }
 
-function confrim_bypass_load(per_cardno,years,name) {
+function confrim_bypass_load(per_cardno,name) {
   $.ajax({
       type: "POST",
       url: "module/evaluation/accept-bypass-show.php",
-      data: {"per_cardno":per_cardno,"years":years},
+      data: {"per_cardno":per_cardno},
       dataType: "JSON",
       success: function (response) {
         $("#modal-name-confrim_bypass").html(name);
@@ -637,29 +637,14 @@ $("#btn_accept_all").click(function (e) {
     data: $("#frm_accept_all").serialize(),
     dataType: "json",
     success: function (response) {
-      $.ajax({
-        type: "POST",
-        url: "module/report_admin/ajax-query-get-table_year.php",
-        data: {"years":$("#accept_year").val()},
-        dataType: "JSON",
-        success: function (resYear) {
+   
           $.ajax({
                   url: "module/report_admin/ajax-query-update_score3.php",
                   dataType: "json",
                   type: "POST",
-                  data: {"per_cardno":$("#accept_per_cardno").val(),
-                          "per_personal":resYear.result.per_personal,
-                          "cpc_score":resYear.result.cpc_score,
-                          "cpc_score_result":resYear.result.cpc_score_result,
-                          "kpi_score":resYear.result.kpi_score,
-                          "kpi_score_result":resYear.result.kpi_score_result,
-                          "kpi_comment":resYear.result.kpi_comment,
-                          "idp_score":resYear.result.idp_score,
-                          "start_evaluation":resYear.result.start_evaluation,
-                          "end_evaluation":resYear.result.end_evaluation,
-                          "table_year":resYear.result.table_year },
+                  data: {"per_cardno":$("#accept_per_cardno").val()},
                   success: function (result) {
-                    confrim_bypass_load($("#accept_per_cardno").val(),resYear.result.table_year,"")
+                    confrim_bypass_load($("#accept_per_cardno").val(),"")
                   },
                   error: function (textStatus, errorThrown) {
                           per_cardno_err.push(per_cardno) 
@@ -667,8 +652,8 @@ $("#btn_accept_all").click(function (e) {
                       }
                 })
         }
-      });
-    }
+      
+    
   });
   
 });
