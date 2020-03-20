@@ -3,7 +3,6 @@ session_start();
 include_once 'config.php';
 include_once 'includes/dbconn.php';
 include_once "module/report/class-report.php";
-include_once "module/module_profile/class.profile.php";
 include_once "includes/class.permission.php";
 include_once "module/myClass.php";
 $per_cardno ="";
@@ -260,7 +259,7 @@ if ($k_user != "-" && $c_user != "-") {
                     </div>
                     <div class="x_content">
                         <a class="date-title">
-                            <small class="date-title-text"><?php $detailYear;?></small>
+                            <small class="date-title-text"><?php echo $detailYear;?></small>
                         </a>
                         <table class="table table-bordered">
                             <thead class="thead-for-user">
@@ -293,7 +292,7 @@ if ($k_user != "-" && $c_user != "-") {
                                         echo "<td colspan='3' class='text-center text-primary'>ผลรวม</td>";
                                         echo "<td class='text-center'>".$kpi['kpiWeightSum']."%</td>";
                                         echo "<td class='text-center text-success'>".$kpi['kpiSum2']."</td>";
-                                        echo "<td class='text text-center text-danger bg-danger'>".$kpi['kpiSum2_user']."</td>";
+                                        echo "<td class='text text-center text-danger bg-danger'>".$kpi['kpiSum2_user_']."</td>";
                                     echo "</tr>";
                                 }else {
                                     echo "<tr>";
@@ -507,79 +506,6 @@ if ($k_user != "-" && $c_user != "-") {
   </body>
 </html>
 <script>
-    // saveScore();
-
-    // function saveScore() {
-    //     saveScoreCPC()
-    //     saveScoreKPI()
-    // }
-
-    // function saveScoreCPC() {
-    //     var per_cardno = '<?php echo $per_cardno;?>'
-       
-    //     var AverageCPC = '<?php echo $AverageCPC;?>'
-       
-    //     var cpcScore = '<?php echo ($cpc['cpcSum2'] != "-"? $cpc['cpcSum2'] : "") ; ?>'
-    //     var years = '<?php echo $years;?>'
-
-    //     if (cpcScore != "" || AverageCPC != "" ) {
-    //         var data = {"cpcScore" : cpcScore ,
-    //                     "AverageCPC" : AverageCPC,
-    //                     "per_cardno" : per_cardno,
-    //                     "years" : years}
-    //         $.ajax({
-    //             url: "module/report/save-score-cpc.php",
-    //             dataType: "json",
-    //             type:"POST",
-    //             data: data,
-    //             success:function (result) {
-    //                 if (result.success == true) {
-    //                     // notify('การบันทึกคะแนน','บันทึก สมรรถนะ เรียบร้อยแล้ว','success')
-    //                 }else{
-    //                     // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้'+result.msg,'warning')
-    //                 }
-    //             }
-    //         })
-    //     }else{
-    //         // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้','warning')
-    //     }
-    // }
-
-    // function saveScoreKPI() {
-    //     var per_cardno = '<?php echo $per_cardno;?>'
-    //     var AverageKPI = '<?php echo $AverageKPI; ?>'
-      
-    //     var kpiScore = '<?php echo ($kpi['kpiSum2'] != "-" ? $kpi['kpiSum2'] : "" ); ?>'
-       
-    //     var years = '<?php echo $years;?>'
-
-    //     if (  kpiScore != "" || AverageKPI != "") {
-    //         var data = {
-    //                     "kpiScore" : kpiScore,
-    //                     "AverageKPI" : AverageKPI,
-    //                     "per_cardno" : per_cardno,
-    //                     "years" : years}
-            
-    //         $.ajax({
-    //             url: "module/report/save-score-kpi.php",
-    //             dataType: "json",
-    //             type:"POST",
-    //             data: data,
-    //             success:function (result) {
-    //                 // console.log(result.success)
-    //                 if (result.success == true) {
-    //                     // notify('การบันทึกคะแนน','บันทึก ดัชนีชี้วัดผลสัมฤทธิ์  เรียบร้อยแล้ว ','success')
-    //                 }else{
-    //                     // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้ '+result.msg,'warning')
-
-    //                 }
-    //             }
-    //         })
-    //     }else{
-    //         // notify('การบันทึกคะแนน','คะแนนยังไม่สมบูรณ์ ไม่สามารถบันทึกได้','warning')
-    //     }
-    // }
-
     function notify(nTitle,nText,nType,timeOut,nHide) {
         var h = (nHide != '' ? true : nHide);
         var t = (timeOut != '' ? 2000 : timeOut);

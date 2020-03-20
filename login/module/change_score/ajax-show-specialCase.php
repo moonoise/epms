@@ -43,18 +43,20 @@ include_once "../report/class-report.php";
             $checkKPI = $report->kpiQueryScore($value['per_cardno'],$year,$kpiScoreResultTable);
             $checkCPC = $report->cpcQueryScore($value['per_cardno'],$year,$cpcScoreResultTable );
             
-            $c = $checkCPC['result'][0]['cpc_score_result_head'] * ($checkCPC['result'][0]['scoring'] /100);
-            $k = $checkKPI['result'][0]['kpi_score_result'] * ($checkKPI['result'][0]['scoring'] / 100);
+            if ($c['success'] != null or $k['success'] != null) {
+                $c = $checkCPC['result'][0]['cpc_score_result_head'] * ($checkCPC['result'][0]['scoring'] /100);
+                $k = $checkKPI['result'][0]['kpi_score_result'] * ($checkKPI['result'][0]['scoring'] / 100);
 
-            $sum = $report->sum_cpc_kpi($checkCPC['result'][0]['cpc_score_result_head'] , $checkKPI['result'][0]['kpi_score_result'] ,$checkCPC['result'][0]['scoring'] ,$checkKPI['result'][0]['scoring'] ) ;
-            // $sum = round( $c + $k , 2) ;
-
+                $sum = $report->sum_cpc_kpi($checkCPC['result'][0]['cpc_score_result_head'] , $checkKPI['result'][0]['kpi_score_result'] ,$checkCPC['result'][0]['scoring'] ,$checkKPI['result'][0]['scoring'] ) ;
+                // $sum = round( $c + $k , 2) ;
+                
+            }else {
+                $sum = null;
+            }
             $success['data'][$key]['sum_CPC_KPI'] = $sum  ;
-           
+            $success['success'] = true;
         }
-        
-        $success['success'] = true;
-    
+
     } catch (\Exception $e) {
         $success['success'] = false;
         $success['msg'] = $e;

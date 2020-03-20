@@ -130,7 +130,9 @@ class cpc extends DbConn
    //ดึง cpc question ตามตำแหน่งของผู้ประเมิน  พร้อมค่าคาดหวัง ที่ได้จากฟังก์ชั่น cpc_divisor 
    function cpcScoreGetDefault($per_cardno,$pl_code,$level_no) {
         $err = '';
-        $success = array();
+        $success = array('success' => null,
+                            'result' => null,
+                            'msg' => null);
         try{
             $cpc_question_create = "SELECT * FROM cpc_question_create WHERE pl_code = :pl_code";
             $cpcCreate = $this->conn->prepare($cpc_question_create);
@@ -149,11 +151,12 @@ class cpc extends DbConn
                     //echo var_dump($d);
                    $value = $value + $a;
                    $success['result'][$key] = $value;
+                   $success['success'] = true;
                 }
             }else {
                 $success['success'] = false;
                 $success['msg'] = 'record = 0';
-                $success['result'] = '';
+                $success['result'] = null;
             }
         }catch(Exception $e)
         {
@@ -163,9 +166,10 @@ class cpc extends DbConn
         if ($err != '') {
             $success['success'] = null;
             $success['msg'] = $err;
-        }else {
-            $success['success'] = true;
         }
+        // else {
+        //     $success['success'] = true;
+        // }
         return $success;
    }
    // insert ข้อมูลที่ได้จาก cpcScoreGetDefault  มาใส่ใน cpc_score

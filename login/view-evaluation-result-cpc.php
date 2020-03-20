@@ -64,7 +64,7 @@ $idp = $report->cal_idp($per_cardno,$year,$idpScoreTable);
 // }
 
 // echo "<pre>";
-//    print_r($gapUpdate);
+//    print_r($r);
 // echo "</pre>";
 
 ?>

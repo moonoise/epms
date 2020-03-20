@@ -3,6 +3,7 @@ session_start();
 include_once "../../config.php";
 include_once "../../includes/dbconn.php";
 include_once "class-report-admin.php";
+include_once "../myClass.php";
 $db = new DbConn;
 $person = new reportAdmin;
 // foreach ($_POST as $key => $value) {
@@ -18,37 +19,37 @@ if (isset($_POST['org_id_2']) and $_POST['org_id_2'] != "") {
 //  $years = explode("#",$_POST['selectYears']);
  $yearsId = $_POST['selectYears'];
 
-    $sql_table_year = "SELECT * FROM `table_year` WHERE `table_year`.`table_id` = :table_id";
-    
-    $stm_table_year = $db->conn->prepare($sql_table_year);
-    $stm_table_year->bindParam(':table_id',$yearsId);
-    $stm_table_year->execute();
-    $result_table_year = $stm_table_year->fetchAll(PDO::FETCH_ASSOC);
-    // $sql = "SELECT t1.*,
-    //         (SELECT t2.`cpc_score_result_head` FROM ".$result_table_year[0]['cpc_score_result']." t2  WHERE t2.`per_cardno` = t1.`per_cardno`  ) as cpc_score_result_head ,
-    //         (SELECT IF(t2.`cpc_score_result_head` is NULL,0,1) FROM ".$result_table_year[0]['cpc_score_result']." t2  WHERE t2.`per_cardno` = t1.`per_cardno`  ) as cpcisnotnull ,
-    //         (SELECT COUNT(*)   FROM ".$result_table_year[0]['cpc_score_result']." t2 WHERE t2.`per_cardno` = t1.`per_cardno` ) as cpccoutrow,
+    $myClass= new myClass;
 
-    //         (SELECT t3.`kpi_score_result` FROM ".$result_table_year[0]['kpi_score_result']." t3  WHERE t3.`per_cardno` = t1.`per_cardno`  ) as kpi_score_result ,
-    //         (SELECT IF(t3.`kpi_score_result` is NULL,0,1) FROM ".$result_table_year[0]['kpi_score_result']." t3  WHERE t3.`per_cardno` = t1.`per_cardno`  ) as kpiisnotnull ,
-    //         (SELECT COUNT(*)   FROM ".$result_table_year[0]['kpi_score_result']." t3 WHERE t3.`per_cardno` = t1.`per_cardno` ) as kpicoutrow
+    $yearById = $myClass->callYearByID($_POST['selectYears']);
+    $tablePersonal = $yearById['data']['per_personal']; 
+    $tableCPCscore = $yearById['data']['cpc_score'];
+    $tableKPIscore = $yearById['data']['kpi_score'];
+    $tableCpcScoreResult = $yearById['data']['cpc_score_result'];
+    $tableKpiScoreResult = $yearById['data']['kpi_score_result'];
 
-    //         FROM ".$result_table_year[0]['per_personal']." t1 where t1.org_id = :org_id OR t1.org_id_1 = :org_id OR t1.org_id_2 = :org_id  ";
+    $startEvaluation_part1 = $yearById['data']['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
+    $endEvaluation_part1 = $yearById['data']['end_evaluation'];
+    $startEvaluation_part2 = $yearById['data']['start_evaluation_2']; //วันเริ่มต้นช่วงที่ 2
+    $endEvaluation_part2 = $yearById['data']['end_evaluation_2'];
+    $tableYear = $yearById['data']['table_year'];
+    $tableId = $yearById['data']['table_id'];
 
+try {
     $sql = "SELECT t1.*,per_level.position_level,
-            (SELECT t2.`cpc_score_result_head` FROM ".$result_table_year[0]['cpc_score_result']." t2  WHERE t2.`per_cardno` = t1.`per_cardno`  ) as cpc_score_result_head ,
-            (SELECT IF(t2.`cpc_score_result_head` is NULL,0,1) FROM ".$result_table_year[0]['cpc_score_result']." t2  WHERE t2.`per_cardno` = t1.`per_cardno`  ) as cpcisnotnull ,
-            (SELECT COUNT(*)   FROM ".$result_table_year[0]['cpc_score_result']." t2 WHERE t2.`per_cardno` = t1.`per_cardno` ) as cpccoutrow,
+            (SELECT t2.`cpc_score_result_head` FROM ".$tableCpcScoreResult." t2  WHERE t2.`per_cardno` = t1.`per_cardno`  ) as cpc_score_result_head ,
+            (SELECT IF(t2.`cpc_score_result_head` is NULL,0,1) FROM ".$tableCpcScoreResult." t2  WHERE t2.`per_cardno` = t1.`per_cardno`  ) as cpcisnotnull ,
+            (SELECT COUNT(*)   FROM ".$tableCpcScoreResult." t2 WHERE t2.`per_cardno` = t1.`per_cardno` ) as cpccoutrow,
 
-            (SELECT t3.`kpi_score_result` FROM ".$result_table_year[0]['kpi_score_result']." t3  WHERE t3.`per_cardno` = t1.`per_cardno`  ) as kpi_score_result ,
-            (SELECT IF(t3.`kpi_score_result` is NULL,0,1) FROM ".$result_table_year[0]['kpi_score_result']." t3  WHERE t3.`per_cardno` = t1.`per_cardno`  ) as kpiisnotnull ,
-            (SELECT COUNT(*)   FROM ".$result_table_year[0]['kpi_score_result']." t3 WHERE t3.`per_cardno` = t1.`per_cardno` ) as kpicoutrow
+            (SELECT t3.`kpi_score_result` FROM ".$tableKpiScoreResult." t3  WHERE t3.`per_cardno` = t1.`per_cardno`  ) as kpi_score_result ,
+            (SELECT IF(t3.`kpi_score_result` is NULL,0,1) FROM ".$tableKpiScoreResult." t3  WHERE t3.`per_cardno` = t1.`per_cardno`  ) as kpiisnotnull ,
+            (SELECT COUNT(*)   FROM ".$tableKpiScoreResult." t3 WHERE t3.`per_cardno` = t1.`per_cardno` ) as kpicoutrow
 
-            FROM ".$result_table_year[0]['per_personal']." t1 
+            FROM ".$tablePersonal." t1 
             LEFT JOIN per_level ON per_level.level_no = t1.level_no
             where (t1.org_id = :org_id OR t1.org_id_1 = :org_id OR t1.org_id_2 = :org_id ) and `login_status` = 1 ";
 
-// echo $sql; 
+    // echo $sql; 
     // $sql = "select * from ".$years[1]." where org_id = :org_id OR org_id_1 = :org_id OR org_id_2 = :org_id  ";
     $stm = $db->conn->prepare($sql);
     $stm->bindParam(':org_id',$orgSelect);
@@ -56,12 +57,20 @@ if (isset($_POST['org_id_2']) and $_POST['org_id_2'] != "") {
     $stm->bindParam(':org_id_2',$orgSelect);
     $stm->execute();
     $result = $stm->fetchAll();
+
+} catch (\Exception $e) {
+   echo  $e->getMessage();
+
+}
+
+
+
     // echo "<pre>";
     // print_r($result);
     // echo "</pre>";
     if(count($result) > 0){
         
-        $data =  $person->dataTablePersonReport($result,$result_table_year[0]['table_year']);
+        $data =  $person->dataTablePersonReport($result,$tableId);
         $data['success'] = true;
     }else {
         $data['success'] = false;

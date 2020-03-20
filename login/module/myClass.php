@@ -137,5 +137,58 @@ class myClass extends DbConn
     
     }
 
+    function pdoMultiInsert($tableName, $data){
+        try {
+                $err = "";
+                $success = array('msg' => null ,
+                                    'success' => null);
+                //Will contain SQL snippets.
+                $rowsSQL = array();
+
+                //Will contain the values that we need to bind.
+                $toBind = array();
+                
+                //Get a list of column names to use in the SQL statement.
+                $columnNames = array_keys($data[0]);
+
+                //Loop through our $data array.
+                foreach($data as $arrayIndex => $row){
+                    $params = array();
+                    foreach($row as $columnName => $columnValue){
+                        $param = ":" . $columnName . $arrayIndex;
+                        $params[] = $param;
+                        $toBind[$param] = $columnValue; 
+                    }
+                    $rowsSQL[] = "(" . implode(", ", $params) . ")";
+                }
+
+                //Construct our SQL statement
+                $sql = "INSERT INTO `$tableName` (" . implode(", ", $columnNames) . ") VALUES " . implode(", ", $rowsSQL);
+
+                //Prepare our PDO statement.
+                $pdoStatement = $this->conn->prepare($sql);
+
+                //Bind our values.
+                foreach($toBind as $param => $val){
+                    $pdoStatement->bindValue($param, $val);
+                }
+                
+                //Execute our statement (i.e. insert the data).
+                    $pdoStatement->execute();
+
+        } catch (\Exception $e) {
+            $err = $e->getMessage();
+        }
+        if ($err != "") {
+            $success['msg'] = $err;
+            $success['success'] = false;
+        }else {
+            $success['success'] = true;
+        }
+        return $success;
+    }
+
+
+
 }
 

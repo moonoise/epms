@@ -436,7 +436,7 @@ class report extends DbConn
             $err = $e->getMessage();
         }
 
-        if ($err != '') {
+        if ($err != '' OR $stm->rowCount() >= 0) {
             $success['success'] = null;
             $success['msg'] = $err;
         }
@@ -460,7 +460,7 @@ class report extends DbConn
             $err = $e->getMessage();
         }
 
-        if ($err != '') {
+        if ($err != '' OR $stm->rowCount() >= 0) {
             $success['success'] = null;
             $success['msg'] = $err;
         }
@@ -553,6 +553,7 @@ class report extends DbConn
             $kpi['kpiSum2'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : "-" ); //ถ้ายืนยันยังไม่ครบส่ง - ใช้กับ report
             $kpi['kpiSum2_'] = ($kpiCheckSumAll == 0 && $kpiSum2 != "" ? round($kpiSum2,2) : null ); //ถ้ายืนยันยังไม่ครบส่ง null
             $kpi['kpiSum2_user'] =  $kpiSum2_user   ;
+            $kpi['kpiSum2_user_'] =  ($kpiSum2_user == 0 ? "-" : $kpiSum2_user )   ; // ไม่มีคะแนนให้ใส่ - 
             $kpi['kpiCheckSumAll'] = ($kpiCheckSumAll == 0? $kpi['kpiSum2'] : "-" );
             $kpi['scoring'] = ($kpiResult['result'][0]['through_trial'] == 2 ? 50 : 70 );
             $kpi['through_trial'] = $kpiResult['result'][0]['through_trial'];
@@ -607,7 +608,7 @@ class report extends DbConn
                             "question_title" => $value['question_title'],
                             "cpc_weight" => $value['cpc_weight'],
                             "total_user" => round($total_user,2),
-                            "total" => ($cpcCheckSumAll>0?"-":$total),
+                            "total" => ($cpcCheckSumAll>0?"-":round($total,2)),
                             "total_" => ($cpcCheckSumAll>0?NULL:round($total,2) ),
                             "sum1" => ($cpcCheckSumAll>0?"-":round($sum1,2)),
                             "sum1_" => ($cpcCheckSumAll>0?NULL:round($sum1,2)),
@@ -860,7 +861,6 @@ class report extends DbConn
         $r = array();
         $rr = array();
 
-
         if ($cpcResult['success'] === true) {
             $cpcSum2 = 0;
             $CPCSumWeight = 0;
@@ -878,15 +878,15 @@ class report extends DbConn
             $r['question_code'] = $value['question_code'];
             $r['question_title'] = $value['question_title'];
             $r['cpc_divisor'] = $value['cpc_divisor'];
-            $r['total'] = $total;
+            $r['total'] = round($total,2);
             $r['cpc_weight'] =$value['cpc_weight'];
-            $r['sum1']     = $sum1;
+            $r['sum1']     = round($sum1,2);
                 
             array_push($rr,$r);
             }
             $success['cpc'] = $rr;
             $success['CPCsumWeight'] = $CPCSumWeight;
-            $success['cpcSum2'] = $cpcSum2;
+            $success['cpcSum2'] = round($cpcSum2,2);
         
        }
        

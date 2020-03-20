@@ -6,6 +6,7 @@ include_once "../../includes/class.permission.php";
 include_once "../../includes/class-date.php";
 include_once "../report/class-report.php";
 include_once "../cpc/class-cpc.php";
+include_once "../myClass.php";
 
 require_once "../../vendor/autoload.php";
 
@@ -310,35 +311,24 @@ function endPage($sumAll) {
 
 
 $per_cardno = $_POST['per_cardno'];
-$part = explode("-",$_POST['years']);
-$years = $_POST['years'];
+
+
 $err = "";
 $db = new DbConn;
 $dateCovert = new dateCovert;
 
-try {
-    $sqlSelectYear = "SELECT * FROM `table_year` WHERE `table_year`.`table_year` LIKE :yy ORDER BY `table_year`.`table_year` ASC  ";
-    $stmY = $db->conn->prepare($sqlSelectYear);
-    // $yy = $part[0]."%";
-    // $stmY->bindParam(":yy",$yy);
-    $stmY->bindParam(":yy",$_POST['years']);
-    $stmY->execute();
-    $tableYear = $stmY->fetchAll(PDO::FETCH_ASSOC);
-    // echo "<pre>";
-    // print_r($yy);
-    // echo "</pre>";
-    if (count($tableYear) === 1) {
-        $tablePersonal = $tableYear[0]['per_personal']; 
-        $tableCPCscore = $tableYear[0]['cpc_score'];
-        $tableKPIscore = $tableYear[0]['kpi_score'];
-        $startEvaluation_part1 = $tableYear[0]['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
-        $endEvaluation_part1 = $tableYear[0]['end_evaluation'];
-        $startEvaluation_part2 = $tableYear[0]['start_evaluation_2']; //วันเริ่มต้นช่วงที่ 2
-        $endEvaluation_part2 = $tableYear[0]['end_evaluation_2'];
-    }
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+$myClass= new myClass;
+
+$yearById = $myClass->callYearByID($_POST['years']);
+$tablePersonal = $yearById['data']['per_personal']; 
+$tableCPCscore = $yearById['data']['cpc_score'];
+$tableKPIscore = $yearById['data']['kpi_score'];
+$startEvaluation_part1 = $yearById['data']['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
+$endEvaluation_part1 = $yearById['data']['end_evaluation'];
+$startEvaluation_part2 = $yearById['data']['start_evaluation_2']; //วันเริ่มต้นช่วงที่ 2
+$endEvaluation_part2 = $yearById['data']['end_evaluation_2'];
+$tableYear = $yearById['data']['table_year'];
+$part = explode("-",$tableYear);
 
 
 try{
@@ -464,7 +454,7 @@ $sumAll = 0;
 
 foreach ($kpiTypeText as $k => $v){
     $html .= htmlTopic($v);
-    $kpiResult = $report->reportKPI($per_cardno,$years,$k,$tableKPIscore);
+    $kpiResult = $report->reportKPI($per_cardno,$tableYear,$k,$tableKPIscore);
     if(count($kpiResult['result']) > 0){
         foreach ($kpiResult['result'] as $key => $value) {
 

@@ -53,7 +53,7 @@ foreach ($sqlID as $key => $value) {
 }
 $part = $year;
 $rr = updateMovCode($moveCode,$per_personalTable);
-$rrr = updatethroughTrial($result,$dateEvaluation[$part[1]],$per_personalTable);
+$rrr = updatethroughTrial($result,'2019-10-01',$per_personalTable);
 $rrrr = array_merge($rr['msg'],$rrr['msg']);
 echo json_encode($rrrr);
 

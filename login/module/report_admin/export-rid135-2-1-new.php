@@ -6,6 +6,7 @@ include_once "../../includes/class.permission.php";
 include_once "../../includes/class-date.php";
 include_once "../report/class-report.php";
 include_once "../cpc/class-cpc.php";
+include_once "../myClass.php";
 
 require_once "../../vendor/autoload.php";
 
@@ -277,38 +278,24 @@ function endPage($param) {
 
 }
 
-
-
 $per_cardno = $_POST['per_cardno'];
-$part = explode("-",$_POST['years']);
-$years = $_POST['years'];
+
 $err = "";
 $db = new DbConn;
 $dateCovert = new dateCovert;
+$myClass= new myClass;
 
-try {
-    $sqlSelectYear = "SELECT * FROM `table_year` WHERE `table_year`.`table_year` LIKE :yy ORDER BY `table_year`.`table_year` ASC  ";
-    $stmY = $db->conn->prepare($sqlSelectYear);
-    // $yy = $part[0]."%";
-    // $stmY->bindParam(":yy",$yy);
-    $stmY->bindParam(":yy",$_POST['years']);
-    $stmY->execute();
-    $tableYear = $stmY->fetchAll(PDO::FETCH_ASSOC);
-    // echo "<pre>";
-    // print_r($yy);
-    // echo "</pre>";
-    if (count($tableYear) === 1) {
-        $tablePersonal = $tableYear[0]['per_personal']; 
-        $tableCPCscore = $tableYear[0]['cpc_score'];
-        $tableKPIscore = $tableYear[0]['kpi_score'];
-        $startEvaluation_part1 = $tableYear[0]['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
-        $endEvaluation_part1 = $tableYear[0]['end_evaluation'];
-        $startEvaluation_part2 = $tableYear[0]['start_evaluation_2']; //วันเริ่มต้นช่วงที่ 2
-        $endEvaluation_part2 = $tableYear[0]['end_evaluation_2'];
-    }
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+$yearById = $myClass->callYearByID($_POST['years']);
+$tablePersonal = $yearById['data']['per_personal']; 
+$tableCPCscore = $yearById['data']['cpc_score'];
+$tableKPIscore = $yearById['data']['kpi_score'];
+$startEvaluation_part1 = $yearById['data']['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
+$endEvaluation_part1 = $yearById['data']['end_evaluation'];
+$startEvaluation_part2 = $yearById['data']['start_evaluation_2']; //วันเริ่มต้นช่วงที่ 2
+$endEvaluation_part2 = $yearById['data']['end_evaluation_2'];
+$tableYear = $yearById['data']['table_year'];
+$part = explode("-",$tableYear);
+
 
 try{
     $sql = "SELECT `$tablePersonal`.`per_id`,
@@ -433,7 +420,7 @@ $html .= headDetail($param);
 $html .= mark(13);
 $count_row = 0;
 $page = 1;
-$table_cpc = $report->tableCPC($per_cardno,$years,array(1),$tablePersonal,$tableCPCscore);
+$table_cpc = $report->tableCPC($per_cardno,$tableYear,array(1),$tablePersonal,$tableCPCscore);
 
 $resultCPC = $report->cpcCalculate_new($table_cpc);
 // echo "<pre>";
@@ -466,7 +453,7 @@ foreach ($resultCPC['cpc'] as $k => $v) {
 $sumWeight += $resultCPC['CPCsumWeight'] ;
 $sum2 +=  $resultCPC['cpcSum2'] ;
 
-$table_cpc = $report->tableCPC($per_cardno,$years,array(2),$tablePersonal,$tableCPCscore);
+$table_cpc = $report->tableCPC($per_cardno,$tableYear,array(2),$tablePersonal,$tableCPCscore);
 $resultCPC = $report->cpcCalculate_new($table_cpc);
 $num2 = count($resultCPC['cpc']);
 if ($num2 > 0) {
@@ -495,7 +482,7 @@ if ($num2 > 0) {
 $sumWeight += $resultCPC['CPCsumWeight'] ;
 $sum2 +=  $resultCPC['cpcSum2'] ;
 
-$table_cpc = $report->tableCPC($per_cardno,$years,array(3),$tablePersonal,$tableCPCscore);
+$table_cpc = $report->tableCPC($per_cardno,$tableYear,array(3),$tablePersonal,$tableCPCscore);
 $resultCPC = $report->cpcCalculate_new($table_cpc);
 $num3 = count($resultCPC['cpc']);
 if ($num3 > 0) {

@@ -32,6 +32,7 @@ $idpScoreTable = $currentYear['data']['idp_score'];
 $year = $currentYear['data']['table_year'];
 $personalTable = $currentYear['data']['per_personal'];
 $cpcScoreTable = $currentYear['data']['cpc_score'];
+$table_id = $currentYear['data']['table_id'];
 
 ?>
 
@@ -192,7 +193,7 @@ $cpcScoreTable = $currentYear['data']['cpc_score'];
                                        
                                         <form action="module/report_admin/export-rid135-all-new.php" method="post" target="rid135">
                                             <input type="hidden" name="per_cardno" value="<?php echo  $_SESSION[__USER_ID__];?>">
-                                            <input type="hidden" name="years" value="<?php echo  $year ;?>">
+                                            <input type="hidden" name="years" value="<?php echo  $table_id ;?>">
                                             <button  class="btn btn-app" type="submit"><i class="fa fa-print text-success"></i> พิมพ์</button>
                                         </form>
                                         
@@ -206,7 +207,7 @@ $cpcScoreTable = $currentYear['data']['cpc_score'];
                                     <td>
                                         <form action="module/report_admin/export-kpi135-1-new.php" method="post" target="kpi135">
                                             <input type="hidden" name="per_cardno" value="<?php echo  $_SESSION[__USER_ID__];?>">
-                                            <input type="hidden" name="years" value="<?php echo  $year;?>">
+                                            <input type="hidden" name="years" value="<?php echo  $table_id;?>">
                                             <button  class="btn btn-app" type="submit"><i class="fa fa-print text-success"></i> พิมพ์</button>
                                         </form>
                                     </td>
@@ -218,7 +219,7 @@ $cpcScoreTable = $currentYear['data']['cpc_score'];
                                     <td>
                                         <form action="module/report_admin/export-rid135-2-1-new.php" method="post" target="rid135-2">
                                                 <input type="hidden" name="per_cardno" value="<?php echo  $_SESSION[__USER_ID__];?>">
-                                                <input type="hidden" name="years" value="<?php echo  $year;?>">
+                                                <input type="hidden" name="years" value="<?php echo  $table_id;?>">
                                                 <button  class="btn btn-app" type="submit"><i class="fa fa-print text-success"></i> พิมพ์</button>
                                         </form>
                                     </td>

@@ -59,7 +59,7 @@ if ($kpiDone['success'] == true && $kpiDone['result'] === 0 && $kpiDone['checkac
 
     (!empty($per_cardno)? $kpiResult = $report->tableKPI($per_cardno,$year,$personalTable,$kpiScoreTable) : $kpiResult);
     $kpi = $report->reportKPI1($kpiResult);
-    $kpiUpdateResutl =  $report->kpiResultUpdate($kpi,$currentYear['data']);
+    $kpiResultUpdate =  $report->kpiResultUpdate($kpi,$currentYear['data']);
 
     $msg_result .= "<span class='text text-info'> ตัวชี้วัด ยังประเมินเสร็จแล้ว</span>";
     $log_['kpiResultUpdate'] = $kpiResultUpdate;

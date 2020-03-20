@@ -356,15 +356,15 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__]);
 <div id="message"></div>
 <form action="module/report_admin/export-rid135-all-new.php" name="report_cpc135" id="report_cpc135" target="tab_cpc135" method="post">
   <input type="hidden" name="per_cardno" id="per_cardno">
-  <input type="hidden" name="years" id="years">
+  <input type="hidden" name="years" id="years_cpc135">
 </form>
 
-<form action="module/report_admin/export-kpi135-1-new.php" name="report_cpc135" id="report_kpi135" target="tab_kpi135" method="post">
+<form action="module/report_admin/export-kpi135-1-new.php" name="report_kpi135" id="report_kpi135" target="tab_kpi135" method="post">
   <input type="hidden" name="per_cardno" id="per_cardno_kpi135">
   <input type="hidden" name="years" id="years_kpi135">
 </form>
 
-<form action="module/report_admin/export-rid135-2-1-new.php" name="report_cpc135" id="report_rid135-2" target="tab_rid135" method="post">
+<form action="module/report_admin/export-rid135-2-1-new.php" name="report_cpc135_2" id="report_rid135-2" target="tab_rid135" method="post">
   <input type="hidden" name="per_cardno" id="per_cardno_rid135-2">
   <input type="hidden" name="years" id="years_rid135-2">
 </form>
@@ -674,7 +674,7 @@ function notify(nTitle,nText,nType,timeOut,nHide) {
 function cpc135(per_cardno,years) {
 
  $("#per_cardno").val(per_cardno)
- $("#years").val(years)
+ $("#years_cpc135").val(years)
 
  $("#report_cpc135").submit();
   
