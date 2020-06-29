@@ -437,7 +437,7 @@ class report extends DbConn
         $err = "";
         $success = array();
         try {
-            $sql = "SELECT * FROM $cpcScoreResult WHERE  `per_cardno` = :per_cardno AND years = :years ";
+            $sql = "SELECT * FROM $cpcScoreResult WHERE  per_cardno = :per_cardno AND years = :years ";
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":per_cardno", $per_cardno);
             $stm->bindParam(":years", $years);
@@ -450,7 +450,7 @@ class report extends DbConn
             $err = $e->getMessage();
         }
 
-        if ($err != '' or $stm->rowCount() >= 0) {
+        if ($err != '' || count($result) == 0) {
             $success['success'] = null;
             $success['msg'] = $err;
         }
@@ -462,7 +462,7 @@ class report extends DbConn
         $err = "";
         $success = array();
         try {
-            $sql = "SELECT * FROM $kpiScoreResultTable WHERE  `per_cardno` = :per_cardno AND years = :years ";
+            $sql = "SELECT * FROM $kpiScoreResultTable WHERE  per_cardno = :per_cardno AND years = :years ";
             $stm = $this->conn->prepare($sql);
             $stm->bindParam(":per_cardno", $per_cardno);
             $stm->bindParam(":years", $years);
@@ -475,7 +475,7 @@ class report extends DbConn
             $err = $e->getMessage();
         }
 
-        if ($err != '' or $stm->rowCount() >= 0) {
+        if ($err != '' or count($result) == 0) {
             $success['success'] = null;
             $success['msg'] = $err;
         }
