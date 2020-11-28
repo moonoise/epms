@@ -37,26 +37,16 @@ $result = $stm->fetchAll();
   <link href="../vendors/bootstrap/dist/css/custom.index.css" rel="stylesheet">
   <style>
     .bg-head {
-      /* The image used */
-      background-image: url(<?php echo __PATH_EXTERNAL__ . "background/6726.png"; ?> );
-
-      /* Full height */
-      height: 20%;
-
-
-      /* Center and scale the image nicely */
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
+      background-color: #d8d3cd;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 255, 255, .5) 35px, rgba(255, 255, 255, .5) 70px);
     }
 
-    body {
-      background-image: url(<?php echo __PATH_EXTERNAL__ . "background/04.jpg"; ?> );
-      background-repeat: no-repeat;
-    }
+    body {}
 
     .x-panel-bg {
-      background: #ffffffb5;
+      /* background: #e0ece4; */
+      background-color: #e0ece4;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 255, 255, .5) 35px, rgba(255, 255, 255, .5) 70px);
     }
   </style>
 
@@ -67,7 +57,7 @@ $result = $stm->fetchAll();
   <div class="col-md-12 col-sm-12 col-xs-12 bg-head ">
     <div class="page-header">
 
-      <h1 class="text-info">
+      <h1 class="text-danger">
         <span class="text-success">Welcome to </span> e-Performance Management
         <small class="blue">กรมชลประทาน</small>
         <img src="../external/icon/rid.png" width="80px" alt="..." style="float:none;">
@@ -83,7 +73,7 @@ $result = $stm->fetchAll();
       <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel x-panel-bg">
           <div class="x_title">
-            <h2 class="text-primary">ประกาศ/ประชาสัมพันธ์ <small class="text-success ">EPM News</small></h2>
+            <h2 class="text-danger">ประกาศ/ประชาสัมพันธ์ <small class="text-success ">EPM News</small></h2>
 
             </ul>
             <div class="clearfix"></div>
