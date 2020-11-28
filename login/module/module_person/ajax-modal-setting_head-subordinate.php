@@ -9,54 +9,54 @@ $currentYear = $myClass->callYear();
 // foreach ($_POST as $key => $value) {
 //     echo $key."->".$value;
 // }
-if(isset($_POST['org_id_2-head']) and $_POST['org_id_2-head'] != ""){
+if (isset($_POST['org_id_2-head']) and $_POST['org_id_2-head'] != "") {
 
-    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id_2 = :org_id_2 and (head != :head or head IS NULL ) AND  per_cardno != :head  ";
+    $sql = "select * from " . $currentYear['data']['per_personal'] . " where org_id_2 = :org_id_2 and (head != :head or head IS NULL ) AND  per_cardno != :head AND per_type = 3 ";
     $stm = $db->conn->prepare($sql);
-    $stm->bindParam(':org_id_2',$_POST['org_id_2-head']);
-    $stm->bindParam(':head',$_POST['modal-per_cardno-settingHead-input']);
+    $stm->bindParam(':org_id_2', $_POST['org_id_2-head']);
+    $stm->bindParam(':head', $_POST['modal-per_cardno-settingHead-input']);
     $stm->execute();
     $result = $stm->fetchAll();
-    
-    dataTable($result);
-    
-}elseif (isset($_POST['org_id_1-head']) and $_POST['org_id_1-head'] != "") {
 
-    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id_1 = :org_id_1 and (head != :head or head IS NULL) AND  per_cardno != :head";
-    $stm = $db->conn->prepare($sql);
-    $stm->bindParam(':org_id_1',$_POST['org_id_1-head']);
-    $stm->bindParam(':head',$_POST['modal-per_cardno-settingHead-input']);
-    $stm->execute();
-    $result = $stm->fetchAll();
-    
     dataTable($result);
-  
-}elseif (isset($_POST['org_id-head']) and $_POST['org_id-head'] != "") {
-    $sql = "select * from ".$currentYear['data']['per_personal']." where org_id = :org_id and (head != :head or head IS NULL ) AND  per_cardno != :head";
+} elseif (isset($_POST['org_id_1-head']) and $_POST['org_id_1-head'] != "") {
+
+    $sql = "select * from " . $currentYear['data']['per_personal'] . " where org_id_1 = :org_id_1 and (head != :head or head IS NULL) AND  per_cardno != :head AND per_type = 3";
     $stm = $db->conn->prepare($sql);
-    $stm->bindParam(':org_id',$_POST['org_id-head']);
-    $stm->bindParam(':head',$_POST['modal-per_cardno-settingHead-input']);
+    $stm->bindParam(':org_id_1', $_POST['org_id_1-head']);
+    $stm->bindParam(':head', $_POST['modal-per_cardno-settingHead-input']);
     $stm->execute();
     $result = $stm->fetchAll();
-    
+
+    dataTable($result);
+} elseif (isset($_POST['org_id-head']) and $_POST['org_id-head'] != "") {
+    $sql = "select * from " . $currentYear['data']['per_personal'] . " where org_id = :org_id and (head != :head or head IS NULL ) AND  per_cardno != :head AND per_type = 3";
+    $stm = $db->conn->prepare($sql);
+    $stm->bindParam(':org_id', $_POST['org_id-head']);
+    $stm->bindParam(':head', $_POST['modal-per_cardno-settingHead-input']);
+    $stm->execute();
+    $result = $stm->fetchAll();
+
     dataTable($result);
     // echo $_POST['modal-per_cardno-settingHead-input'];
 }
 
-function dataTable($result) {
+function dataTable($result)
+{
     $r = array();
     $d = array();
     foreach ($result as $key => $value) {
-      
-    $d[] = array("<div class='checkbox checkbox-warning'>
-                    <input id='checkbox-".$value['per_cardno']."' type='checkbox' class='headSelectCheckbox' onclick='subordinateList(`".$value['per_cardno']."`,`checkbox-".$value['per_cardno']."`)'>
-                    <label for='checkbox-".$value['per_cardno']."'></label>
+
+        $d[] = array(
+            "<div class='checkbox checkbox-warning'>
+                    <input id='checkbox-" . $value['per_cardno'] . "' type='checkbox' class='headSelectCheckbox' onclick='subordinateList(`" . $value['per_cardno'] . "`,`checkbox-" . $value['per_cardno'] . "`)'>
+                    <label for='checkbox-" . $value['per_cardno'] . "'></label>
                 </div>",
-                 $value['per_cardno'],
-                 $value['pn_name'].$value['per_name']." ". $value['per_surname'],
-                 $value['pm_name'],
-                 "<button type='button' class='btn btn-info btn-xs confirm-change-head' 
-                                onclick='changeHead(`".$value['per_cardno']."`)' data-original-title='' title=''>
+            $value['per_cardno'],
+            $value['pn_name'] . $value['per_name'] . " " . $value['per_surname'],
+            $value['pm_name'],
+            "<button type='button' class='btn btn-info btn-xs confirm-change-head' 
+                                onclick='changeHead(`" . $value['per_cardno'] . "`)' data-original-title='' title=''>
                                   <i class ='fa fa-plus'></i></button>
                                   <script>
                                   $('.confirm-change-head').popConfirm({
@@ -69,15 +69,14 @@ function dataTable($result) {
                                           });
                                   </script>
                                   "
-                     );
-  
+        );
     }
 
-//     echo "<pre>";
-//     print_r($r);
-//  echo "</pre>";
+    //     echo "<pre>";
+    //     print_r($r);
+    //  echo "</pre>";
 
-   $data = array('data' => $d );
+    $data = array('data' => $d);
     echo json_encode($data);
 }
 

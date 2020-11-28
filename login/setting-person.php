@@ -249,6 +249,22 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
 
                     </table>
 
+                    <br>
+                    <h3 class="text text-info">เลือกผู้บังคับบัญชา</h3>
+                    <table id="table-head" class="table table-hover table-bordered" style="width:100%">
+                      <thead>
+                        <tr class="bg-secondary">
+                          <th class="col-md-1 col-sm-1 col-xs-1">เลขบัตรประชาชน</th>
+                          <th class="col-md-3 col-sm-3 col-xs-3">ชื่อ-สกุล</th>
+                          <th class="col-md-3 col-sm-3 col-xs-3">ตำแหน่ง</th>
+                          <th class="col-md-5 col-sm-5 col-xs-5">#</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                      </tbody>
+
+                    </table>
                   </div>
                 </div>
               </div>
@@ -496,7 +512,7 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
             backdrop: 'static'
           })
           $("#show-cpc-question").DataTable({
-            'pageLength': 4,
+            'pageLength': 7,
             "lengthMenu": [
               [4, 10, 25, 50, -1],
               [4, 10, 25, 50, "All"]
@@ -675,8 +691,54 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
       ]
     })
 
+    var h = [
+      ["", "", "", ""]
+    ]
+    var ht = $('#table-head').DataTable({
+      "data": h,
+      "deferRender": true,
+      "columns": [{
+          data: 0
+        },
+        {
+          data: 1
+        },
+        {
+          data: 2
+        },
+        {
+          data: 3
+        }
+      ],
+      "columnDefs": [{
+          "targets": [0],
+          "searchable": true
+        },
+        {
+          "targets": [1],
+          "searchable": true
+        },
+        {
+          "targets": [2],
+          "searchable": true
+        },
+        {
+          "targets": [3],
+          "searchable": false
+        },
+      ],
+      'pageLength': 5,
+      "lengthMenu": [
+        [5, 10, 25, 50, 100, -1],
+        [5, 10, 25, 50, 100, "All"]
+      ]
+    })
+
     $("#submit-org").click(function() {
       var c = [
+        ["", "", "", ""]
+      ]
+      var h = [
         ["", "", "", ""]
       ]
       $.ajax({
@@ -690,6 +752,24 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
             t.clear().rows.add(result.data).draw();
           } else if (result.success == false) {
             t.clear().rows.add(c).draw();
+          }
+        },
+        beforeSend: function() {
+          $("#message").html("<div class='loading'>Loading&#8230;</div>");
+        }
+      })
+
+      $.ajax({
+        url: "module/module_person/ajax-query-person-head.php",
+        dataType: "json",
+        type: "POST",
+        data: $("#form-select-org").serialize(),
+        success: function(result) {
+          $("#message").html("");
+          if (result.success == true) {
+            ht.clear().rows.add(result.data).draw();
+          } else if (result.success == false) {
+            ht.clear().rows.add(h).draw();
           }
         },
         beforeSend: function() {
@@ -719,6 +799,27 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
           $("#message").html("<div class='loading'>Loading&#8230;</div>");
         }
       });
+
+      var h = [
+        ["", "", "", ""]
+      ]
+      $.ajax({
+        url: "module/module_person/ajax-query-person-name-head.php",
+        dataType: "json",
+        type: "POST",
+        data: $("#searchName").serialize(),
+        success: function(result) {
+          $("#message").html("");
+          if (result.success == true) {
+            ht.clear().rows.add(result.data).draw();
+          } else if (result.success == false) {
+            ht.clear().rows.add(c).draw();
+          }
+        },
+        beforeSend: function() {
+          $("#message").html("<div class='loading'>Loading&#8230;</div>");
+        }
+      });
       event.preventDefault();
     });
 
@@ -737,6 +838,26 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
             t.clear().rows.add(result.data).draw();
           } else if (result.success == false) {
             t.clear().rows.add(c).draw();
+          }
+        },
+        beforeSend: function() {
+          $("#message").html("<div class='loading'>Loading&#8230;</div>");
+        }
+      });
+      var h = [
+        ["", "", "", ""]
+      ]
+      $.ajax({
+        url: "module/module_person/ajax-query-person-id-head.php",
+        dataType: "json",
+        type: "POST",
+        data: $("#searchID").serialize(),
+        success: function(result) {
+          $("#message").html("");
+          if (result.success == true) {
+            ht.clear().rows.add(result.data).draw();
+          } else if (result.success == false) {
+            ht.clear().rows.add(c).draw();
           }
         },
         beforeSend: function() {
@@ -850,11 +971,11 @@ activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__]);
       })
     }
 
-    function cpcAdd(per_cardno, question_no, pl_code, level_no) {
+    function cpcAdd(per_cardno, question_no) {
       $.ajax({
         url: "module/cpc/ajax-modal-cpc_score-add.php",
         dataType: "json",
-        data: "per_cardno=" + per_cardno + "&question_no=" + question_no + "&pl_code=" + pl_code + "&level_no=" + level_no,
+        data: "per_cardno=" + per_cardno + "&question_no=" + question_no,
         success: function(result) {
           console.log(result)
           if (result.success === null) {
