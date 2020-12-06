@@ -9,15 +9,15 @@ class report extends DbConn
     {
         if (is_numeric($score)) {
             $score = round($score);
-            if ($score >= 90) {
+            if ($score >= 95) {
                 $grade = "A";
-            } elseif (($score >= 80) && ($score <= 89)) {
+            } elseif (($score >= 85) && ($score <= 94)) {
                 $grade = "B";
-            } elseif (($score >= 70) && ($score <= 79)) {
+            } elseif (($score >= 75) && ($score <= 84)) {
                 $grade = "C";
-            } elseif (($score >= 60) && ($score <= 69)) {
+            } elseif (($score >= 65) && ($score <= 74)) {
                 $grade = "D";
-            } elseif (($score >= 0) && ($score <= 59)) {
+            } elseif (($score >= 0) && ($score <= 64)) {
                 $grade = "F";
             }
         } else {
