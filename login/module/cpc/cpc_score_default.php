@@ -36,7 +36,8 @@ if (!empty($_GET['per_cardno']) && !empty($_GET['pl_code']) && !empty($_GET['lev
                     "per_cardno" => $value['per_cardno'],
                     "id_admin" => $_SESSION[__USER_ID__],
                     "years" => $year,
-                    "cpc_divisor" => $value['weight_default'],
+                    'cpc_divisor' => $d['cpc_divisor'],
+                    'cpc_weight' => $d['weight_default'],
                     "date_key_score" => $d,
                     "soft_delete" => 0
                 );

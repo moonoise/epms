@@ -9,11 +9,11 @@ include_once "../cpc/class-cpc.php";
 
 require_once "../../vendor/autoload.php";
 
-if(!isset($_SESSION[__USER_ID__]) ){ 
+if (!isset($_SESSION[__USER_ID__])) {
     header("location:../../login-dpis.php");
-  }
+}
 
-activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__],"../../login-dpis.php");
+activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__], "../../login-dpis.php");
 
 // $success =  groupUsers($_SESSION[__USER_ID__]);
 // if (($success['success'] === true)   ) {
@@ -27,14 +27,16 @@ activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__],"../../login-dpis.php
 //     if ($_SESSION[__GROUP_ID__] == 1 || $_SESSION[__GROUP_ID__] == 2 || $_SESSION[__GROUP_ID__] == 3) {
 //         $per_cardno = $_SESSION[__USER_ID__];
 //         $name = $_SESSION[__F_NAME__] ." ".$_SESSION[__L_NAME__];
-        
+
 //     }
 // }
 
-$kpiTypeText = array('1' => '1. งานที่สนับสนุนตัวชี้วัดของผู้บังคับบัญชาตามยุทธศาสตร์กรม / คำรับรองการปฏิบัติราชการ (กรม สำนัก กอง)' ,
-                '2' => '2. งานตามบทบาทหน้าที่ของตำแหน่งงาน',
-                '3' => '3. งานที่ได้รับมอบหมายพิเศษ');
-$html ="";
+$kpiTypeText = array(
+    '1' => '1. งานที่สนับสนุนตัวชี้วัดของผู้บังคับบัญชาตามยุทธศาสตร์กรม / คำรับรองการปฏิบัติราชการ (กรม สำนัก กอง)',
+    '2' => '2. งานตามบทบาทหน้าที่ของตำแหน่งงาน',
+    '3' => '3. งานที่ได้รับมอบหมายพิเศษ'
+);
+$html = "";
 $css = "
 <style>
 @font-face {
@@ -152,25 +154,26 @@ table.inner  td{
     ";
 $html .= $css;
 
-function headDetail($param){
-    
+function headDetail($param)
+{
+
     $head_logo = '
     <table cellpadding="0" cellspacing="0" border="0" width="100%">
     <tbody>
         <tr valign="top">
             <td width="30%"></td>
             <td align="center" width="40%"><img src="../../../external/logo_rid/rid_112x132.png" border="0"  width="60"></td>
-            <td width="30%" align="right"><div style="float:right;"><b>ชป.135/1</b><br>หน้า '.$param['page'].'</div></td>
+            <td width="30%" align="right"><div style="float:right;"><b>ชป.135/1</b><br>หน้า ' . $param['page'] . '</div></td>
         </tr>
     </tbody>
     </table>
     ';
-    
+
     $head_topic = '
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding:5px 0;">
         <tbody>
             <tr>
-                <td align="center" style="font-size: 16pt;"><b>แบบสรุปการประเมินผลการปฏิบัติราชการของข้าราชการ</b></td>
+                <td align="center" style="font-size: 16pt;"><b>แบบสรุปการประเมินผลการปฏิบัติราชการของพนักงานราชการ</b></td>
             </tr>
         </tbody>
     </table>';
@@ -181,18 +184,18 @@ function headDetail($param){
 <tbody>
 
     <tr>
-        <td colspan = "2" >รอบการประเมิน (1) <img src= "'.($param['part']==1?'../../../external/report/block_ok.png' : '../../../external/report/block.png' ).'" border="0" > รอบที่ 1 ตั้งแต่วันที่ '.$param['date1'].' ถึงวันที่ '.$param['date11'].'	</td>
-        <td colspan = "2" ><img src= "'.($param['part']==2?'../../../external/report/block_ok.png' : '../../../external/report/block.png' ).'" border="0" > รอบที่ 2 ตั้งแต่วันที่ '.$param['date2'].'	ถึงวันที่ '.$param['date22'].' </td>
+        <td colspan = "2" >รอบการประเมิน (1) <img src= "' . ($param['part'] == 1 ? '../../../external/report/block_ok.png' : '../../../external/report/block.png') . '" border="0" > รอบที่ 1 ตั้งแต่วันที่ ' . $param['date1'] . ' ถึงวันที่ ' . $param['date11'] . '	</td>
+        <td colspan = "2" ><img src= "' . ($param['part'] == 2 ? '../../../external/report/block_ok.png' : '../../../external/report/block.png') . '" border="0" > รอบที่ 2 ตั้งแต่วันที่ ' . $param['date2'] . '	ถึงวันที่ ' . $param['date22'] . ' </td>
     </tr>
     <tr>
-        <td width="24%" style="padding-top:5px; font-size: 12pt;"> ชื่อผู้รับการประเมิน (2) '.$param['name_lastname'].' </td>
-        <td width="35%" style="padding-top:5px; font-size: 12pt;"> ตำแหน่ง/ระดับ (3) '.($param['pm_name'] == $param['pl_name']? ' '.$param['pl_name'].' '.$param['position_level'].'' : $param['pm_name'].' ('.$param['pl_name'].' '.$param['position_level'].')').' </td>
+        <td width="24%" style="padding-top:5px; font-size: 12pt;"> ชื่อผู้รับการประเมิน (2) ' . $param['name_lastname'] . ' </td>
+        <td width="35%" style="padding-top:5px; font-size: 12pt;"> ตำแหน่ง/ระดับ (3) ' . ($param['pm_name'] == $param['pl_name'] ? ' ' . $param['pl_name'] . ' ' . $param['position_level'] . '' : $param['pm_name'] . ' (' . $param['pl_name'] . ' ' . $param['position_level'] . ')') . ' </td>
         <td width="41%" style="padding-top:5px; font-size: 12pt;" colspan = "2"> ลงชื่อ (4.1) ............................. วันที่ .................... ลงชื่อ (4.2) ............................. วันที่ .................... </td>
        
     </tr>
     <tr>
-        <td style="padding-top:5px; font-size: 12pt;"> ชื่อผู้บังคัญบัญชา (5) '.$param['head_nameLastname'].' </td>
-        <td style="padding-top:5px; font-size: 12pt;"> ตำแหน่ง/ระดับ (6)	'.($param['head_pm_name'] == $param['head_pl_name']? ' '.$param['head_pl_name'].' '.$param['head_position_level'].' ' : $param['head_pm_name'].' ('.$param['head_pl_name'].' '.$param['head_position_level'].')').'</td>
+        <td style="padding-top:5px; font-size: 12pt;"> ชื่อผู้บังคัญบัญชา (5) ' . $param['head_nameLastname'] . ' </td>
+        <td style="padding-top:5px; font-size: 12pt;"> ตำแหน่ง/ระดับ (6)	' . ($param['head_pm_name'] == $param['head_pl_name'] ? ' ' . $param['head_pl_name'] . ' ' . $param['head_position_level'] . ' ' : $param['head_pm_name'] . ' (' . $param['head_pl_name'] . ' ' . $param['head_position_level'] . ')') . '</td>
         <td style="padding-top:5px; font-size: 12pt;" colspan = "2"> ลงชื่อ (7.1) ............................. วันที่ .................... ลงชื่อ (7.2) ............................. วันที่ .................... </td>
     
     </tr>
@@ -200,7 +203,7 @@ function headDetail($param){
 </tbody>
 </table>';
 
-$head_table = '
+    $head_table = '
 <table cellpadding="3" cellspacing="0" border="0" style="padding-top:5px; font-size: 12pt;" width="100%" class="inner">
 <tbody>
     <tr>
@@ -239,43 +242,46 @@ $head_table = '
         
     </tr>
     ';
-    
 
- return $head_logo.$head_topic.$head_detail.$head_table;
+
+    return $head_logo . $head_topic . $head_detail . $head_table;
 }
 
 
 
-function htmlTopic($text) {
+function htmlTopic($text)
+{
     return '
         <tr>
-        <td colspan="12" style="font-size: 12pt; padding: 1px;" class="inner_td"><b>'.$text.'</b></td>
+        <td colspan="12" style="font-size: 12pt; padding: 1px;" class="inner_td"><b>' . $text . '</b></td>
         </tr>';
 }
 
-function html_content($text) {
-   
-    
+function html_content($text)
+{
+
+
     // $kpi_level2 = wordwrap($text['kpi_level2'],10, "<br>\n");
-   
-        return ' <tr>
-        <td  width="15%" style="font-size: 12pt; padding: 1px;" class="inner_td">'.$text['works_name'].'</td>
-        <td  width="20%"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$text['kpi_title'].'</td>
+
+    return ' <tr>
+        <td  width="15%" style="font-size: 12pt; padding: 1px;" class="inner_td">' . $text['works_name'] . '</td>
+        <td  width="20%"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $text['kpi_title'] . '</td>
         <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td"></td>
-        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">'.$text['kpi_level1'].'</td>
-        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">'.$text['kpi_level2'].'</td>
-        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">'.$text['kpi_level3'].'</td>
-        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">'.$text['kpi_level4'].'</td>
-        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">'.$text['kpi_level5'].'</td>
-        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.($text['kpi_score_raw']!=""?$text['kpi_score_raw']:$text['kpi_score']).'</td>
-        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$text['kpi_score'].'</td>
-        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$text['weight'].'</td>
-        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$text['sum'].'</td>
+        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">' . $text['kpi_level1'] . '</td>
+        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">' . $text['kpi_level2'] . '</td>
+        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">' . $text['kpi_level3'] . '</td>
+        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">' . $text['kpi_level4'] . '</td>
+        <td style="font-size: 12pt; padding: 1px;" class="kpi_level_td">' . $text['kpi_level5'] . '</td>
+        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . ($text['kpi_score_raw'] != "" ? $text['kpi_score_raw'] : $text['kpi_score']) . '</td>
+        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $text['kpi_score'] . '</td>
+        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $text['weight'] . '</td>
+        <td  width="5%" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $text['sum'] . '</td>
     </tr>
 
-';        
+';
 }
-function html_content_blank(){
+function html_content_blank()
+{
     return '<tr>
                 <td  width="15%" style="font-size: 12pt; padding: 1px;" class="inner_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td  width="20%"  style="font-size: 12pt; padding: 1px;" class="inner_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -292,23 +298,22 @@ function html_content_blank(){
             </tr>';
 }
 
-function endPage($sumAll) {
+function endPage($sumAll)
+{
     return  '
     <tr>
         <td  colspan="11" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">รวม (16)</td>
-        <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$sumAll.'</td>
+        <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $sumAll . '</td>
     </tr>
         
     </tbody>
     </table>';
-
-
 }
 
 
 
 $per_cardno = $_POST['per_cardno'];
-$part = explode("-",$_POST['years']);
+$part = explode("-", $_POST['years']);
 $years = $_POST['years'];
 $err = "";
 $db = new DbConn;
@@ -319,14 +324,14 @@ try {
     $stmY = $db->conn->prepare($sqlSelectYear);
     // $yy = $part[0]."%";
     // $stmY->bindParam(":yy",$yy);
-    $stmY->bindParam(":yy",$_POST['years']);
+    $stmY->bindParam(":yy", $_POST['years']);
     $stmY->execute();
     $tableYear = $stmY->fetchAll(PDO::FETCH_ASSOC);
     // echo "<pre>";
     // print_r($yy);
     // echo "</pre>";
     if (count($tableYear) === 1) {
-        $tablePersonal = $tableYear[0]['per_personal']; 
+        $tablePersonal = $tableYear[0]['per_personal'];
         $tableCPCscore = $tableYear[0]['cpc_score'];
         $tableKPIscore = $tableYear[0]['kpi_score'];
         $startEvaluation_part1 = $tableYear[0]['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
@@ -339,7 +344,7 @@ try {
 }
 
 
-try{
+try {
     $sql = "SELECT `$tablePersonal`.`per_id`,
 						`$tablePersonal`.`per_cardno`,
 						`$tablePersonal`.`pn_name`,
@@ -372,13 +377,12 @@ try{
 				LEFT JOIN per_mgt ON per_mgt.pm_code = $tablePersonal.pm_code	
 		WHERE per_cardno = :per_cardno ";
     $stm = $db->conn->prepare($sql);
-    $stm->bindParam(":per_cardno",$per_cardno);
+    $stm->bindParam(":per_cardno", $per_cardno);
     $stm->execute();
     $result = $stm->fetchAll();
-     //echo $sql;
+    //echo $sql;
 
-}catch(Exception $e)
-{
+} catch (Exception $e) {
     $err = $e->getMessage();
 }
 if ($err != '') {
@@ -391,7 +395,7 @@ $date11 = $dateCovert->fullDateEngToThai($endEvaluation_part1);
 $date2 = $dateCovert->fullDateEngToThai($startEvaluation_part2);
 $date22 = $dateCovert->fullDateEngToThai($endEvaluation_part2);
 
-$name_lastname = $result[0]['pn_name'].$result[0]['per_name']." ".$result[0]['per_surname'];
+$name_lastname = $result[0]['pn_name'] . $result[0]['per_name'] . " " . $result[0]['per_surname'];
 
 $position_type = $result[0]['position_type'];
 $pl_name = $result[0]['pl_name'];
@@ -399,7 +403,7 @@ $pm_name = $result[0]['pm_name'];
 $position_level = $result[0]['position_level'];
 
 
-$head_nameLastname = $result[0]['head_pn_name'].$result[0]['head_per_name']." ".$result[0]['head_per_surname'];
+$head_nameLastname = $result[0]['head_pn_name'] . $result[0]['head_per_name'] . " " . $result[0]['head_per_surname'];
 $head_position_type = $result[0]['head_position_type'];
 $head_pl_name = $result[0]['head_pl_name'];
 $head_pm_name = $result[0]['head_pm_name'];
@@ -416,23 +420,24 @@ $report = new report;
 
 $sumWeight = 0;
 $sum2 = 0;
-$param = array('name_lastname' => $name_lastname,
-                'position_type' => $position_type,
-                'pl_name' => $pl_name,
-                'pm_name' => $pm_name,
-                'position_level' => $position_level,
-                'head_nameLastname' => $head_nameLastname,
-                'head_position_type' => $head_position_type,
-                'head_pl_name' => $head_pl_name,
-                'head_pm_name' => $head_pm_name,
-                'head_position_level' => $head_position_level,
-                'part' => $part[1],
-                'date1' => $date1,
-                'date11' => $date11,
-                'date2' => $date2,
-                'date22' => $date22,
-                'page' => 1
-                );
+$param = array(
+    'name_lastname' => $name_lastname,
+    'position_type' => $position_type,
+    'pl_name' => $pl_name,
+    'pm_name' => $pm_name,
+    'position_level' => $position_level,
+    'head_nameLastname' => $head_nameLastname,
+    'head_position_type' => $head_position_type,
+    'head_pl_name' => $head_pl_name,
+    'head_pm_name' => $head_pm_name,
+    'head_position_level' => $head_position_level,
+    'part' => $part[1],
+    'date1' => $date1,
+    'date11' => $date11,
+    'date2' => $date2,
+    'date22' => $date22,
+    'page' => 1
+);
 
 
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
@@ -442,49 +447,49 @@ $defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
 $fontData = $defaultFontConfig['fontdata'];
 
 $mpdf = new \Mpdf\Mpdf(
-[
-    'fontDir' => array_merge($fontDirs, [
-        __DIR__ . '../../vendor/mpdf/ttfonts',
-    ]),
-    'fontdata' => $fontData + [
-        'thsarabun' => [
-            'R' => 'THSarabun.ttf',
-            'I' => 'THSarabun Italic.ttf',
-            'B' => 'THSarabun Bold.ttf',
-        ]
-    ],
-    'default_font' => 'thsarabun',
-    'orientation' => 'L'
-]);
+    [
+        'fontDir' => array_merge($fontDirs, [
+            __DIR__ . '../../vendor/mpdf/ttfonts',
+        ]),
+        'fontdata' => $fontData + [
+            'thsarabun' => [
+                'R' => 'THSarabun.ttf',
+                'I' => 'THSarabun Italic.ttf',
+                'B' => 'THSarabun Bold.ttf',
+            ]
+        ],
+        'default_font' => 'thsarabun',
+        'orientation' => 'L'
+    ]
+);
 
 $html .= headDetail($param);
 $sumAll = 0;
 
-foreach ($kpiTypeText as $k => $v){
+foreach ($kpiTypeText as $k => $v) {
     $html .= htmlTopic($v);
-    $kpiResult = $report->reportKPI($per_cardno,$years,$k,$tableKPIscore);
-    if(count($kpiResult['result']) > 0){
+    $kpiResult = $report->reportKPI($per_cardno, $years, $k, $tableKPIscore);
+    if (count($kpiResult['result']) > 0) {
         foreach ($kpiResult['result'] as $key => $value) {
 
             if ($value['kpi_accept'] == 1) {
-                $sum = ($value['kpi_score'] * $value['weight'] * 20 ) / 100;
-            }else {
+                $sum = ($value['kpi_score'] * $value['weight'] * 20) / 100;
+            } else {
                 $sum = '<small style="color: red;">คะแนนยังไม่สมบูรณ์</small>';
             }
             $value['sum'] = $sum;
             $sumAll = $sumAll + $sum;
-            $html .= html_content($value);   
-           }
-    }else{
-            $html .= html_content_blank();
-    }   
-   
+            $html .= html_content($value);
+        }
+    } else {
+        $html .= html_content_blank();
+    }
 }
 
 $html .= endPage($sumAll);
 
 
-        
+
 // $test = array("works_name" => 'ระดับความสำเร็จในการจัดทำรายงานผลการปฏิบัติงานเพื่อคณะอนุและคณะกรรมการบริหารเงินทุนหมุนเวียนเพื่อการชลประทาน',
 // "kpi_title" => 'ระดับความสำเร็จในการจัดทำรายงานผลการปฏิบัติงานเพื่อคณะอนุและคณะกรรมการบริหารเงินทุนหมุนเวียนเพื่อการชลประทาน',
 // "kpi_score_raw" => '95',
@@ -522,5 +527,3 @@ $html .= endPage($sumAll);
 // echo "</pre>";
 
 echo ($html);
-
-

@@ -10,11 +10,11 @@ include_once "../myClass.php";
 
 require_once "../../vendor/autoload.php";
 
-if(!isset($_SESSION[__USER_ID__]) ){ 
+if (!isset($_SESSION[__USER_ID__])) {
     header("location:../../login-dpis.php");
-  }
+}
 
-  activeTime($login_timeout,$_SESSION[__SESSION_TIME_LIFE__],"../../login-dpis.php");
+activeTime($login_timeout, $_SESSION[__SESSION_TIME_LIFE__], "../../login-dpis.php");
 
 // $success =  groupUsers($_SESSION[__USER_ID__]);
 // if (($success['success'] === true)   ) {
@@ -28,10 +28,10 @@ if(!isset($_SESSION[__USER_ID__]) ){
 //     if ($_SESSION[__GROUP_ID__] == 1 || $_SESSION[__GROUP_ID__] == 2 || $_SESSION[__GROUP_ID__] == 3) {
 //         $per_cardno = $_SESSION[__USER_ID__];
 //         $name = $_SESSION[__F_NAME__] ." ".$_SESSION[__L_NAME__];
-        
+
 //     }
 // }
-$html ="";
+$html = "";
 $css = "
 <style>
 @page {
@@ -126,25 +126,26 @@ table.inner  td{
     ";
 $html .= $css;
 
-function headDetail($param){
-    
+function headDetail($param)
+{
+
     $head_logo = '
     <table cellpadding="0" cellspacing="0" border="0" width="100%">
     <tbody>
         <tr valign="top">
             <td width="30%"></td>
             <td align="center" width="40%"><img src="../../../external/logo_rid/rid_112x132.png" border="0"  width="60"></td>
-            <td width="30%" align="right"><div style="float:right;"><b>ชป.135/2-2</b><br>หน้า '.$param['page'].'</div></td>
+            <td width="30%" align="right"><div style="float:right;"><b>ชป.135/2-2</b><br>หน้า ' . $param['page'] . '</div></td>
         </tr>
     </tbody>
     </table>
     ';
-    
+
     $head_topic = '
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="padding:5px 0;">
         <tbody>
             <tr>
-                <td align="center" style="font-size: 16pt;"><b>แบบสรุปการประเมินผลการปฏิบัติราชการของข้าราชการ</b></td>
+                <td align="center" style="font-size: 16pt;"><b>แบบสรุปการประเมินผลการปฏิบัติราชการของพนักงานราชการ</b></td>
             </tr>
         </tbody>
     </table>';
@@ -155,27 +156,27 @@ function headDetail($param){
 <tbody>
 
     <tr>
-        <td colspan = "2" >รอบการประเมิน (1) <img src= "'.($param['part']==1?'../../../external/report/block_ok.png' : '../../../external/report/block.png' ).'" border="0" > รอบที่ 1 ตั้งแต่วันที่ '.$param['date1'].' ถึงวันที่ '.$param['date11'].'	</td>
-        <td colspan = "2" ><img src= "'.($param['part']==2?'../../../external/report/block_ok.png' : '../../../external/report/block.png' ).'" border="0" > รอบที่ 2 ตั้งแต่วันที่ '.$param['date2'].'	ถึงวันที่ '.$param['date22'].' </td>
+        <td colspan = "2" >รอบการประเมิน (1) <img src= "' . ($param['part'] == 1 ? '../../../external/report/block_ok.png' : '../../../external/report/block.png') . '" border="0" > รอบที่ 1 ตั้งแต่วันที่ ' . $param['date1'] . ' ถึงวันที่ ' . $param['date11'] . '	</td>
+        <td colspan = "2" ><img src= "' . ($param['part'] == 2 ? '../../../external/report/block_ok.png' : '../../../external/report/block.png') . '" border="0" > รอบที่ 2 ตั้งแต่วันที่ ' . $param['date2'] . '	ถึงวันที่ ' . $param['date22'] . ' </td>
     </tr>
     <tr>
-        <td width="25%" style="padding-top:5px;"> ชื่อผู้รับการประเมิน (2) '.$param['name_lastname'].' </td>
-        <td width="35%" style="padding-top:5px;"> ตำแหน่ง/ระดับ (3) '.($param['pm_name'] == $param['pl_name']? ' '.$param['pl_name'].' '.$param['position_level'].'' : $param['pm_name'].' ('.$param['pl_name'].' '.$param['position_level'].')').' </td>
+        <td width="25%" style="padding-top:5px;"> ชื่อผู้รับการประเมิน (2) ' . $param['name_lastname'] . ' </td>
+        <td width="35%" style="padding-top:5px;"> ตำแหน่ง/ระดับ (3) ' . ($param['pm_name'] == $param['pl_name'] ? ' ' . $param['pl_name'] . ' ' . $param['position_level'] . '' : $param['pm_name'] . ' (' . $param['pl_name'] . ' ' . $param['position_level'] . ')') . ' </td>
         <td width="40%" style="padding-top:5px;" colspan = "2"> ลงชื่อ (4.1) ............................. วันที่ ......................... ลงชื่อ (4.2) ............................. วันที่ ........................ </td>
        
     </tr>
     <tr>
-        <td style="padding-top:5px;"> ชื่อผู้บังคับบัญชา (5) '.$param['head_nameLastname'].' </td>
-        <td style="padding-top:5px;"> ตำแหน่ง/ระดับ (6)	'.($param['head_pm_name'] == $param['head_pl_name']? ' '.$param['head_pl_name'].' '.$param['head_position_level'].' ' : $param['head_pm_name'].' ('.$param['head_pl_name'].' '.$param['head_position_level'].')').' </td>
+        <td style="padding-top:5px;"> ชื่อผู้บังคับบัญชา (5) ' . $param['head_nameLastname'] . ' </td>
+        <td style="padding-top:5px;"> ตำแหน่ง/ระดับ (6)	' . ($param['head_pm_name'] == $param['head_pl_name'] ? ' ' . $param['head_pl_name'] . ' ' . $param['head_position_level'] . ' ' : $param['head_pm_name'] . ' (' . $param['head_pl_name'] . ' ' . $param['head_position_level'] . ')') . ' </td>
         <td style="padding-top:5px;" colspan = "2"> ลงชื่อ (7.1) ............................. วันที่ ......................... ลงชื่อ (7.2) ............................. วันที่ ........................ </td>
     
     </tr>
 
 </tbody>
 </table>';
-// ('.$param['pl_name'].')
-// ('.$param['head_pl_name'].')
-$head_table = '
+    // ('.$param['pl_name'].')
+    // ('.$param['head_pl_name'].')
+    $head_table = '
 <table cellpadding="3" cellspacing="0" border="0" style="padding-top:5px; font-size: 12pt; " width="100%" class="inner">
 <tbody>
     <tr >
@@ -200,12 +201,13 @@ $head_table = '
         
     </tr>
     ';
-    
 
- return $head_logo.$head_topic.$head_detail.$head_table;
+
+    return $head_logo . $head_topic . $head_detail . $head_table;
 }
 
-function mark($rowspan){
+function mark($rowspan)
+{
     return  '
     <tr>
         <td class="line0" > </td>
@@ -215,54 +217,57 @@ function mark($rowspan){
         <td class="line0" > </td>
         <td class="line0" > </td>
         <td class="line0" > </td>
-        <td class="line00"  rowspan="'.$rowspan.'"> <span> &nbsp;&nbsp;ผู้บังคับบัญชาจะต้องประเมินสมรรถนะ<br>
+        <td class="line00"  rowspan="' . $rowspan . '"> <span> &nbsp;&nbsp;ผู้บังคับบัญชาจะต้องประเมินสมรรถนะ<br>
                                                             &nbsp;&nbsp;โดยใช้มาตรวัดแบบเปรียบเทียบกับ<br>
-                                                            &nbsp;&nbsp;สมรรถนะของข้าราชการอื่น<br>
+                                                            &nbsp;&nbsp;สมรรถนะของพนักงานราชการอื่น<br>
                                                             &nbsp;&nbsp;ในประเภท/ตำแหน่งเดียวกัน<br>
                                                             &nbsp;&nbsp;ซึ่งมีเกณฑ์การให้คะแนนประเมิน ดังนี้ </span>                                                                                
         <br>
         &nbsp;&nbsp;<u>คะแนน</u>&nbsp;&nbsp;<u>นิยาม</u> <br>
         <p>&nbsp;&nbsp; 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;จำเป็นต้องพัฒนาอย่างยิ่ง </p>
-        <p>&nbsp;&nbsp; 2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ด้อยกว่าข้าราชการอื่นในประเภท<br> 
+        <p>&nbsp;&nbsp; 2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ด้อยกว่าพนักงานราชการอื่นในประเภท<br> 
                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ตำแหน่งเดียวกัน</p> 
     
-        <p>&nbsp;&nbsp; 3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ทัดเทียมกับข้าราชการอื่น ในประเภท/<br>
+        <p>&nbsp;&nbsp; 3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ทัดเทียมกับพนักงานราชการอื่น ในประเภท/<br>
                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ในประเภท/ตำแหน่งเดียวกัน</p>
         
         
-        <p>&nbsp;&nbsp; 4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;สูงกว่าข้าราชการอื่นในประเภท/<br> 
+        <p>&nbsp;&nbsp; 4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;สูงกว่าพนักงานราชการอื่นในประเภท/<br> 
                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ตำแหน่งเดียวกัน </p>
         
-        <p>&nbsp;&nbsp; 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เป็นเลิศกว่าข้าราชการอื่น<br>  
+        <p>&nbsp;&nbsp; 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เป็นเลิศกว่าพนักงานราชการอื่น<br>  
                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ในประเภท/ตำแหน่งเดียวกัน</p></td>
     </tr>';
 }
 
-function htmlTopic($cpcType,$value) {
+function htmlTopic($cpcType, $value)
+{
     return '
         <tr>
-        <td colspan="7" style="font-size: 12pt; padding: 1px;" class="inner_td"><b>'.$cpcType.($value==3?' (คะแนนรวม 30 คะแนน โดยต้องมีสมรรถนะอย่างน้อย 3 สมรรถนะ)':'').'</b></td>
+        <td colspan="7" style="font-size: 12pt; padding: 1px;" class="inner_td"><b>' . $cpcType . ($value == 3 ? ' (คะแนนรวม 30 คะแนน โดยต้องมีสมรรถนะอย่างน้อย 3 สมรรถนะ)' : '') . '</b></td>
         </tr>';
 }
 
-function html_content($question_title,$cpc_divisor,$total,$cpc_weight,$sum1) {
+function html_content($question_title, $cpc_divisor, $total, $cpc_weight, $sum1)
+{
     return ' <tr>
-                <td    style="font-size: 12pt; padding: 1px;" class="inner_td">'.$question_title.'</td>
-                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$cpc_divisor.'</td>
-                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$total.'</td>
-                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$cpc_weight.'</td>
-                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">'.$sum1.'</td>
+                <td    style="font-size: 12pt; padding: 1px;" class="inner_td">' . $question_title . '</td>
+                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $cpc_divisor . '</td>
+                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $total . '</td>
+                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $cpc_weight . '</td>
+                <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td">' . $sum1 . '</td>
                 <td   style="font-size: 12pt;  padding: 1px;" class="inner_td"></td>
                 <td   style="font-size: 12pt;  padding: 1px;" class="inner_td"></td>
             </tr>';
 }
 
-function endPage($param) {
+function endPage($param)
+{
     return  '
     <tr>
         <td colspan="3" style="font-size: 12pt; padding: 1px;" class="inner_td"></td>
-        <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td"> '.$param['sumWeight'].'%</td>
-        <td align="center" rowspan="2" style="font-size: 12pt; padding: 1px;" class="inner_td">'.$param['sumScore'].'</td>
+        <td align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td"> ' . $param['sumWeight'] . '%</td>
+        <td align="center" rowspan="2" style="font-size: 12pt; padding: 1px;" class="inner_td">' . $param['sumScore'] . '</td>
         <td colspan="2" rowspan="2" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td"></td>
         <td rowspan="2" align="center"  style="font-size: 12pt; padding: 1px;" class="inner_td"></td>
         </tr>
@@ -274,8 +279,6 @@ function endPage($param) {
         
     </tbody>
     </table>';
-
-
 }
 
 $per_cardno = $_POST['per_cardno'];
@@ -283,10 +286,10 @@ $per_cardno = $_POST['per_cardno'];
 $err = "";
 $db = new DbConn;
 $dateCovert = new dateCovert;
-$myClass= new myClass;
+$myClass = new myClass;
 
 $yearById = $myClass->callYearByID($_POST['years']);
-$tablePersonal = $yearById['data']['per_personal']; 
+$tablePersonal = $yearById['data']['per_personal'];
 $tableCPCscore = $yearById['data']['cpc_score'];
 $tableKPIscore = $yearById['data']['kpi_score'];
 $startEvaluation_part1 = $yearById['data']['start_evaluation'];  //วันเริ่มต้นช่วงที่ 1
@@ -294,10 +297,10 @@ $endEvaluation_part1 = $yearById['data']['end_evaluation'];
 $startEvaluation_part2 = $yearById['data']['start_evaluation_2']; //วันเริ่มต้นช่วงที่ 2
 $endEvaluation_part2 = $yearById['data']['end_evaluation_2'];
 $tableYear = $yearById['data']['table_year'];
-$part = explode("-",$tableYear);
+$part = explode("-", $tableYear);
 
 
-try{
+try {
     $sql = "SELECT `$tablePersonal`.`per_id`,
 						`$tablePersonal`.`per_cardno`,
 						`$tablePersonal`.`pn_name`,
@@ -330,13 +333,12 @@ try{
 				LEFT JOIN per_mgt ON per_mgt.pm_code = $tablePersonal.pm_code	
 		WHERE per_cardno = :per_cardno ";
     $stm = $db->conn->prepare($sql);
-    $stm->bindParam(":per_cardno",$per_cardno);
+    $stm->bindParam(":per_cardno", $per_cardno);
     $stm->execute();
     $result = $stm->fetchAll();
-     //echo $sql;
+    //echo $sql;
 
-}catch(Exception $e)
-{
+} catch (Exception $e) {
     $err = $e->getMessage();
 }
 if ($err != '') {
@@ -349,7 +351,7 @@ $date11 = $dateCovert->fullDateEngToThai($endEvaluation_part1);
 $date2 = $dateCovert->fullDateEngToThai($startEvaluation_part2);
 $date22 = $dateCovert->fullDateEngToThai($endEvaluation_part2);
 
-$name_lastname = $result[0]['pn_name'].$result[0]['per_name']." ".$result[0]['per_surname'];
+$name_lastname = $result[0]['pn_name'] . $result[0]['per_name'] . " " . $result[0]['per_surname'];
 
 $position_type = $result[0]['position_type'];
 $pl_name = $result[0]['pl_name'];
@@ -357,7 +359,7 @@ $pm_name = $result[0]['pm_name'];
 $position_level = $result[0]['position_level'];
 
 
-$head_nameLastname = $result[0]['head_pn_name'].$result[0]['head_per_name']." ".$result[0]['head_per_surname'];
+$head_nameLastname = $result[0]['head_pn_name'] . $result[0]['head_per_name'] . " " . $result[0]['head_per_surname'];
 $head_position_type = $result[0]['head_position_type'];
 $head_pl_name = $result[0]['head_pl_name'];
 $head_pm_name = $result[0]['head_pm_name'];
@@ -369,28 +371,29 @@ $head_position_level = $result[0]['head_position_level'];
 // echo "</pre>";
 
 $report = new report;
-$cpcTypeKey = array(1,2,3);
+$cpcTypeKey = array(1, 2, 3);
 $a = 1;
 
 $sumWeight = 0;
 $sum2 = 0;
-$param = array('name_lastname' => $name_lastname,
-                'position_type' => $position_type,
-                'pl_name' => $pl_name,
-                'pm_name' => $pm_name,
-                'position_level' => $position_level,
-                'head_nameLastname' => $head_nameLastname,
-                'head_position_type' => $head_position_type,
-                'head_pl_name' => $head_pl_name,
-                'head_pm_name' => $head_pm_name,
-                'head_position_level' => $head_position_level,
-                'part' => $part[1],
-                'date1' => $date1,
-                'date11' => $date11,
-                'date2' => $date2,
-                'date22' => $date22,
-                'page' => 1
-                );
+$param = array(
+    'name_lastname' => $name_lastname,
+    'position_type' => $position_type,
+    'pl_name' => $pl_name,
+    'pm_name' => $pm_name,
+    'position_level' => $position_level,
+    'head_nameLastname' => $head_nameLastname,
+    'head_position_type' => $head_position_type,
+    'head_pl_name' => $head_pl_name,
+    'head_pm_name' => $head_pm_name,
+    'head_position_level' => $head_position_level,
+    'part' => $part[1],
+    'date1' => $date1,
+    'date11' => $date11,
+    'date2' => $date2,
+    'date22' => $date22,
+    'page' => 1
+);
 
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
 $fontDirs = $defaultConfig['fontDir'];
@@ -399,20 +402,21 @@ $defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
 $fontData = $defaultFontConfig['fontdata'];
 
 $mpdf = new \Mpdf\Mpdf(
-[
-    'fontDir' => array_merge($fontDirs, [
-        __DIR__ . '../../vendor/mpdf/ttfonts',
-    ]),
-    'fontdata' => $fontData + [
-        'thsarabun' => [
-            'R' => 'THSarabun.ttf',
-            'I' => 'THSarabun Italic.ttf',
-            'B' => 'THSarabun Bold.ttf',
-        ]
-    ],
-    'default_font' => 'thsarabun',
-    'orientation' => 'L'
-]);
+    [
+        'fontDir' => array_merge($fontDirs, [
+            __DIR__ . '../../vendor/mpdf/ttfonts',
+        ]),
+        'fontdata' => $fontData + [
+            'thsarabun' => [
+                'R' => 'THSarabun.ttf',
+                'I' => 'THSarabun Italic.ttf',
+                'B' => 'THSarabun Bold.ttf',
+            ]
+        ],
+        'default_font' => 'thsarabun',
+        'orientation' => 'L'
+    ]
+);
 
 
 
@@ -420,7 +424,7 @@ $html .= headDetail($param);
 $html .= mark(13);
 $count_row = 0;
 $page = 1;
-$table_cpc = $report->tableCPC($per_cardno,$tableYear,array(1),$tablePersonal,$tableCPCscore);
+$table_cpc = $report->tableCPC($per_cardno, $tableYear, array(1), $tablePersonal, $tableCPCscore);
 
 $resultCPC = $report->cpcCalculate_new($table_cpc);
 // echo "<pre>";
@@ -428,94 +432,88 @@ $resultCPC = $report->cpcCalculate_new($table_cpc);
 // echo "</pre>";
 $num1 = count($resultCPC['cpc']);
 if ($num1 > 0) {
-    $html .= htmlTopic($cpcType['1'],1);
-$count_row ++;
-foreach ($resultCPC['cpc'] as $k => $v) {
-    $html .= html_content($v['question_title'],$v['cpc_divisor'],$v['total'],$v['cpc_weight'],$v['sum1']);
-    $count_row ++;
-    if ($count_row  >= 13 ) {
-       echo  $html .= ' </tbody>
+    $html .= htmlTopic($cpcType['1'], 1);
+    $count_row++;
+    foreach ($resultCPC['cpc'] as $k => $v) {
+        $html .= html_content($v['question_title'], $v['cpc_divisor'], $v['total'], $v['cpc_weight'], $v['sum1']);
+        $count_row++;
+        if ($count_row  >= 13) {
+            echo  $html .= ' </tbody>
         </table>';
-        $mpdf->WriteHTML($html);
-       $mpdf->AddPage();
-       $page++;
-        $param['page'] = $page;
-        $html =  headDetail($param);
-        $html .= htmlTopic($cpcType['1'],1);
-        $count_row = 0;
-        
+            $mpdf->WriteHTML($html);
+            $mpdf->AddPage();
+            $page++;
+            $param['page'] = $page;
+            $html =  headDetail($param);
+            $html .= htmlTopic($cpcType['1'], 1);
+            $count_row = 0;
+        }
     }
-    
-}
 }
 
 
-$sumWeight += $resultCPC['CPCsumWeight'] ;
-$sum2 +=  $resultCPC['cpcSum2'] ;
+$sumWeight += $resultCPC['CPCsumWeight'];
+$sum2 +=  $resultCPC['cpcSum2'];
 
-$table_cpc = $report->tableCPC($per_cardno,$tableYear,array(2),$tablePersonal,$tableCPCscore);
+$table_cpc = $report->tableCPC($per_cardno, $tableYear, array(2), $tablePersonal, $tableCPCscore);
 $resultCPC = $report->cpcCalculate_new($table_cpc);
 $num2 = count($resultCPC['cpc']);
 if ($num2 > 0) {
-    $html .= htmlTopic($cpcType['2'],2);
-    $count_row ++;
+    $html .= htmlTopic($cpcType['2'], 2);
+    $count_row++;
     foreach ($resultCPC['cpc'] as $k => $v) {
-        $html .= html_content($v['question_title'],$v['cpc_divisor'],$v['total'],$v['cpc_weight'],$v['sum1']);
-        $count_row ++;
-        if ($count_row  >= 13 ) {
+        $html .= html_content($v['question_title'], $v['cpc_divisor'], $v['total'], $v['cpc_weight'], $v['sum1']);
+        $count_row++;
+        if ($count_row  >= 13) {
             $html .= ' </tbody>
             </table>';
             $mpdf->WriteHTML($html);
-            
+
             $mpdf->AddPage();
             $page++;
             $param['page'] = $page;
             $html =  headDetail($param);
-            $html .= htmlTopic($cpcType['2'],2);
+            $html .= htmlTopic($cpcType['2'], 2);
             $count_row = 0;
-        
         }
-        
     }
 }
 
-$sumWeight += $resultCPC['CPCsumWeight'] ;
-$sum2 +=  $resultCPC['cpcSum2'] ;
+$sumWeight += $resultCPC['CPCsumWeight'];
+$sum2 +=  $resultCPC['cpcSum2'];
 
-$table_cpc = $report->tableCPC($per_cardno,$tableYear,array(3),$tablePersonal,$tableCPCscore);
+$table_cpc = $report->tableCPC($per_cardno, $tableYear, array(3), $tablePersonal, $tableCPCscore);
 $resultCPC = $report->cpcCalculate_new($table_cpc);
 $num3 = count($resultCPC['cpc']);
 if ($num3 > 0) {
-    $html .= htmlTopic($cpcType['3'],3);
-    $count_row ++;
+    $html .= htmlTopic($cpcType['3'], 3);
+    $count_row++;
     foreach ($resultCPC['cpc'] as $k => $v) {
-        $html .= html_content($v['question_title'],$v['cpc_divisor'],$v['total'],$v['cpc_weight'],$v['sum1']);
-        $count_row ++;
-        if ($count_row  >= 13 ) {
-        $html .= ' </tbody>
+        $html .= html_content($v['question_title'], $v['cpc_divisor'], $v['total'], $v['cpc_weight'], $v['sum1']);
+        $count_row++;
+        if ($count_row  >= 13) {
+            $html .= ' </tbody>
             </table>';
             $mpdf->WriteHTML($html);
-            
+
             $mpdf->AddPage();
             $page++;
             $param['page'] = $page;
             $html =  headDetail($param);
-            $html .= htmlTopic($cpcType['3'],3);
-        $count_row = 0;
-            
+            $html .= htmlTopic($cpcType['3'], 3);
+            $count_row = 0;
         }
-
     }
 }
 
-$sumWeight += $resultCPC['CPCsumWeight'] ;
-$sum2 +=  $resultCPC['cpcSum2'] ;
+$sumWeight += $resultCPC['CPCsumWeight'];
+$sum2 +=  $resultCPC['cpcSum2'];
 
-$engPage = array('sumWeight' => $sumWeight,
-                'sumScore' => $sum2 );
- $html .= endPage($engPage);
- $mpdf->WriteHTML($html);
+$engPage = array(
+    'sumWeight' => $sumWeight,
+    'sumScore' => $sum2
+);
+$html .= endPage($engPage);
+$mpdf->WriteHTML($html);
 $mpdf->Output();
 echo ($html);
-
-

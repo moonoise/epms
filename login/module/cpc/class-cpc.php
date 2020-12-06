@@ -38,6 +38,7 @@ class cpc extends DbConn
                 " . $cpcScoreTable . ".`question_no`,
                 " . $cpcScoreTable . ".`per_cardno`,
                 " . $cpcScoreTable . ".`cpc_divisor`,
+                " . $cpcScoreTable . ".`cpc_weight`,
                 " . $cpcScoreTable . ".`cpc_score1`,
                 " . $cpcScoreTable . ".`cpc_score2`,
                 " . $cpcScoreTable . ".`cpc_score3`,
@@ -140,8 +141,7 @@ class cpc extends DbConn
                     //echo $value['question_no'].'-'.$level_no;
                     $d = $this->cpc_divisor($value['question_no']);
                     $a  = array(
-                        'per_cardno' => $per_cardno,
-                        'cpc_divisor' => $d['weight_default']
+                        'per_cardno' => $per_cardno
                     );
                     //echo var_dump($d);
                     $value = $value + $a;
@@ -178,6 +178,7 @@ class cpc extends DbConn
                             `per_cardno`,
                             `id_admin`,
                             `years`,
+                            `cpc_weight`,
                             `cpc_divisor`,
                             `date_key_score`,
                             `soft_delete`
@@ -188,6 +189,7 @@ class cpc extends DbConn
                                :per_cardno,
                                :id_admin,
                                :years,
+                               :cpc_weight,
                                :cpc_divisor,
                                :date_key_score,
                                :soft_delete
@@ -197,6 +199,7 @@ class cpc extends DbConn
             $stm->bindParam(":per_cardno", $data['per_cardno']);
             $stm->bindParam(":id_admin", $data['id_admin']);
             $stm->bindParam(":years", $data['years']);
+            $stm->bindParam(":cpc_weight", $data['cpc_weight']);
             $stm->bindParam(":cpc_divisor", $data['cpc_divisor']);
             $stm->bindParam(":date_key_score", $data['date_key_score']);
             $stm->bindParam(":soft_delete", $data['soft_delete']);

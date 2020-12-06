@@ -43,7 +43,7 @@ oci_free_statement($stid);
 
 foreach ($res['PER_CARDNO'] as $key => $value) {
     $result = $dpis->queryPersonalType1($value);
-    $r = $dpis->insertPer_Personal($result['result'], $personalTable);
+    $r = $dpis->insertPer_PersonalType1($result['result'], $personalTable);
     if ($r['success'] === false or $r['success'] === null) {
         $log[] = $r;
     }

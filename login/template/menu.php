@@ -28,15 +28,20 @@ function checkPicture2($namePicture)
       <?php if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(1, 2, 3))) {
         echo "<li><a href='view-profile.php'><i class='fa fa-user text-success'></i>ข้อมูลส่วนตัว</a></li>";
       } ?>
-      <?php if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(1, 2, 3))) {
+      <?php if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(3))) {
         echo "<li><a><i class='fa fa-bar-chart-o text-success'></i>การประเมินผล <span class='fa fa-chevron-down'></span></a>
                               <ul class='nav child_menu text-success'>
                                 <li><a href='view-evaluation.php'>แบบประเมิน</a></li>
-                                <li><a href='view-evaluation-accept.php'>ยืนยันประเมิน</a></li>
+      
                               </ul>
                             </li>";
       }
-      if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(1, 2, 3))) {
+
+      if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(1))) {
+        echo "<li><a href='view-evaluation-accept.php'><i class='fa fa-bar-chart-o text-success'></i>ยืนยันประเมิน</a></li>";
+      }
+
+      if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(3))) {
         echo '<li><a><i class="fa fa-file-text text-success"></i>  รายงานผลรายบุคคล <span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu text-success">
                               <li><a href="view-evaluation-result.php">ผลการประเมิน</a></li>
@@ -47,7 +52,7 @@ function checkPicture2($namePicture)
                           </li>';
       }
 
-      if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(1, 2, 3))) {
+      if (isset($_SESSION[__USER_ID__]) and in_array($_SESSION[__GROUP_ID__], array(3))) {
         echo '<li><a  href="view-cpc2.php"><i class="fa  fa-shopping-cart text-success"></i><i class="fa fa-list-ol text-success"></i>  รายการสมรรถนะ </a>
                         </li>';
         echo '<li><a  href="view-kpi2.php"><i class="fa  fa-shopping-cart text-success"></i><i class="fa  fa-list-ul text-success"></i>  รายการตัวชี้วัด </a>

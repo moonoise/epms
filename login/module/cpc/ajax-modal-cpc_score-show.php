@@ -35,9 +35,10 @@ if (!empty($_GET['per_cardno'])) {
             echo "<td>" . $n . "</td>";
             echo "<td>" . $row['question_no'] . "</td>";
             echo "<td>" . $row['question_title'] . "</td>";
+            echo "<td>" . $row['cpc_weight'] . "</td>";
             echo "<td>  
                         <div class='form-group' >
-                        <input type='number' class='' style='width: 6em' maxlength='5' min='1' max='5' size='5' value='" . $row['cpc_divisor'] . "' id='divisor-" . $row['cpc_score_id'] . "' " . $_SESSION[__EVALUATION_ON_OFF__] . ">
+                        <input type='number' class='' style='width: 3em' maxlength='2' min='1' max='2' size='2' value='" . $row['cpc_divisor'] . "' id='divisor-" . $row['cpc_score_id'] . "' " . $_SESSION[__EVALUATION_ON_OFF__] . ">
                         <button type='button' class='btn btn-info btn-xs' 
                         onclick='divisor(`" . $row['cpc_score_id'] . "`)' " . $_SESSION[__EVALUATION_ON_OFF__] . ">
                         <i class='fa fa-save'></i></button>

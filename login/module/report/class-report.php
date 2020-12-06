@@ -273,6 +273,7 @@ class report extends DbConn
             `" . $tableCPCscore . "`.`question_no`,
             " . $tableCPCscore . ".`per_cardno`,
             " . $tableCPCscore . ".`cpc_divisor`,
+            " . $tableCPCscore . ".`cpc_weight`,
             " . $tableCPCscore . ".`cpc_accept1`,
             " . $tableCPCscore . ".`cpc_accept2`,
             " . $tableCPCscore . ".`cpc_accept3`,
@@ -288,14 +289,6 @@ class report extends DbConn
                 `cpc_question`.`question_title`,
                 `cpc_question`.`question_type`,
                 `" . $tablePersonal . "`.`level_no`,
-            IF (`" . $tablePersonal . "`.`level_no` = 'D1' OR `" . $tablePersonal . "`.`level_no` = 'D2' ,  
-                ( CASE `cpc_question`.`question_type`
-                    WHEN 1 THEN 10
-                    WHEN 2 THEN 3
-                    WHEN 3 THEN 4
-                END
-                )
-                    , 10) AS cpc_weight,
                     " . $tablePersonal . ".`through_trial`   
             FROM " . $tableCPCscore . " 
             INNER JOIN `cpc_question` ON (`cpc_question`.`question_no` = " . $tableCPCscore . ".`question_no` )
@@ -568,7 +561,7 @@ class report extends DbConn
             $kpi['kpiSum2_user'] =  $kpiSum2_user;
             $kpi['kpiSum2_user_'] =  ($kpiSum2_user == 0 ? "-" : $kpiSum2_user); // ไม่มีคะแนนให้ใส่ - 
             $kpi['kpiCheckSumAll'] = ($kpiCheckSumAll == 0 ? $kpi['kpiSum2'] : "-");
-            $kpi['scoring'] = ($kpiResult['result'][0]['through_trial'] == 2 ? 50 : 70);
+            $kpi['scoring'] = 80;
             $kpi['through_trial'] = $kpiResult['result'][0]['through_trial'];
         }
 
@@ -636,7 +629,7 @@ class report extends DbConn
             $cpc['cpcSum2_'] = ($cpcCheckSumAll > 0 && $cpcSum2 == 0 ? null : round($cpcSum2, 2));  //ถ้ายังยืนยันผลไม่เสร็จให้ส่งค่าเป็น NULL 
             //----user -----
             $cpc['cpcSum2_user'] = ($cpcCheckSumAll_user > 0 && $cpcSum2_user == 0 ? "-" : round($cpcSum2_user, 2));
-            $cpc['scoring'] = ($value['through_trial'] == 2 ? 50 : 30);
+            $cpc['scoring'] = 20;
             $cpc['through_trial'] = $value['through_trial'];
             // $cpc['cpcSum2_user'] = $cpcCheckSumAll_user ;
         }
@@ -791,7 +784,7 @@ class report extends DbConn
                     $errUpdate = $e->getMessage();
 
                     $log_['per_cardno'] = $kpi['per_cardno'];
-                    $log_['id'] = $value['kpi_score_id'];
+                    $log_['id'] = $valueKPI['kpi_score_id'];
                     $log_['error'] = $kpi_score . " " . $errUpdate;
                     $log[] = $log_;
                     $log_ = [];

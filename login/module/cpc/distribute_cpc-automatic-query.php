@@ -44,7 +44,8 @@ foreach ($resultPer as $key => $v) {
                     "per_cardno" => $value['per_cardno'],
                     "id_admin" => $_SESSION[__USER_ID__],
                     "years" => $year,
-                    "cpc_divisor" => $value['weight_default'],
+                    'cpc_divisor' => $d['cpc_divisor'],
+                    'cpc_weight' => $d['weight_default'],
                     "date_key_score" => $d,
                     "soft_delete" => 0
                 );

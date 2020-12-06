@@ -31,8 +31,8 @@ oci_fetch_all($stid, $res, null, null, OCI_ASSOC);
 oci_free_statement($stid);
 
 foreach ($res['PER_CARDNO'] as $key => $value) {
-    $result = $dpis->queryPersonal($value);
-    $r = $dpis->insertPer_Personal($result['result'], $personalTable);
+    $result = $dpis->queryPersonalType3($value);
+    $r = $dpis->insertPer_PersonalType3($result['result'], $personalTable);
     if ($r['success'] === false or $r['success'] === null) {
         $log[] = $r;
     }

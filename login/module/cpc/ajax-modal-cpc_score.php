@@ -17,6 +17,7 @@ include_once "class-cpc.php";
             <th>รหัส</th>
             <th>รายการสมรรถนะ <span class="text-warning">(ตัวเลือก)</span></th>
             <th>ประเภท</th>
+
             <th><i class="fa fa-save"></i></th>
         </tr>
     </thead>
@@ -32,6 +33,7 @@ include_once "class-cpc.php";
                 echo "<td>" . $row['question_code'] . "</td>";
                 echo "<td>" . $row['question_title'] . "</td>";
                 echo "<td>" . $cpcType[$row['question_type']] . "</td>";
+
                 echo "<td>
                                     <div class='input-group'>
                                     <button type='button' class='btn btn-info btn-xs confirm-add'  data-toggle='confirmation' 
@@ -57,6 +59,7 @@ include_once "class-cpc.php";
             <th class="col-md-1 col-sm-1 col-xs-1">#</th>
             <th class="col-md-1 col-sm-1 col-xs-1">รหัส</th>
             <th class="col-md-7 col-sm-7 col-xs-7">รายการสมรรถนะ <span class="text-warning">(ที่กำหนดไว้)</span></th>
+            <th class="col-md-2 col-sm-2 col-xs-2">ค่าน้ำหนัก</th>
             <th class="col-md-2 col-sm-2 col-xs-2">ค่าคาดหวัง</th>
             <th class="col-md-1 col-sm-1 col-xs-1"><i class="fa fa-edit"></i></th>
         </tr>

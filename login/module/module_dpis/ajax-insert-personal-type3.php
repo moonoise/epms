@@ -13,15 +13,15 @@ if ($_POST['per_cardno'] != "") {
 
     $personalTable = $currentYear['data']['per_personal'];
 
-    $result = $dpis->queryPersonalType1($_POST['per_cardno']);
+    $result = $dpis->queryPersonalType3($_POST['per_cardno']);
     // echo "<pre>";
     // print_r($result['result']);
     // echo "</pre>";
-    $r = $dpis->queryPersonalType1($result['result'], $personalTable);
+    $r = $dpis->insertPer_PersonalType3($result['result'], $personalTable);
     if ($r['success'] === true) {
         echo json_encode($r);
     } else {
-        $rr = $dpis->updatePer_PersonalType1($result['result'], $personalTable);
+        $rr = $dpis->updatePer_PersonalType3($result['result'], $personalTable);
         echo json_encode($rr);
     }
 }

@@ -33,7 +33,8 @@ if (!empty($_GET['per_cardno']) && !empty($_GET['question_no'])) {
                 "per_cardno" => $_GET['per_cardno'],
                 "id_admin" => $_SESSION[__USER_ID__],
                 "years" => $year,
-                "cpc_divisor" => $r['weight_default'],
+                "cpc_divisor" => $r['cpc_divisor'],
+                "cpc_weight" => $r['weight_default'],
                 "date_key_score" => $d,
                 "soft_delete" => 0
             );

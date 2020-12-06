@@ -89,10 +89,10 @@ if ($kpi['through_trial'] == 1) {
 } elseif ($kpi['through_trial'] == 2) {
     $txt = '<b class="text-danger text-center">อยู่ในช่วงทดลองงาน</b>';
 } else {
-    $AverageKPI = 70;
-    $AverageKPI2 = 0.7;
-    $AverageCPC = 30;
-    $AverageCPC2 = 0.3;
+    $AverageKPI = 80;
+    $AverageKPI2 = 0.8;
+    $AverageCPC = 20;
+    $AverageCPC2 = 0.2;
     $txt = '';
 }
 if ($kpi['kpiSum2'] != "-") {
