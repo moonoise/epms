@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: rid_Mariadb
--- Generation Time: Dec 12, 2020 at 08:50 AM
+-- Generation Time: Dec 12, 2020 at 09:08 AM
 -- Server version: 10.3.12-MariaDB-1:10.3.12+maria~bionic
 -- PHP Version: 7.2.13
 
@@ -20469,46 +20469,6 @@ CREATE TABLE `useronline` (
 
 INSERT INTO `useronline` (`useronline_id`, `per_cardno_ip`, `timestamp`) VALUES
 (402420, '3101900121798-192.168.48.1', '1607267920');
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `view_cpc1`
--- (See below for the actual view)
---
-CREATE TABLE `view_cpc1` (
-`per_cardno` varchar(15)
-,`c` bigint(21)
-);
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `view_kpi`
--- (See below for the actual view)
---
-CREATE TABLE `view_kpi` (
-`per_cardno` varchar(15)
-,`c` bigint(21)
-);
-
--- --------------------------------------------------------
-
---
--- Structure for view `view_cpc1`
---
-DROP TABLE IF EXISTS `view_cpc1`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`epm`@`localhost` SQL SECURITY DEFINER VIEW `view_cpc1`  AS  select `cpc_score_result_2020_1`.`per_cardno` AS `per_cardno`,count(0) AS `c` from `cpc_score_result_2020_1` group by `cpc_score_result_2020_1`.`per_cardno` having `c` > 1 ;
-
--- --------------------------------------------------------
-
---
--- Structure for view `view_kpi`
---
-DROP TABLE IF EXISTS `view_kpi`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`epm`@`localhost` SQL SECURITY DEFINER VIEW `view_kpi`  AS  select `kpi_score_result_2020_1`.`per_cardno` AS `per_cardno`,count(0) AS `c` from `kpi_score_result_2020_1` group by `kpi_score_result_2020_1`.`per_cardno` having `c` > 1 ;
 
 --
 -- Indexes for dumped tables
