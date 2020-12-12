@@ -27,7 +27,7 @@ $result = $stm->fetchAll();
   <meta charset="utf-8">
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href=<?php echo __PATH_EXTERNAL__ . "icon/rid.png"; ?>> <!-- Bootstrap -->
+  <link rel="icon" href='../external/icon/rid.png'> <!-- Bootstrap -->
   <!-- Bootstrap -->
   <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
